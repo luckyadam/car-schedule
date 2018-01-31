@@ -1,57 +1,52 @@
-<style lang="less">
+<style lang="scss">
   .userinfo {
     display: flex;
     flex-direction: column;
     align-items: center;
   }
 
-  .userinfo-avatar {
+  .userinfo_avatar {
     width: 80rpx;
     height: 80rpx;
     border-radius: 50%;
   }
 
-  .userinfo-nickname {
+  .userinfo_nickname {
     color: #aaa;
+    font-size: 24rpx;
   }
 </style>
 <template>
   <view class="container">
-    <view class="userinfo" @tap="handleViewTap">
-      <image class="userinfo-avatar" src="{{ userInfo.avatarUrl }}" background-size="cover"/>
-      <view class="userinfo-nickname">{{ userInfo.nickName }}</view>
+    <view class="userinfo">
+      <image class="userinfo_avatar" src="{{ userInfo.avatarUrl }}" background-size="cover" />
+      <view class="userinfo_nickname">{{ userInfo.nickName }}</view>
     </view>
-
-    <panel>
+    <view class="choice">
+      <view class="choice_btn choice_driver">
+        <button @tap="chooseDriver">
+          <text>司机</text>
+        </button>
+      </view>
+      <view class="choice_btn choice_travel">
+        <button @tap="chooseTravel">
+          <text>旅行社</text>
+        </button>
+      </view>
+    </view>
+    <view>
       <view class="title" slot="title">测试数据绑定</view>
-
-      <text class="info">{{normalTitle}}</text>
-      <text class="info">{{setTimeoutTitle}}</text>
-      <text class="info">{{mixin}}</text>
-      <text class="info">{{mynum}}</text>
-      <text class="info">{{now}}</text>
+      <view><text class="info">{{num}}</text></view>
+      <view><text class="info">{{asyncNum}}</text></view>
+      <view><text class="info">{{sumNum}}</text></view>
       <button @tap="plus('a')" size="mini">  +  </button>
-    </panel>
-
-    <panel>
-      <view class="title" slot="title">其它测试</view>
-      <button @tap="toast" size="mini">第三方组件</button>
-      <button @tap="communicate" size="mini">组件通信</button>
-      <button @tap="tap" size="mini">混合TAP事件</button>
-    </panel>
-
-    <panel>
-      <view class="title" slot="title">测试并发网络请求</view>
-      <view>返回结果: <text>{{netrst}}</text></view>
-      <button @tap="request" size="mini"> 点我发起10个请求 </button>
-    </panel>
-
-    <panel>
+    </view>
+    <view>
       <view class="title" slot="title">测试组件</view>
 
       <text class="testcounter">计数组件1: </text>
       <view class="counterview">
-        <counter1 @index-emit.user="counterEmit" />
+        <counter1 @index-emit="counterEmit" />
       </view>
 
       <text class="testcounter">计数组件2: </text>
@@ -59,110 +54,56 @@
       <view class="counterview">
         <counter2 :num.sync="mynum"></counter2>
       </view>
-    </panel>
-
-    <panel>
-      <view class="title" slot="title">测试组件Repeat</view>
-      <repeat for="{{groupList}}" index="index" item="item" key="key">
-        <group :grouplist="item" :indexa="index"></group>
-      </repeat>
-    </panel>
-
-    <panel>
-      <view class="title" slot="title">测试列表</view>
-      <list></list>
-    </panel>
-
-    <toast />
+    </view>
   </view>
 </template>
 
 <script>
   import wepy from 'wepy'
-  import List from '../components/list'
-  import Panel from '@/components/panel' // alias example
-  import Counter from 'counter' // alias example
-  import Group from '../components/group'
-  import Toast from 'wepy-com-toast'
-  import testMixin from '../mixins/test'
+  import { connect } from 'wepy-redux'
+
+  import Counter from 'counter' //
+
+  @connect({
+    num (state) {
+      return state.counter.num
+    },
+    asyncNum (state) {
+      return state.counter.asyncNum
+    },
+    sumNum (state) {
+      return state.counter.num + state.counter.asyncNum
+    }
+  })
 
   export default class Index extends wepy.page {
     config = {
-      navigationBarTitleText: 'test'
+      navigationBarTitleText: '选择角色'
     }
+
     components = {
-      panel: Panel,
       counter1: Counter,
       counter2: Counter,
-      list: List,
-      group: Group,
-      toast: Toast
     }
-
-    mixins = [testMixin]
 
     data = {
-      mynum: 20,
       userInfo: {
         nickName: '加载中...'
-      },
-      normalTitle: '原始标题',
-      setTimeoutTitle: '标题三秒后会被修改',
-      count: 0,
-      netrst: '',
-      groupList: [
-        {
-          id: 1,
-          name: '点击改变',
-          list: [
-            {
-              childid: '1.1',
-              childname: '子项，点我改变'
-            }, {
-              childid: '1.2',
-              childname: '子项，点我改变'
-            }, {
-              childid: '1.3',
-              childname: '子项，点我改变'
-            }
-          ]
-        },
-        {
-          id: 2,
-          name: '点击改变',
-          list: [
-            {
-              childid: '2.1',
-              childname: '子项，点我改变'
-            }, {
-              childid: '2.2',
-              childname: '子项，点我改变'
-            }, {
-              childid: '2.3',
-              childname: '子项，点我改变'
-            }
-          ]
-        },
-        {
-          id: 3,
-          name: '点击改变',
-          list: [
-            {
-              childid: '3.1',
-              childname: '子项，点我改变'
-            }
-          ]
-        }
-      ]
-    }
-
-    computed = {
-      now () {
-        return +new Date()
       }
     }
 
+    computed = {
+
+    }
+
     methods = {
+      chooseDriver () {
+        console.log('--')
+      },
+
+      choice_travel () {
+        console.log('++')
+      },
       plus () {
         this.mynum++
       },
@@ -214,22 +155,10 @@
       }
     }
 
-    onLoad() {
-      let self = this
-      this.$parent.getUserInfo(function (userInfo) {
-        if (userInfo) {
-          self.userInfo = userInfo
-        }
-        self.normalTitle = '标题已被修改'
-
-        self.setTimeoutTitle = '标题三秒后会被修改'
-        setTimeout(() => {
-          self.setTimeoutTitle = '到三秒了'
-          self.$apply()
-        }, 3000)
-
-        self.$apply()
-      })
+    async onLoad () {
+      await this.$parent.getUserInfo()
+      this.userInfo = this.$parent.globalData.userData.userInfo
+      this.$apply()
     }
   }
 </script>
