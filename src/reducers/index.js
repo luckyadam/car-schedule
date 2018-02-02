@@ -1,6 +1,8 @@
 import { combineReducers } from 'redux'
-import counter from './counter'
+import user from './user'
+import driver from './driver'
 
 export default combineReducers({
-  counter
+  user,
+  driver
 })

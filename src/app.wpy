@@ -1,11 +1,39 @@
 <style lang="scss">
-.container {
+@import './weui/weui.wxss';
+
+/* reset */
+page {
+  background-color: #F8F8F8;
   height: 100%;
+  font-size: 32rpx;
+  line-height: 1.6;
+}
+checkbox, radio{
+  margin-right: 10rpx;
+}
+button{
+  margin-top: 20rpx;
+  margin-bottom: 20rpx;
+}
+form{
+  width: 100%;
+}
+
+/* lib */
+.strong{
+  font-weight: bold;
+}
+.tc{
+  text-align: center;
+}
+
+/* page */
+.container {
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: space-between;
-  box-sizing: border-box;
+  font-size: 32rpx;
+  font-family: -apple-system-font,Helvetica Neue,Helvetica,sans-serif;
 }
 </style>
 
@@ -22,7 +50,9 @@ setStore(store)
 export default class extends wepy.app {
   config = {
     pages: [
-      'pages/index'
+      'pages/index',
+      'pages/profile/driver',
+      'pages/profile/travel'
     ],
     window: {
       backgroundTextStyle: 'light',
@@ -32,29 +62,12 @@ export default class extends wepy.app {
     }
   }
 
-  globalData = {
-    userData: null
-  }
-
   constructor () {
     super()
     this.use('promisify')
   }
 
   onLaunch () {
-  }
-
-  async getUserInfo () {
-    if (this.globalData.userData) {
-      return this.globalData.userData
-    }
-    try {
-      const loginRes = await wepy.login()
-      this.globalData.userData = await wepy.getUserInfo()
-    } catch (err) {
-      console.log(err)
-      console.log('登录失败')
-    }
   }
 }
 </script>

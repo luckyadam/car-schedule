@@ -1,0 +1,17 @@
+<style lang="scss">
+</style>
+
+<template>
+  <view class="container"></view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import { connect } from 'wepy-redux'
+
+  export default class TravelProfile extends wepy.page {
+    config = {
+      navigationBarTitleText: '旅行社资料完善'
+    }
+  }
+</script>
