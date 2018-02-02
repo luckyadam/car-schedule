@@ -39,7 +39,7 @@
   import { connect } from 'wepy-redux'
 
   import { inputDriverUsername, inputDriverId, inputDriverPhone } from '../../actions/driver'
-  import { isEmptyStr, isValidPhoneNumber, isValidIdentifyId } from '../../utils'
+  import { isEmptyStr, isValidPhoneNumber, isValidIdentifyId } from '../../utils/validate'
 
   @connect({
     username (state) {
