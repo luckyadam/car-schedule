@@ -1,0 +1,96 @@
+<style lang="scss">
+.car {
+  &_info {
+    padding: 30rpx 30rpx 10rpx 30rpx;
+    background: #FFFFFF;
+    margin-bottom: 20rpx;
+    &_main {
+      padding: 0 50rpx 0;
+      .editable-item:last-child {
+        border-bottom: 0;
+      }
+    }
+  }
+  &_title {
+    color: #EB3034;
+    font-size: 32rpx;
+  }
+}
+</style>
+
+<template>
+  <view class="container car">
+    <view class="car_info">
+      <view class="car_title">基本信息</view>
+      <view class="car_info_main">
+        <view class="editable-item">
+          <view class="editable-item_title">车牌号码</view>
+          <view class="editable-item_content">
+            <text class="editable-item_content_add" wx:if="{{type === 'add'}}">添加车牌号码</text>
+            <text class="editable-item_content_edit" wx:else>{{this.carInfo.carNumber}}</text>
+            <text class="editable-item_arrow"></text>
+          </view>
+        </view>
+        <view class="editable-item">
+          <view class="editable-item_title">限载人数</view>
+          <view class="editable-item_content">
+            <text class="editable-item_content_add" wx:if="{{type === 'add'}}">添加限载人数</text>
+            <text class="editable-item_content_edit" wx:else>{{this.carInfo.passengers}}</text>
+            <text class="editable-item_arrow"></text>
+          </view>
+        </view>
+        <view class="editable-item">
+          <view class="editable-item_title">使用年限</view>
+          <view class="editable-item_content">
+            <text class="editable-item_content_add" wx:if="{{type === 'add'}}">添加使用年限</text>
+            <text class="editable-item_content_edit" wx:else>{{this.carInfo.age}}</text>
+            <text class="editable-item_arrow"></text>
+          </view>
+        </view>
+        <view class="editable-item">
+          <view class="editable-item_title">车辆品牌</view>
+          <view class="editable-item_content">
+            <text class="editable-item_content_add" wx:if="{{type === 'add'}}">添加车辆品牌</text>
+            <text class="editable-item_content_edit" wx:else>{{this.carInfo.brand}}</text>
+            <text class="editable-item_arrow"></text>
+          </view>
+        </view>
+      </view>
+    </view>
+    <view class="car_info">
+      <view class="car_title">车辆图片</view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import { connect } from 'wepy-redux'
+
+  @connect({
+    newCar (state) {
+      return state.car
+    },
+    cars (state) {
+      return state.driver.cars
+    }
+  })
+  export default class ProfileCar extends wepy.page {
+    config = {
+      navigationBarTitleText: '车辆信息'
+    }
+
+    data = {
+      type: 'add',
+      carInfo: {}
+    }
+
+    onLoad (option) {
+      this.type = option.type
+      this.carIndex = option.index
+      if (this.carIndex !== undefined) {
+        this.carInfo = this.cars[carIndex]
+      }
+    }
+  }
+</script>

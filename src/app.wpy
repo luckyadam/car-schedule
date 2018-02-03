@@ -35,6 +35,39 @@ form{
   font-size: 32rpx;
   font-family: -apple-system-font,Helvetica Neue,Helvetica,sans-serif;
 }
+
+.editable-item {
+  display: flex;
+  justify-content: space-between;
+  font-size: 28rpx;
+  padding: 25rpx 0;
+  border-bottom: 1rpx dashed #DADADA;
+  &_title {
+    color: #A4A4A4;
+  }
+  &_content {
+    &_add {
+      color: #A4A4A4;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    &_edit {
+      color: #333333;
+      display: inline-block;
+      vertical-align: middle;
+    }
+  }
+  &_arrow {
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 8rpx;
+    height: 15rpx;
+    width: 15rpx;
+    border-right: 3rpx solid #333333;
+    border-bottom: 3rpx solid #333333;
+    transform: rotate(-45deg);
+  }
+}
 </style>
 
 <script>
@@ -52,13 +85,14 @@ export default class extends wepy.app {
     pages: [
       'pages/index',
       'pages/profile/driver',
-      'pages/profile/travel'
+      'pages/profile/travel',
+      'pages/profile/car',
     ],
     window: {
       backgroundTextStyle: 'light',
-      navigationBarBackgroundColor: '#fff',
+      navigationBarBackgroundColor: '#EB3434',
       navigationBarTitleText: 'WeChat',
-      navigationBarTextStyle: 'black'
+      navigationBarTextStyle: 'white'
     }
   }
 

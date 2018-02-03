@@ -1,6 +1,6 @@
 {
-  "name": "myproject",
-  "version": "1.2.8",
+  "name": "car-schedule",
+  "version": "0.0.1",
   "description": "",
   "main": "dist/app.js",
   "scripts": {
@@ -8,7 +8,7 @@
     "build": "cross-env NODE_ENV=production wepy build --no-cache",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "author": "luckyadam",
   "license": "MIT",
   "dependencies": {
     "redux": "^3.7.2",

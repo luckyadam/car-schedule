@@ -29,5 +29,6 @@ export default handleActions({
 }, {
   username: null,
   phoneNumber: null,
-  idNumber: null
+  idNumber: null,
+  cars: []
 })
