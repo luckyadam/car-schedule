@@ -55,7 +55,6 @@
   import wepy from 'wepy'
 
   export default class TabBar extends wepy.component {
-
     props = {
       active: {
         twoWay: true

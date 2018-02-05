@@ -1,0 +1,39 @@
+<style lang="scss">
+</style>
+
+<template>
+  <view class="container">
+    <view>
+      <EditInput :val.sync="username" placeholder="请输入姓名" :onInput="onInputHandler" />
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import { connect } from 'wepy-redux'
+
+  import EditInput from '../../components/editInput'
+  import { inputUsername } from '../../actions/user'
+
+  @connect({
+    username (state) {
+      return state.user.username
+    }
+  }, {
+    inputUsername
+  })
+  export default class EditUsername extends wepy.page {
+    config = {
+      navigationBarTitleText: '修改姓名'
+    }
+
+    components = {
+      EditInput
+    }
+
+    onInputHandler = (val) => {
+      this.methods.inputUsername(val)
+    }
+  }
+</script>

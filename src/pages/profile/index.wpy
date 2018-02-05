@@ -1,0 +1,119 @@
+<style lang="scss">
+  .profile {
+    &_car {
+      &_add {
+        padding: 20rpx 0;
+        &_button {
+          box-sizing: border-box;
+          width: 610rpx;
+          height: 60rpx;
+          line-height: 60rpx;
+          border: 1rpx dashed #DADADA;
+          text-align: center;
+          color: #A4A4A4;
+          font-size: 24rpx;
+          border-radius: 0;
+          background: transparent;
+        }
+      }
+    }
+    &_submit {
+      padding-top: 10rpx;
+    }
+  }
+</style>
+
+<template>
+  <view class="container profile region">
+    <view>
+      <view class="region_section profile_info">
+        <view class="region_title">个人信息</view>
+        <view class="region_section_main">
+          <view class="editable-item">
+            <view class="editable-item_title">头像</view>
+            <view class="editable-item_content">
+              <image class="editable-item_content_img" src="{{user.avatarUrl}}" />
+            </view>
+          </view>
+          <view class="editable-item">
+            <view class="editable-item_title">昵称</view>
+            <view class="editable-item_content">
+              <text class="editable-item_content_edit">{{user.nickname}}</text>
+            </view>
+          </view>
+          <view class="editable-item" @tap="editUsername">
+            <view class="editable-item_title">姓名</view>
+            <view class="editable-item_content">
+              <text class="editable-item_content_add" wx:if="{{!user.username}}">请添加姓名</text>
+              <text class="editable-item_content_edit" wx:else>{{user.username}}</text>
+              <text class="editable-item_arrow"></text>
+            </view>
+          </view>
+          <view class="editable-item" @tap="editTelephone">
+            <view class="editable-item_title">手机号码</view>
+            <view class="editable-item_content">
+              <text class="editable-item_content_add" wx:if="{{!user.telephone}}">请添加手机号码</text>
+              <text class="editable-item_content_edit" wx:else>{{user.telephone}}</text>
+              <text class="editable-item_arrow"></text>
+            </view>
+          </view>
+        </view>
+      </view>
+      <view class="region_section profile_car" wx:if="{{user.role === 'driver'}}">
+        <view class="region_title">车辆信息</view>
+        <view class="region_section_main">
+          <view class="profile_car_add">
+            <button class="profile_car_add_button" @tap="addCar">添加车辆</button>
+          </view>
+        </view>
+      </view>
+      <view class="profile_submit">
+        <button class="button profile_submit_btn" @tap="updateProfile">确认提交</button>
+      </view>
+    </view>
+    <TabBar active="2" />
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import { connect } from 'wepy-redux'
+
+  import { isEmptyStr, isValidPhoneNumber, isValidIdentifyId } from '../../utils/validate'
+  import TabBar from '../../components/tabBar'
+
+  @connect({
+    user (state) {
+      return state.user
+    }
+  })
+  export default class Profile extends wepy.page {
+    config = {
+      navigationBarTitleText: '我的资料'
+    }
+
+    components = {
+      TabBar
+    }
+
+    methods = {
+      addCar () {
+        wepy.navigateTo({
+          url: './car?type=add'
+        })
+      },
+
+      editUsername () {
+        wepy.navigateTo({
+          url: '../edit/username'
+        })
+      },
+
+      editTelephone () {
+        wepy.navigateTo({
+          url: '../edit/telephone'
+        })
+      }
+    }
+  }
+</script>

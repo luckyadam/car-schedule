@@ -1,0 +1,35 @@
+<style type="scss">
+
+</style>
+
+<template>
+  <view class="edit-input">
+    <input
+      class="edit-input_box"
+      type="text"
+      value="{{val}}"
+      placeholder="{{placeholder}}"
+      @input="editInputChangeHandler"
+      focus="true" />
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+
+  export default class EditInput extends wepy.component {
+    props = {
+      val: {
+        twoWay: true
+      },
+      placeholder: String,
+      onInput: Function
+    }
+
+    methods = {
+      editInputChangeHandler (e) {
+        this.onInput(e.detail.value)
+      }
+    }
+  }
+</script>

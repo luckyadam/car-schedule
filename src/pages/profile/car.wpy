@@ -1,28 +1,13 @@
 <style lang="scss">
 .car {
-  &_info {
-    padding: 30rpx 30rpx 10rpx 30rpx;
-    background: #FFFFFF;
-    margin-bottom: 20rpx;
-    &_main {
-      padding: 0 50rpx 0;
-      .editable-item:last-child {
-        border-bottom: 0;
-      }
-    }
-  }
-  &_title {
-    color: #EB3034;
-    font-size: 32rpx;
-  }
 }
 </style>
 
 <template>
-  <view class="container car">
-    <view class="car_info">
-      <view class="car_title">基本信息</view>
-      <view class="car_info_main">
+  <view class="container car region">
+    <view class="region_section">
+      <view class="region_title">基本信息</view>
+      <view class="region_section_main">
         <view class="editable-item">
           <view class="editable-item_title">车牌号码</view>
           <view class="editable-item_content">
@@ -57,7 +42,7 @@
         </view>
       </view>
     </view>
-    <view class="car_info">
+    <view class="region_section">
       <view class="car_title">车辆图片</view>
     </view>
   </view>

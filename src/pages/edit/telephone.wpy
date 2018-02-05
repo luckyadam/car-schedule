@@ -1,0 +1,39 @@
+<style lang="scss">
+</style>
+
+<template>
+  <view class="container">
+    <view>
+      <EditInput :val.sync="telephone" placeholder="请输入手机号" :onInput="onInputHandler" />
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import { connect } from 'wepy-redux'
+
+  import EditInput from '../../components/editInput'
+  import { inputTelephone } from '../../actions/user'
+
+  @connect({
+    telephone (state) {
+      return state.user.telephone
+    }
+  }, {
+    inputTelephone
+  })
+  export default class EditTelephone extends wepy.page {
+    config = {
+      navigationBarTitleText: '修改手机'
+    }
+
+    components = {
+      EditInput
+    }
+
+    onInputHandler = (val) => {
+      this.methods.inputTelephone(val)
+    }
+  }
+</script>

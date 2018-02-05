@@ -1,5 +1,12 @@
 import { handleActions } from 'redux-actions'
-import { GET_USER, GET_USER_SUCCESS, GET_USER_ERROR, SET_USER_ROLE } from '../constants/user'
+import {
+  GET_USER,
+  GET_USER_ERROR,
+  GET_USER_SUCCESS,
+  SET_USER_ROLE,
+  USER_USERNAME_INPUT,
+  USER_TELEPHONE_INPUT
+} from '../constants/user'
 
 export default handleActions({
   [GET_USER] (state) {
@@ -31,6 +38,20 @@ export default handleActions({
     return {
       ...state,
       ...action.payload
+    }
+  },
+
+  [USER_USERNAME_INPUT] (state, action) {
+    return {
+      ...state,
+      username: action.payload.username
+    }
+  },
+
+  [USER_TELEPHONE_INPUT] (state, action) {
+    return {
+      ...state,
+      telephone: action.payload.telephone
     }
   }
 }, {

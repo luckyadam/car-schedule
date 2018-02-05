@@ -9,10 +9,7 @@ page {
 checkbox, radio{
   margin-right: 10rpx;
 }
-button{
-  margin-top: 20rpx;
-  margin-bottom: 20rpx;
-}
+
 form{
   width: 100%;
 }
@@ -34,11 +31,43 @@ form{
   font-family: -apple-system-font,Helvetica Neue,Helvetica,sans-serif;
 }
 
+.edit-input {
+  &_box {
+    box-sizing: border-box;
+    width: 100%;
+    height: 100rpx;
+    line-height: 100rpx;
+    background: #FFFFFF;
+    border-bottom: 1px solid #DADADA;
+    font-size: 28rpx;
+    padding-left: 30rpx;
+  }
+}
+
+.region {
+  &_section {
+    padding: 30rpx 30rpx 10rpx 30rpx;
+    margin-bottom: 20rpx;
+    background: #ffffff;
+    &_main {
+      padding: 0 50rpx 0;
+      .editable-item:last-child {
+        border-bottom: 0;
+      }
+    }
+  }
+  &_title {
+    color: #EB3034;
+    font-size: 32rpx;
+  }
+}
+
 .editable-item {
   display: flex;
   justify-content: space-between;
   font-size: 28rpx;
-  padding: 25rpx 0;
+  height: 80rpx;
+  line-height: 80rpx;
   border-bottom: 1rpx dashed #DADADA;
   &_title {
     color: #A4A4A4;
@@ -54,6 +83,12 @@ form{
       display: inline-block;
       vertical-align: middle;
     }
+    &_img {
+      display: inline-block;
+      width: 60rpx;
+      height: 60rpx;
+      border-radius: 50%;
+    }
   }
   &_arrow {
     display: inline-block;
@@ -64,6 +99,20 @@ form{
     border-right: 3rpx solid #333333;
     border-bottom: 3rpx solid #333333;
     transform: rotate(-45deg);
+  }
+}
+
+.button {
+  width: 300rpx;
+  height: 80rpx;
+  border-radius: 40rpx;
+  color: #FFFFFF;
+  font-size: 32rpx;
+  background: linear-gradient(to right, #EB3434, #EB7234);
+  border: 0;
+  &[disabled] {
+    background: #DADADA;
+    color: #FFFFFF;
   }
 }
 </style>
@@ -82,9 +131,11 @@ export default class extends wepy.app {
   config = {
     pages: [
       'pages/index',
-      'pages/profile/driver',
+      'pages/profile/index',
       'pages/profile/guide',
       'pages/profile/car',
+      'pages/edit/username',
+      'pages/edit/telephone'
     ],
     window: {
       backgroundTextStyle: 'light',
