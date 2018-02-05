@@ -1,5 +1,5 @@
 import { handleActions } from 'redux-actions'
-import { GET_USER, GET_USER_SUCCESS, GET_USER_ERROR } from '../constants/user'
+import { GET_USER, GET_USER_SUCCESS, GET_USER_ERROR, SET_USER_ROLE } from '../constants/user'
 
 export default handleActions({
   [GET_USER] (state) {
@@ -25,13 +25,20 @@ export default handleActions({
       isFetching: false,
       isError: true
     }
+  },
+
+  [SET_USER_ROLE] (state, action) {
+    return {
+      ...state,
+      ...action.payload
+    }
   }
 }, {
   isFetching: false,
   isError: false,
-  code: null,
-  encryptedData: null,
-  iv: null,
-  signature: null,
-  userInfo: null
+  nickname: null,
+  username: null,
+  telephone: null,
+  avatarUrl: null,
+  role: null
 })

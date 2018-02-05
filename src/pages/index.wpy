@@ -1,6 +1,5 @@
 <style lang="scss">
   // @import '../style/reset.scss'
-
   .container {
     height: 100%;
     background: linear-gradient(#EB3434, #EB7234);
@@ -32,7 +31,7 @@
     &_main {
       position: relative;
     }
-    &_btn {
+    &_role {
       width: 252rpx;
       margin: 0 auto;
       text-align: center;
@@ -45,12 +44,34 @@
       }
       &_txt {
         color: #A4A4A4;
-        font-size: 24rpx;
+        font-size: 30rpx;
+      }
+      &.active {
+        .choose_role_main {
+          background-color: #F2DFDF;
+          border-color: #EB3434;
+        }
+        .choose_role_txt {
+          color: #EB3434;
+        }
+      }
+    }
+    &_btn {
+      width: 300rpx;
+      height: 80rpx;
+      border-radius: 40rpx;
+      color: #FFFFFF;
+      font-size: 32rpx;
+      background: linear-gradient(to right, #EB3434, #EB7234);
+      border: 0;
+      &_wrapper {
+        text-align: center;
+        margin-top: 60rpx;
       }
     }
     &_driver {
       margin-bottom: 40rpx;
-      .choose_btn_main {
+      .choose_role_main {
         position: relative;
         &_img {
           width: 175rpx;
@@ -62,8 +83,8 @@
         }
       }
     }
-    &_travel {
-      .choose_btn_main {
+    &_guide {
+      .choose_role_main {
         position: relative;
         &_img {
           width: 158rpx;
@@ -88,17 +109,20 @@
         <view class="choose_head_msg">请选择你的身份</view>
       </view>
       <view class="choose_main">
-        <view class="choose_btn choose_driver" @tap="chooseDriver">
-          <view class="choose_btn_main">
-            <image class="choose_btn_main_img" src="../assets/driver.png">
+        <view :class="{'choose_role': true, 'choose_driver': true, 'active': user.role === DRIVER}" @tap="chooseDriver">
+          <view class="choose_role_main">
+            <image class="choose_role_main_img" src="../assets/driver.png">
           </view>
-          <text class="choose_btn_txt">我是司机</text>
+          <text class="choose_role_txt">我是司机</text>
         </view>
-        <view class="choose_btn choose_travel" @tap="chooseTravel">
-          <view class="choose_btn_main">
-            <image class="choose_btn_main_img" src="../assets/travel.png">
+        <view :class="{'choose_role': true, 'choose_guide': true, 'active': user.role === GUIDE}" @tap="chooseGuide">
+          <view class="choose_role_main">
+            <image class="choose_role_main_img" src="../assets/guide.png">
           </view>
-          <text class="choose_btn_txt">我是旅行社</text>
+          <text class="choose_role_txt">我是旅行社</text>
+        </view>
+        <view class="choose_btn_wrapper">
+          <button class="choose_btn" disabled="{{user.role !== DRIVER && user.role !== GUIDE}}" @tap="goToCompleteProfile">去完善资料</button>
         </view>
       </view>
     </view>
@@ -109,34 +133,39 @@
   import wepy from 'wepy'
   import { connect } from 'wepy-redux'
 
-  import { fetchUser } from '../actions/user'
+  import { fetchUser, setUserRole } from '../actions/user'
+  import { ROLE } from '../constants/user'
 
   @connect({
     user (state) {
       return state.user
     }
   }, {
-    fetchUser
+    fetchUser,
+    setUserRole
   })
   export default class Index extends wepy.page {
     config = {
       navigationBarTitleText: '选择角色'
     }
 
-    computed = {
-
+    data = {
+      DRIVER: ROLE.DRIVER,
+      GUIDE: ROLE.GUIDE
     }
 
     methods = {
       chooseDriver () {
-        wepy.navigateTo({
-          url: './profile/driver'
-        })
+        this.methods.setUserRole(ROLE.DRIVER)
       },
 
-      chooseTravel () {
+      chooseGuide () {
+        this.methods.setUserRole(ROLE.GUIDE)
+      },
+
+      goToCompleteProfile () {
         wepy.navigateTo({
-          url: './profile/travel'
+          url: `./profile/${this.user.role}`
         })
       }
     }

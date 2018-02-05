@@ -85,7 +85,7 @@ export default class extends wepy.app {
     pages: [
       'pages/index',
       'pages/profile/driver',
-      'pages/profile/travel',
+      'pages/profile/guide',
       'pages/profile/car',
     ],
     window: {

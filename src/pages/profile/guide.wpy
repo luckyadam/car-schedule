@@ -9,7 +9,7 @@
   import wepy from 'wepy'
   import { connect } from 'wepy-redux'
 
-  export default class TravelProfile extends wepy.page {
+  export default class GuideProfile extends wepy.page {
     config = {
       navigationBarTitleText: '旅行社资料完善'
     }
