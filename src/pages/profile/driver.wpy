@@ -36,6 +36,7 @@
         <button class="driver_car_add_button" @tap="addCar">添加车辆</button>
       </view>
     </view>
+    <TabBar />
   </view>
 </template>
 
@@ -45,6 +46,7 @@
 
   import { inputDriverUsername, inputDriverId, inputDriverPhone } from '../../actions/driver'
   import { isEmptyStr, isValidPhoneNumber, isValidIdentifyId } from '../../utils/validate'
+  import TabBar from '../../components/tabBar'
 
   @connect({
     username (state) {
@@ -64,6 +66,10 @@
   export default class ProfileDriver extends wepy.page {
     config = {
       navigationBarTitleText: '司机资料完善'
+    }
+
+    components = {
+      TabBar
     }
 
     methods = {

@@ -1,6 +1,4 @@
 <style lang="scss">
-@import './weui/weui.wxss';
-
 /* reset */
 page {
   background-color: #F8F8F8;
@@ -91,7 +89,7 @@ export default class extends wepy.app {
     window: {
       backgroundTextStyle: 'light',
       navigationBarBackgroundColor: '#EB3434',
-      navigationBarTitleText: 'WeChat',
+      navigationBarTitleText: '汽车调度',
       navigationBarTextStyle: 'white'
     }
   }

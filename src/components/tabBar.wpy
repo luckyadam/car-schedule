@@ -1,0 +1,77 @@
+<style type="scss">
+.tabbar {
+  position: fixed;
+  bottom: 0;
+  height: 100rpx;
+  width: 100%;
+  box-shadow: 0 2px 4px rgba(0,0,0,.5);
+  background-color: #FFFFFF;
+  font-size: 20rpx;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  &_item {
+    &.active {
+      color: #EB3034;
+    }
+    display: block;
+    flex: 1;
+    width: 100%;
+    text-align: center;
+    &_icon {
+      width: 40rpx;
+      height: 40rpx;
+      display: block;
+      margin: auto;
+      color: #A4A4A4;
+    }
+    &_title {
+      color: #A4A4A4;
+      padding-top: 6rpx;
+      display: block;
+    }
+  }
+}
+</style>
+
+<template>
+  <view class="tabbar">
+    <view class="tabbar_item tabbar_schedule{{active == 0 ? ' active' : ''}}" @tap="change(0)">
+      <image class="tabbar_item_icon" src="../assets/schedule.svg"></image>
+      <text class="tabbar_item_title">行程</text>
+    </view>
+    <view class="tabbar_item tabbar_add{{active == 1 ? ' active' : ''}}" @tap="change(1)">
+      <image class="tabbar_item_icon" src="../assets/add.svg"></image>
+      <text class="tabbar_item_title">发布</text>
+    </view>
+    <view class="tabbar_item tabbar_me{{active == 2 ? ' active' : ''}}" @tap="change(2)">
+      <image class="tabbar_item_icon" src="../assets/me.svg"></image>
+      <text class="tabbar_item_title">我</text>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+
+  export default class TabBar extends wepy.component {
+
+    props = {
+      active: {
+        twoWay: true
+      }
+    }
+
+    data = {
+    }
+
+    methods = {
+      change (idx) {
+        this.active = +idx
+      }
+    };
+
+    onLoad () {
+    }
+  }
+</script>
