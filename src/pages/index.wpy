@@ -76,7 +76,7 @@
         }
       }
     }
-    &_guide {
+    &_travel {
       .choose_role_main {
         position: relative;
         &_img {
@@ -108,14 +108,14 @@
           </view>
           <text class="choose_role_txt">我是司机</text>
         </view>
-        <view :class="{'choose_role': true, 'choose_guide': true, 'active': user.role === GUIDE}" @tap="chooseGuide">
+        <view :class="{'choose_role': true, 'choose_travel': true, 'active': user.role === TRAVEL}" @tap="chooseTravel">
           <view class="choose_role_main">
-            <image class="choose_role_main_img" src="../assets/guide.png">
+            <image class="choose_role_main_img" src="../assets/travel.png">
           </view>
           <text class="choose_role_txt">我是旅行社</text>
         </view>
         <view class="choose_btn_wrapper">
-          <button class="choose_btn button" disabled="{{user.role !== DRIVER && user.role !== GUIDE}}" @tap="goToCompleteProfile">去完善资料</button>
+          <button class="choose_btn button" disabled="{{user.role !== DRIVER && user.role !== TRAVEL}}" @tap="goToCompleteProfile">去完善资料</button>
         </view>
       </view>
     </view>
@@ -144,7 +144,7 @@
 
     data = {
       DRIVER: ROLE.DRIVER,
-      GUIDE: ROLE.GUIDE
+      TRAVEL: ROLE.TRAVEL
     }
 
     methods = {
@@ -152,8 +152,8 @@
         this.methods.setUserRole(ROLE.DRIVER)
       },
 
-      chooseGuide () {
-        this.methods.setUserRole(ROLE.GUIDE)
+      chooseTravel () {
+        this.methods.setUserRole(ROLE.TRAVEL)
       },
 
       goToCompleteProfile () {

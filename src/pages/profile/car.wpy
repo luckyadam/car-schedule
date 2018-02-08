@@ -8,42 +8,52 @@
     <view class="region_section">
       <view class="region_title">基本信息</view>
       <view class="region_section_main">
-        <view class="editable-item">
+        <view class="editable-item" @tap="editLicense">
           <view class="editable-item_title">车牌号码</view>
           <view class="editable-item_content">
-            <text class="editable-item_content_add" wx:if="{{type === 'add'}}">添加车牌号码</text>
-            <text class="editable-item_content_edit" wx:else>{{this.carInfo.carNumber}}</text>
+            <text class="editable-item_content_add" wx:if="{{car.license == null}}">添加车牌号码</text>
+            <text class="editable-item_content_edit" wx:else>{{car.license}}</text>
             <text class="editable-item_arrow"></text>
           </view>
         </view>
-        <view class="editable-item">
+        <view class="editable-item" @tap="editNumber">
           <view class="editable-item_title">限载人数</view>
           <view class="editable-item_content">
-            <text class="editable-item_content_add" wx:if="{{type === 'add'}}">添加限载人数</text>
-            <text class="editable-item_content_edit" wx:else>{{this.carInfo.passengers}}</text>
+            <text class="editable-item_content_add" wx:if="{{car.number == null}}">添加限载人数</text>
+            <text class="editable-item_content_edit" wx:else>{{car.number}}人</text>
             <text class="editable-item_arrow"></text>
           </view>
         </view>
-        <view class="editable-item">
+        <view class="editable-item" @tap="editAge">
           <view class="editable-item_title">使用年限</view>
           <view class="editable-item_content">
-            <text class="editable-item_content_add" wx:if="{{type === 'add'}}">添加使用年限</text>
-            <text class="editable-item_content_edit" wx:else>{{this.carInfo.age}}</text>
+            <text class="editable-item_content_add" wx:if="{{car.age == null}}">添加使用年限</text>
+            <text class="editable-item_content_edit" wx:else>{{car.age}}年</text>
             <text class="editable-item_arrow"></text>
           </view>
         </view>
-        <view class="editable-item">
+        <view class="editable-item" @tap="editBrand">
           <view class="editable-item_title">车辆品牌</view>
           <view class="editable-item_content">
-            <text class="editable-item_content_add" wx:if="{{type === 'add'}}">添加车辆品牌</text>
-            <text class="editable-item_content_edit" wx:else>{{this.carInfo.brand}}</text>
+            <text class="editable-item_content_add" wx:if="{{car.brand == null}}">添加车辆品牌</text>
+            <text class="editable-item_content_edit" wx:else>{{car.brand}}</text>
+            <text class="editable-item_arrow"></text>
+          </view>
+        </view>
+        <view class="editable-item" @tap="editSystem">
+          <view class="editable-item_title">驱动系统</view>
+          <view class="editable-item_content">
+            <text class="editable-item_content_add" wx:if="{{car.system == null}}">添加驱动系统</text>
+            <text class="editable-item_content_edit" wx:else>{{car.system}}</text>
             <text class="editable-item_arrow"></text>
           </view>
         </view>
       </view>
     </view>
     <view class="region_section">
-      <view class="car_title">车辆图片</view>
+      <view class="region_title">车辆图片</view>
+      <view class="region_main">
+      </view>
     </view>
   </view>
 </template>
@@ -53,11 +63,8 @@
   import { connect } from 'wepy-redux'
 
   @connect({
-    newCar (state) {
+    car (state) {
       return state.car
-    },
-    cars (state) {
-      return state.driver.cars
     }
   })
   export default class ProfileCar extends wepy.page {
@@ -70,11 +77,29 @@
       carInfo: {}
     }
 
-    onLoad (option) {
-      this.type = option.type
-      this.carIndex = option.index
-      if (this.carIndex !== undefined) {
-        this.carInfo = this.cars[carIndex]
+    methods = {
+      editNumber () {
+        wepy.navigateTo({
+          url: '../edit/car/number'
+        })
+      },
+
+      editLicense () {
+        wepy.navigateTo({
+          url: '../edit/car/license'
+        })
+      },
+
+      editAge () {
+        wepy.navigateTo({
+          url: '../edit/car/age'
+        })
+      },
+
+      editBrand () {
+         wepy.navigateTo({
+          url: '../edit/car/brand'
+        })
       }
     }
   }

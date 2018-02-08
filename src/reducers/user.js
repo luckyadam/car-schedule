@@ -5,7 +5,11 @@ import {
   GET_USER_SUCCESS,
   SET_USER_ROLE,
   USER_USERNAME_INPUT,
-  USER_TELEPHONE_INPUT
+  USER_TELEPHONE_INPUT,
+  UPDATE_USER,
+  UPDATE_USER_SUCCESS,
+  UPDATE_USER_ERROR,
+  USER_LOGIN_ERROR
 } from '../constants/user'
 
 export default handleActions({
@@ -26,11 +30,12 @@ export default handleActions({
     }
   },
 
-  [GET_USER_ERROR] (state) {
+  [GET_USER_ERROR] (state, action) {
     return {
       ...state,
       isFetching: false,
-      isError: true
+      isError: true,
+      ...action.payload
     }
   },
 
@@ -53,13 +58,49 @@ export default handleActions({
       ...state,
       telephone: action.payload.telephone
     }
+  },
+
+  [UPDATE_USER] (state) {
+    return {
+      ...state,
+      isFetching: true,
+      isError: false
+    }
+  },
+
+  [UPDATE_USER_SUCCESS] (state, action) {
+    return {
+      ...state,
+      isFetching: false,
+      isError: false,
+      ...action.payload
+    }
+  },
+
+  [UPDATE_USER_ERROR] (state) {
+    return {
+      ...state,
+      isFetching: false,
+      isError: true
+    }
+  },
+
+  [USER_LOGIN_ERROR] (state) {
+    return {
+      ...state,
+      isFetching: false,
+      loginError: true
+    }
   }
 }, {
   isFetching: false,
   isError: false,
+  id: null,
   nickname: null,
   username: null,
   telephone: null,
   avatarUrl: null,
-  role: null
+  role: null,
+  errorObj: null,
+  loginError: false
 })

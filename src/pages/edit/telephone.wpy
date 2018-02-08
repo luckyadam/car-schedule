@@ -1,10 +1,18 @@
 <style lang="scss">
+  .telephone {
+    &_tip {
+      color: #EB3434;
+      font-size: 24rpx;
+      padding: 10rpx 0 0 30rpx;
+    }
+  }
 </style>
 
 <template>
-  <view class="container">
-    <view>
-      <EditInput :val.sync="telephone" placeholder="请输入手机号" :onInput="onInputHandler" />
+  <view class="container telephone">
+    <EditInput :val.sync="telephone" placeholder="请输入手机号" :onInput="onInputHandler" />
+    <view class="telephone_tip" wx:if="{{!telephoneValidate}}">
+      请输入正确的手机号
     </view>
   </view>
 </template>
@@ -15,6 +23,7 @@
 
   import EditInput from '../../components/editInput'
   import { inputTelephone } from '../../actions/user'
+  import { isValidPhoneNumber } from '../../utils/validate'
 
   @connect({
     telephone (state) {
@@ -32,8 +41,20 @@
       EditInput
     }
 
+    data = {
+      telephoneValidate: false
+    }
+
+    isValidPhoneNumber = isValidPhoneNumber
+
     onInputHandler = (val) => {
-      this.methods.inputTelephone(val)
+      if (isValidPhoneNumber(val)) {
+        this.methods.inputTelephone(val)
+        this.telephoneValidate = true
+      } else {
+        this.telephoneValidate = false
+      }
+      this.$apply()
     }
   }
 </script>

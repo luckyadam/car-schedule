@@ -1,34 +1,28 @@
 import { handleActions } from 'redux-actions'
 import {
-  DRIVER_ID_INPUT,
-  DRIVER_USERNAME_INPUT,
-  DRIVER_PHONE_INPUT
+  ADD_CAR,
+  DELETE_CAR
 } from '../constants/driver'
 
 export default handleActions({
-  [DRIVER_ID_INPUT] (state, action) {
+  [ADD_CAR] (state, { car }) {
+    const cars = state.cars.concat()
+    cars.push(car)
     return {
       ...state,
-      idNumber: action.payload.idNumber
+      cars
     }
   },
 
-  [DRIVER_USERNAME_INPUT] (state, action) {
+  [DELETE_CAR] (state, { index }) {
+    const cars = state.cars.concat()
+    cars.splice(index, 1)
     return {
       ...state,
-      username: action.payload.username
-    }
-  },
-
-  [DRIVER_PHONE_INPUT] (state, action) {
-    return {
-      ...state,
-      phoneNumber: action.payload.phoneNumber
+      cars
     }
   }
 }, {
-  username: null,
-  phoneNumber: null,
-  idNumber: null,
+  id: null,
   cars: []
 })

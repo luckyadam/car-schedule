@@ -79,13 +79,19 @@
   import wepy from 'wepy'
   import { connect } from 'wepy-redux'
 
-  import { isEmptyStr, isValidPhoneNumber, isValidIdentifyId } from '../../utils/validate'
   import TabBar from '../../components/tabBar'
+
+  import { isEmptyStr, isValidPhoneNumber, isValidIdentifyId } from '../../utils/validate'
+  import { updateUser } from '../../actions/user'
+  import { initCar } from '../../actions/car'
 
   @connect({
     user (state) {
       return state.user
     }
+  }, {
+    updateUser,
+    initCar
   })
   export default class Profile extends wepy.page {
     config = {
@@ -98,8 +104,9 @@
 
     methods = {
       addCar () {
+        this.methods.initCar()
         wepy.navigateTo({
-          url: './car?type=add'
+          url: './car'
         })
       },
 
@@ -112,6 +119,17 @@
       editTelephone () {
         wepy.navigateTo({
           url: '../edit/telephone'
+        })
+      },
+
+      updateProfile () {
+        const { nickname, username, telephone, avatarUrl, role } = this.user
+        this.methods.updateUser({
+          nickname,
+          username,
+          telephone,
+          avatarUrl,
+          role
         })
       }
     }

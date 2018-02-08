@@ -1,0 +1,169 @@
+<style lang="scss">
+  .license {
+    &_main {
+      display: flex;
+    }
+    &_prefix {
+      width: 180rpx;
+      height: 100rpx;
+      font-size: 28rpx;
+      line-height: 100rpx;
+      padding-left: 30rpx;
+      box-sizing: border-box;
+      background: #FFFFFF;
+      border-bottom: 1rpx solid #DADADA;
+      position: relative;
+      &_txt {
+      }
+      &_arrow {
+        position: absolute;
+        top: 37rpx;
+        left: 126rpx;
+        height: 15rpx;
+        width: 15rpx;
+        border-right: 3rpx solid #333333;
+        border-bottom: 3rpx solid #333333;
+        transform: rotate(45deg);
+      }
+      &_split {
+        position: absolute;
+        width: 2rpx;
+        height: 40rpx;
+        right: 0;
+        top: 50%;
+        margin-top: -20rpx;
+        background: #DADADA;
+      }
+    }
+    &_suffix {
+      width: 100%;
+      flex: 1;
+    }
+  }
+</style>
+
+<template>
+  <view class="container license">
+    <view class="license_main">
+      <picker class="license_prefix" mode="multiSelector" value="{{licensePrefixValue}}" @change="licensePrefixChangeHandler" @columnchange="licensePrefixColumnChangeHandler" range="{{carPrefixData}}">
+        <text class="license_prefix_txt">{{licensePrefix}}</text>
+        <text class="license_prefix_arrow" />
+        <view class="license_prefix_split" />
+      </picker>
+      <EditInput class="license_suffix" :val.sync="licenseSuffix" placeholder="请输入车牌号" :onInput="onInputHandler" />
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import { connect } from 'wepy-redux'
+
+  import EditInput from '../../../components/editInput'
+  import { inputCarLicense } from '../../../actions/car'
+
+  @connect({
+    license (state) {
+      return state.car.license
+    }
+  }, {
+    inputCarLicense
+  })
+  export default class EditCarLicense extends wepy.page {
+    config = {
+      navigationBarTitleText: '修改车牌号码'
+    }
+
+    data = {
+      carPrefixData: [
+        ['浙', '闽', '粤', '京', '津', '冀', '晋', '蒙', '辽', '吉', '黑', '沪', '苏', '皖', '赣', '鲁', '豫', '鄂', '湘', '桂', '琼', '渝', '川', '贵', '云', '藏', '陕', '甘', '青', '宁', '新'],
+        ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L']
+      ],
+      proviceCarPrefixLetter: {
+        '0': ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L'],
+        '1': ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K'],
+        '2': ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'],
+        '3': ['A', 'C', 'E', 'F', 'H', 'J', 'K', 'L', 'M', 'N', 'P', 'G', 'Y'],
+        '4': ['A', 'B', 'C', 'D', 'F', 'G', 'H', 'J', 'K', 'L'],
+        '5': ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'R', 'T'],
+        '6': ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M'],
+        '7': ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M'],
+        '8': ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'P'],
+        '9': ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J'],
+        '10': ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'P'],
+        '11': ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K'],
+        '12': ['A', 'C', 'E', 'F', 'H', 'J', 'K', 'L', 'M', 'N'],
+        '13': ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S'],
+        '14': ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M'],
+        '15': ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'U', 'V'],
+        '16': ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'U'],
+        '17': ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S'],
+        '18': ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N'],
+        '19': ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'P', 'Q', 'R'],
+        '20': ['A', 'B', 'C', 'D', 'E'],
+        '21': ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'],
+        '22': ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'],
+        '23': ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J'],
+        '24': ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S'],
+        '25': ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J'],
+        '26': ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K'],
+        '27': ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'P'],
+        '28': ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'],
+        '29': ['A', 'B', 'C', 'D'],
+        '30': ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'P', 'Q', 'R']
+      }
+    }
+
+    components = {
+      EditInput
+    }
+
+    computed = {
+      licensePrefix () {
+        if (this.license) {
+          return this.license.substr(0, 2)
+        }
+        return '粤B'
+      },
+
+      licenseSuffix () {
+        if (this.license) {
+          return this.license.substr(2)
+        }
+        return ''
+      },
+
+      licensePrefixValue () {
+        if (this.licensePrefix) {
+          const provinceIndex = this.carPrefixData[0].indexOf(this.licensePrefix[0])
+          const letterIndex = this.proviceCarPrefixLetter[provinceIndex].indexOf(this.licensePrefix[1])
+          return [provinceIndex, letterIndex]
+        }
+        return [2, 1]
+      }
+    }
+
+    methods = {
+      licensePrefixColumnChangeHandler (e) {
+        if (e.detail.column === 0) {
+          this.carPrefixData[1] = this.proviceCarPrefixLetter[e.detail.value]
+        }
+      },
+
+      licensePrefixChangeHandler (e) {
+        const value = e.detail.value
+        const province = this.carPrefixData[0][value[0]]
+        const letter = this.proviceCarPrefixLetter[value[0]][value[1]]
+        this.methods.inputCarlicense(`${province}${letter}${this.licenseSuffix}`)
+      }
+    }
+
+    onInputHandler = val => {
+      this.licenseSuffix = val
+    }
+
+    onUnload () {
+      this.methods.inputCarlicense(`${this.licensePrefix}${this.licenseSuffix}`)
+    }
+  }
+</script>

@@ -6,7 +6,7 @@
   <view class="edit-input">
     <input
       class="edit-input_box"
-      type="text"
+      type="{{type}}"
       value="{{val}}"
       placeholder="{{placeholder}}"
       @input="editInputChangeHandler"
@@ -23,7 +23,11 @@
         twoWay: true
       },
       placeholder: String,
-      onInput: Function
+      onInput: Function,
+      type: {
+        type: String,
+        default: 'text'
+      }
     }
 
     methods = {

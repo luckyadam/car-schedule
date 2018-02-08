@@ -1,0 +1,40 @@
+<style lang="scss">
+  .age {
+
+  }
+</style>
+
+<template>
+  <view class="container age">
+    <EditInput type="number" :val.sync="age" placeholder="请输入使用年限" :onInput="onInputHandler" />
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import { connect } from 'wepy-redux'
+
+  import EditInput from '../../../components/editInput'
+  import { inputCarAge } from '../../../actions/car'
+
+  @connect({
+    age (state) {
+      return state.car.age
+    }
+  }, {
+    inputCarAge
+  })
+  export default class EditAge extends wepy.page {
+    config = {
+      navigationBarTitleText: '修改使用年限'
+    }
+
+    components = {
+      EditInput
+    }
+
+    onInputHandler = (val) => {
+      this.methods.inputCarAge(val)
+    }
+  }
+</script>

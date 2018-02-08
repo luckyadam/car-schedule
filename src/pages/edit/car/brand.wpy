@@ -1,0 +1,62 @@
+<style lang="scss">
+  .brand {
+    &_picker {
+      box-sizing: border-box;
+      width: 100%;
+      height: 100rpx;
+      line-height: 100rpx;
+      background: #FFFFFF;
+      border-bottom: 1px solid #DADADA;
+      font-size: 28rpx;
+      padding-left: 30rpx;
+    }
+  }
+</style>
+
+<template>
+  <view class="container brand">
+    <picker @change="carBrandChangeHandler" value="{{brandIndex}}" range="{{brandList}}">
+      <view class="brand_picker">
+        {{brand || brandList[brandIndex]}}
+      </view>
+    </picker>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import { connect } from 'wepy-redux'
+
+  import { inputCarBrand } from '../../../actions/car'
+
+  @connect({
+    brand (state) {
+      return state.car.brand
+    }
+  }, {
+    inputCarBrand
+  })
+  export default class EditBrand extends wepy.page {
+    config = {
+      navigationBarTitleText: '修改品牌'
+    }
+
+    data = {
+      brandList: [
+        '宇通',
+        '比亚迪',
+        '申龙',
+        '金旅',
+        '金龙'
+      ],
+
+      brandIndex: 0
+    }
+
+    methods = {
+      carBrandChangeHandler (e) {
+        this.methods.inputCarBrand(this.brandList[e.detail.value])
+      }
+    }
+  }
+</script>
