@@ -8,6 +8,8 @@ import {
   CAR_SYSTEM_SELECT,
   CAR_COMPANY_INPUT,
   CAR_BELONGTO_SELECT,
+  CAR_IMAGES_ADD,
+  CAR_IMAGRS_DELETE,
   INIT_CAR
 } from '../constants/car'
 
@@ -18,4 +20,6 @@ export const inputCarBrand = createAction(CAR_BRAND_SELECT, brand => ({ brand })
 export const inputCarSystem = createAction(CAR_SYSTEM_SELECT, system => ({ system }))
 export const inputCarCompany = createAction(CAR_COMPANY_INPUT, company => ({ company }))
 export const inputCarBelongTo = createAction(CAR_BELONGTO_SELECT, belongTo => ({ belongTo }))
+export const addCarImage = createAction(CAR_IMAGES_ADD, image => ({ image }))
+export const deleteCarImage = createAction(CAR_IMAGRS_DELETE, index => ({ index }))
 export const initCar = createAction(INIT_CAR, car => car)

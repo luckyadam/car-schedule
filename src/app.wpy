@@ -103,7 +103,7 @@ form{
   }
 }
 
-.button {
+.btn {
   width: 300rpx;
   height: 80rpx;
   border-radius: 40rpx;
@@ -115,6 +115,19 @@ form{
     background: #DADADA;
     color: #FFFFFF;
   }
+}
+.btn-add {
+  box-sizing: border-box;
+  width: 610rpx;
+  height: 60rpx;
+  line-height: 60rpx;
+  border: 1rpx dashed #DADADA;
+  text-align: center;
+  color: #A4A4A4;
+  font-size: 24rpx;
+  border-radius: 0;
+  background: transparent;
+  appearance: none;
 }
 </style>
 
@@ -139,7 +152,10 @@ export default class extends wepy.app {
       'pages/edit/car/number',
       'pages/edit/car/license',
       'pages/edit/car/age',
-      'pages/edit/car/brand'
+      'pages/edit/car/brand',
+      'pages/edit/car/system',
+      'pages/edit/car/company',
+      'pages/edit/car/belongTo'
     ],
     window: {
       backgroundTextStyle: 'light',

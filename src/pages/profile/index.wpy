@@ -3,18 +3,6 @@
     &_car {
       &_add {
         padding: 20rpx 0;
-        &_button {
-          box-sizing: border-box;
-          width: 610rpx;
-          height: 60rpx;
-          line-height: 60rpx;
-          border: 1rpx dashed #DADADA;
-          text-align: center;
-          color: #A4A4A4;
-          font-size: 24rpx;
-          border-radius: 0;
-          background: transparent;
-        }
       }
     }
     &_submit {
@@ -63,12 +51,12 @@
         <view class="region_title">车辆信息</view>
         <view class="region_section_main">
           <view class="profile_car_add">
-            <button class="profile_car_add_button" @tap="addCar">添加车辆</button>
+            <button class="profile_car_add_button btn-add" @tap="addCar">添加车辆</button>
           </view>
         </view>
       </view>
       <view class="profile_submit">
-        <button class="button profile_submit_btn" @tap="updateProfile">确认提交</button>
+        <button class="btn profile_submit_btn" @tap="updateProfile">确认提交</button>
       </view>
     </view>
     <TabBar active="2" />

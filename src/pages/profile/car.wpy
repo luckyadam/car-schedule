@@ -1,5 +1,13 @@
 <style lang="scss">
 .car {
+  &_images {
+    &_add {
+      padding:20rpx 0;
+    }
+  }
+  &_submit {
+    padding-top: 10rpx;
+  }
 }
 </style>
 
@@ -48,12 +56,39 @@
             <text class="editable-item_arrow"></text>
           </view>
         </view>
+        <view class="editable-item" @tap="editCompany">
+          <view class="editable-item_title">车辆所属公司</view>
+          <view class="editable-item_content">
+            <text class="editable-item_content_add" wx:if="{{car.company == null}}">添加车辆所属公司</text>
+            <text class="editable-item_content_edit" wx:else>{{car.company}}</text>
+            <text class="editable-item_arrow"></text>
+          </view>
+        </view>
+        <view class="editable-item" @tap="editBelongTo">
+          <view class="editable-item_title">车辆所属地</view>
+          <view class="editable-item_content">
+            <text class="editable-item_content_add" wx:if="{{car.belongTo == null}}">添加车辆所属地</text>
+            <text class="editable-item_content_edit" wx:else>{{belongToShow}}</text>
+            <text class="editable-item_arrow"></text>
+          </view>
+        </view>
       </view>
     </view>
-    <view class="region_section">
-      <view class="region_title">车辆图片</view>
+    <view class="region_section car_images">
+      <view class="region_title">车辆照片</view>
       <view class="region_main">
+        <view class="car_images_list" wx:if="{{car.images.length}}">
+          <view wx:for="{{car.images}}" wx:key="{{item.path}}" class="car_images_list_item">
+            <image class="car_images_list_img" mode="aspectFitf" src="{{item.path}}" />
+          </view>
+        </view>
+        <view class="car_images_add">
+          <button class="car_images_add_btn btn-add" @tap="chooseImages">上传照片</button>
+        </view>
       </view>
+    </view>
+    <view class="car_submit">
+      <button class="btn car_submit_btn" @tap="updateProfile">确认提交</button>
     </view>
   </view>
 </template>
@@ -62,10 +97,15 @@
   import wepy from 'wepy'
   import { connect } from 'wepy-redux'
 
+  import { addCarImage, deleteCarImage } from '../../actions/car'
+
   @connect({
     car (state) {
       return state.car
     }
+  }, {
+    addCarImage,
+    deleteCarImage
   })
   export default class ProfileCar extends wepy.page {
     config = {
@@ -74,7 +114,17 @@
 
     data = {
       type: 'add',
-      carInfo: {}
+      carInfo: {},
+      tempImagesPaths: []
+    }
+
+    computed = {
+      belongToShow () {
+        if (this.car && this.car.belongTo) {
+          return this.car.belongTo.join('，')
+        }
+        return ''
+      }
     }
 
     methods = {
@@ -97,9 +147,36 @@
       },
 
       editBrand () {
-         wepy.navigateTo({
+        wepy.navigateTo({
           url: '../edit/car/brand'
         })
+      },
+
+      editSystem () {
+        wepy.navigateTo({
+          url: '../edit/car/system'
+        })
+      },
+
+      editCompany () {
+        wepy.navigateTo({
+          url: '../edit/car/company'
+        })
+      },
+
+      editBelongTo () {
+        wepy.navigateTo({
+          url: '../edit/car/belongTo'
+        })
+      },
+
+      async chooseImages () {
+        const res = await wepy.chooseImage({
+          count: 9,
+          sizeType: ['original', 'compressed'],
+          sourceType: ['album', 'camera']
+        })
+        this.methods.addCarImage(res.tempFiles)
       }
     }
   }

@@ -1,0 +1,40 @@
+<style lang="scss">
+  .company {
+
+  }
+</style>
+
+<template>
+  <view class="container company">
+    <EditInput type="number" :val.sync="company" placeholder="请输入车辆所属公司" :onInput="onInputHandler" />
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import { connect } from 'wepy-redux'
+
+  import EditInput from '../../../components/editInput'
+  import { inputCarCompany } from '../../../actions/car'
+
+  @connect({
+    company (state) {
+      return state.car.company
+    }
+  }, {
+    inputCarCompany
+  })
+  export default class EditCompany extends wepy.page {
+    config = {
+      navigationBarTitleText: '修改车辆所属公司'
+    }
+
+    components = {
+      EditInput
+    }
+
+    onInputHandler = val => {
+      this.methods.inputCarCompany(val)
+    }
+  }
+</script>

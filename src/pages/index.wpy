@@ -115,7 +115,7 @@
           <text class="choose_role_txt">我是旅行社</text>
         </view>
         <view class="choose_btn_wrapper">
-          <button class="choose_btn button" disabled="{{user.role !== DRIVER && user.role !== TRAVEL}}" @tap="goToCompleteProfile">去完善资料</button>
+          <button class="choose_btn btn" disabled="{{user.role !== DRIVER && user.role !== TRAVEL}}" @tap="goToCompleteProfile">去完善资料</button>
         </view>
       </view>
     </view>

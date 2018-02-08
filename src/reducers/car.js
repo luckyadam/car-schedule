@@ -7,6 +7,8 @@ import {
   CAR_SYSTEM_SELECT,
   CAR_COMPANY_INPUT,
   CAR_BELONGTO_SELECT,
+  CAR_IMAGES_ADD,
+  CAR_IMAGRS_DELETE,
   INIT_CAR
 } from '../constants/car'
 
@@ -82,6 +84,30 @@ export default handleActions({
     return {
       ...state,
       ...action.payload
+    }
+  },
+
+  [CAR_IMAGES_ADD] (state, action) {
+    const { image } = action.payload
+    let images = state.images.concat()
+    if (Array.isArray(image)) {
+      images = images.concat(image)
+    } else {
+      images.push(image)
+    }
+    return {
+      ...state,
+      images
+    }
+  },
+
+  [CAR_IMAGRS_DELETE] (state, action) {
+    const { index } = action.payload
+    const images = state.images.concat()
+    images.splice(index, 1)
+    return {
+      ...state,
+      images
     }
   }
 }, {

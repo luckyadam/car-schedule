@@ -154,7 +154,7 @@
         const value = e.detail.value
         const province = this.carPrefixData[0][value[0]]
         const letter = this.proviceCarPrefixLetter[value[0]][value[1]]
-        this.methods.inputCarlicense(`${province}${letter}${this.licenseSuffix}`)
+        this.methods.inputCarLicense(`${province}${letter}${this.licenseSuffix}`)
       }
     }
 
@@ -163,7 +163,7 @@
     }
 
     onUnload () {
-      this.methods.inputCarlicense(`${this.licensePrefix}${this.licenseSuffix}`)
+      this.methods.inputCarLicense(`${this.licensePrefix}${this.licenseSuffix}`)
     }
   }
 </script>

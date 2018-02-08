@@ -1,0 +1,95 @@
+<style lang="scss">
+  .belongTo {
+    &_picker {
+      width: 100%;
+      height: 100rpx;
+      font-size: 28rpx;
+      line-height: 100rpx;
+      padding-left: 30rpx;
+      box-sizing: border-box;
+      background: #FFFFFF;
+      border-bottom: 1rpx solid #DADADA;
+    }
+  }
+</style>
+
+<template>
+  <view class="container belongTo">
+    <picker class="belongTo_picker"
+      mode="multiSelector"
+      value="{{belongToValue}}"
+      @change="belongToChangeHandler"
+      @columnchange="belongToColumnChangeHandler"
+      range="{{provinceList}}">
+      <text class="belongTo_picker_txt">{{belongToShow}}</text>
+      <text class="belongTo_picker_arrow" />
+    </picker>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import { connect } from 'wepy-redux'
+
+  import { inputCarBelongTo } from '../../../actions/car'
+
+  @connect({
+    belongTo (state) {
+      return state.car.belongTo
+    }
+  }, {
+    inputCarBelongTo
+  })
+  export default class EditBelongTo extends wepy.page {
+    config = {
+      navigationBarTitleText: '修改车辆所属地'
+    }
+
+    data = {
+      provinceList: [
+        ['北京', '上海', '天津', '重庆', '四川'],
+        ['东城区', '西城区', '崇文区', '宣武区', '朝阳区', '丰台区', '石景山区', '海淀区', '门头沟区', '房山区', '通州区', '顺义区', '昌平区', '大兴区', '怀柔区', '平谷区']
+      ],
+      cityList: {
+        '0': ['东城区', '西城区', '崇文区', '宣武区', '朝阳区', '丰台区', '石景山区', '海淀区', '门头沟区', '房山区', '通州区', '顺义区', '昌平区', '大兴区', '怀柔区', '平谷区'],
+        '1': ['黄浦区', '卢湾区', '徐汇区', '长宁区', '静安区', '普陀区', '闸北区', '虹口区', '杨浦区', '闵行区', '宝山区', '嘉定区', '浦东新区', '金山区', '松江区', '青浦区', '南汇区', '奉贤区'],
+        '2': ['和平区', '河东区', '河西区', '南开区', '河北区', '红桥区', '塘沽区', '汉沽区', '大港区', '东丽区', '西青区', '津南区', '北辰区', '武清区', '宝坻区'],
+        '3': ['万州区', '涪陵区', '渝中区', '大渡口区', '江北区', '沙坪坝区', '九龙坡区', '南岸区', '北碚区', '万盛区', '双桥区', '渝北区', '巴南区', '黔江区', '长寿区'],
+        '4': ['成都市', '自贡市', '攀枝花市', '泸州市', '德阳市', '绵阳市', '广元市', '遂宁市', '内江市', '乐山市', '南充市', '眉山市', '宜宾市', '广安市', '达州市', '雅安市', '巴中市', '资阳市', '阿坝藏族羌族自治州', '甘孜藏族自治州', '凉山彝族自治州']
+      }
+    }
+
+    computed = {
+      belongToShow () {
+        if (this.belongTo) {
+          return this.belongTo.join('，')
+        }
+        return '北京，东城区'
+      },
+
+      belongToValue () {
+        if (this.belongTo) {
+          const provinceIndex = this.provinceList[0].indexOf(this.belongTo[0])
+          const cityIndex = this.cityList[provinceIndex].indexOf(this.belongTo[1])
+          return [provinceIndex, cityIndex]
+        }
+        return [0, 0]
+      }
+    }
+
+    methods = {
+      belongToChangeHandler (e) {
+        const value = e.detail.value
+        const province = this.provinceList[0][value[0]]
+        const city = this.cityList[value[0]][value[1]]
+        this.methods.inputCarBelongTo([province, city])
+      },
+
+      belongToColumnChangeHandler (e) {
+        if (e.detail.column === 0) {
+          this.provinceList[1] = this.cityList[e.detail.value]
+        }
+      }
+    }
+  }
+</script>
