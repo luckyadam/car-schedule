@@ -10,6 +10,7 @@ import {
   CAR_BELONGTO_SELECT,
   CAR_IMAGES_ADD,
   CAR_IMAGRS_DELETE,
+  CAR_IMAGES_UPDATE,
   INIT_CAR
 } from '../constants/car'
 
@@ -22,4 +23,5 @@ export const inputCarCompany = createAction(CAR_COMPANY_INPUT, company => ({ com
 export const inputCarBelongTo = createAction(CAR_BELONGTO_SELECT, belongTo => ({ belongTo }))
 export const addCarImage = createAction(CAR_IMAGES_ADD, image => ({ image }))
 export const deleteCarImage = createAction(CAR_IMAGRS_DELETE, index => ({ index }))
+export const updateCarImage = createAction(CAR_IMAGES_UPDATE, image => ({ image }))
 export const initCar = createAction(INIT_CAR, car => car)

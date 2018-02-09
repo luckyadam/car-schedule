@@ -9,6 +9,7 @@ import {
   CAR_BELONGTO_SELECT,
   CAR_IMAGES_ADD,
   CAR_IMAGRS_DELETE,
+  CAR_IMAGES_UPDATE,
   INIT_CAR
 } from '../constants/car'
 
@@ -108,6 +109,19 @@ export default handleActions({
     return {
       ...state,
       images
+    }
+  },
+
+  [CAR_IMAGES_UPDATE] (state, action) {
+    let { image } = action.payload
+    if (!Array.isArray(image)) {
+      image = [image]
+    } else {
+      image = image.concat()
+    }
+    return {
+      ...state,
+      images: image
     }
   }
 }, {

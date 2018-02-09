@@ -2,7 +2,55 @@
 .car {
   &_images {
     &_add {
-      padding:20rpx 0;
+      padding: 20rpx 0;
+    }
+    &_list {
+      padding-top: 30rpx;
+      padding-bottom: 20rpx;
+      overflow: hidden;
+      &_item {
+        float: left;
+        width: 300rpx;
+        height: 200rpx;
+        margin-right: 10rpx;
+        margin-bottom: 10rpx;
+        position: relative;
+        &:nth-child(even) {
+          margin-right: 0;
+        }
+      }
+      &_img {
+        width: 100%;
+        height: 100%;
+      }
+      &_overlay {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        background-color: rgba(255,255,255, .7);
+        &.uploading {
+          .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            margin-top: -14rpx;
+            margin-left: -14rpx;
+          }
+        }
+        &.error {
+          .tip {
+            position: absolute;
+            width: 100%;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #EB3034;
+            font-size: 24rpx;
+            text-align: center;
+          }
+        }
+      }
     }
   }
   &_submit {
@@ -76,10 +124,16 @@
     </view>
     <view class="region_section car_images">
       <view class="region_title">车辆照片</view>
-      <view class="region_main">
+      <view class="region_section_main">
         <view class="car_images_list" wx:if="{{car.images.length}}">
           <view wx:for="{{car.images}}" wx:key="{{item.path}}" class="car_images_list_item">
-            <image class="car_images_list_img" mode="aspectFitf" src="{{item.path}}" />
+            <image class="car_images_list_img" mode="aspectFill" src="{{item.path}}" />
+            <view class="car_images_list_overlay uploading" wx:if="{{item.isUploading}}">
+              <view class="loading"></view>
+            </view>
+            <view class="car_images_list_overlay error" wx:if="{{item.isUploadError}}">
+              <view class="tip">上传失败</view>
+            </view>
           </view>
         </view>
         <view class="car_images_add">
@@ -97,15 +151,22 @@
   import wepy from 'wepy'
   import { connect } from 'wepy-redux'
 
-  import { addCarImage, deleteCarImage } from '../../actions/car'
+  import { addCarImage, deleteCarImage, updateCarImage } from '../../actions/car'
+  import { API_BASE } from '../../utils/api'
+  import { uploadFiles } from '../../actions/upload'
 
   @connect({
     car (state) {
       return state.car
+    },
+    files (state) {
+      return state.upload.files
     }
   }, {
     addCarImage,
-    deleteCarImage
+    deleteCarImage,
+    updateCarImage,
+    uploadFiles
   })
   export default class ProfileCar extends wepy.page {
     config = {
@@ -115,7 +176,8 @@
     data = {
       type: 'add',
       carInfo: {},
-      tempImagesPaths: []
+      tempImagesPaths: [],
+      apiBase: API_BASE
     }
 
     computed = {
@@ -171,12 +233,44 @@
       },
 
       async chooseImages () {
-        const res = await wepy.chooseImage({
-          count: 9,
-          sizeType: ['original', 'compressed'],
-          sourceType: ['album', 'camera']
-        })
-        this.methods.addCarImage(res.tempFiles)
+        try {
+          const len = this.car.images.length
+          const res = await wepy.chooseImage({
+            count: 9,
+            sizeType: ['original', 'compressed'],
+            sourceType: ['album', 'camera']
+          })
+          const files = res.tempFiles.map(file => file)
+          this.methods.addCarImage(files)
+          await this.methods.uploadFiles(files, {
+            beforeFileUpload: (index, file) => {
+              const filesCopy = this.car.images.concat()
+              filesCopy[len + index].isUploading = true
+              this.methods.updateCarImage(filesCopy)
+            },
+            uploadFileSuccess: (index, res) => {
+              const filesCopy = this.car.images.concat()
+              filesCopy[len + index].isUploading = false
+              this.methods.updateCarImage(filesCopy)
+            },
+            uploadFileError: (index, res) => {
+              const filesCopy = this.car.images.concat()
+              filesCopy[len + index].isUploading = false
+              filesCopy[len + index].isUploadError = true
+              this.methods.updateCarImage(filesCopy)
+            }
+          })
+        } catch (err) {
+          console.log(err)
+        }
+      },
+
+      async updateProfile () {
+        // // 有图片先上传图片
+        // console.log(this.car.images)
+        // if (this.car.images.length) {
+        //   await this.methods.uploadFiles(this.car.images)
+        // }
       }
     }
   }
