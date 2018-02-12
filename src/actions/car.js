@@ -1,4 +1,5 @@
 import { createAction } from 'redux-actions'
+import wepy from 'wepy'
 
 import {
   CAR_LICENSE_INPUT,
@@ -13,9 +14,10 @@ import {
   CAR_IMAGES_UPDATE,
   INIT_CAR
 } from '../constants/car'
+import { API_CAR } from '../utils/api'
 
 export const inputCarLicense = createAction(CAR_LICENSE_INPUT, license => ({ license }))
-export const inputCarNumber = createAction(CAR_NUMBER_INPUT, carNumber => ({ carNumber }))
+export const inputCarNumber = createAction(CAR_NUMBER_INPUT, number => ({ number }))
 export const inputCarAge = createAction(CAR_AGE_INPUT, age => ({ age }))
 export const inputCarBrand = createAction(CAR_BRAND_SELECT, brand => ({ brand }))
 export const inputCarSystem = createAction(CAR_SYSTEM_SELECT, system => ({ system }))
@@ -25,3 +27,37 @@ export const addCarImage = createAction(CAR_IMAGES_ADD, image => ({ image }))
 export const deleteCarImage = createAction(CAR_IMAGRS_DELETE, index => ({ index }))
 export const updateCarImage = createAction(CAR_IMAGES_UPDATE, image => ({ image }))
 export const initCar = createAction(INIT_CAR, car => car)
+
+export function addCar (car) {
+  return async dispatch => {
+    await wepy.showLoading()
+    try {
+      const authorization = wepy.getStorageSync('authorization')
+      // 本地存在authorization，表示之前已经请求登录过
+      if (authorization) {
+        const result = await wepy.request({
+          url: API_CAR,
+          method: 'POST',
+          data: {
+            license: car.license,
+            number: car.number,
+            age: new Date(car.age).toString(),
+            brand: car.brand,
+            system: car.system,
+            company: car.company,
+            belongTo: car.belongTo,
+            images: car.images
+          },
+          header: {
+            authorization: `JWT ${authorization}`
+          }
+        })
+        await wepy.hideLoading()
+        console.log(result)
+      }
+    } catch (err) {
+      await wepy.hideLoading()
+      console.log(err)
+    }
+  }
+}

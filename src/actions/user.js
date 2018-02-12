@@ -44,7 +44,8 @@ export async function fetchInitialUserInfo () {
     return userInfo
   } catch (err) {
     console.log('微信登录或用户接口故障')
-    return await fetchInitialUserInfo()
+    return null
+    // return await fetchInitialUserInfo()
   }
 }
 
@@ -68,8 +69,16 @@ export function fetchUser () {
         userInfo = await fetchInitialUserInfo()
       }
       await wepy.hideLoading()
-      dispatch(getUserSuccess(userInfo))
+      if (userInfo === null) {
+        dispatch(getUserError())
+      } else {
+        dispatch(getUserSuccess(userInfo))
+      }
     } catch (err) {
+      await wepy.showToast({
+        title: JSON.stringify(err),
+        icon: 'success'
+      })
       await wepy.hideLoading()
       dispatch(getUserError(err))
     }

@@ -6,7 +6,7 @@
       height: 100rpx;
       line-height: 100rpx;
       background: #FFFFFF;
-      border-bottom: 1px solid #DADADA;
+      border-bottom: 2rpx solid #DADADA;
       font-size: 28rpx;
       padding-left: 30rpx;
     }

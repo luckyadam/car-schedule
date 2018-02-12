@@ -64,7 +64,7 @@
     <view class="region_section">
       <view class="region_title">基本信息</view>
       <view class="region_section_main">
-        <view class="editable-item" @tap="editLicense">
+        <view :class="{'editable-item': true, error: submitError.license}" @tap="editLicense">
           <view class="editable-item_title">车牌号码</view>
           <view class="editable-item_content">
             <text class="editable-item_content_add" wx:if="{{car.license == null}}">添加车牌号码</text>
@@ -72,23 +72,23 @@
             <text class="editable-item_arrow"></text>
           </view>
         </view>
-        <view class="editable-item" @tap="editNumber">
-          <view class="editable-item_title">限载人数</view>
+        <view :class="{'editable-item': true, error: submitError.number}" @tap="editNumber">
+          <view class="editable-item_title">核载人数</view>
           <view class="editable-item_content">
-            <text class="editable-item_content_add" wx:if="{{car.number == null}}">添加限载人数</text>
+            <text class="editable-item_content_add" wx:if="{{car.number == null}}">添加核载人数</text>
             <text class="editable-item_content_edit" wx:else>{{car.number}}人</text>
             <text class="editable-item_arrow"></text>
           </view>
         </view>
-        <view class="editable-item" @tap="editAge">
-          <view class="editable-item_title">使用年限</view>
+        <view :class="{'editable-item': true, error: submitError.age}" @tap="editAge">
+          <view class="editable-item_title">出厂年份</view>
           <view class="editable-item_content">
-            <text class="editable-item_content_add" wx:if="{{car.age == null}}">添加使用年限</text>
+            <text class="editable-item_content_add" wx:if="{{car.age == null}}">添加出厂年份</text>
             <text class="editable-item_content_edit" wx:else>{{car.age}}年</text>
             <text class="editable-item_arrow"></text>
           </view>
         </view>
-        <view class="editable-item" @tap="editBrand">
+        <view :class="{'editable-item': true, error: submitError.brand}" @tap="editBrand">
           <view class="editable-item_title">车辆品牌</view>
           <view class="editable-item_content">
             <text class="editable-item_content_add" wx:if="{{car.brand == null}}">添加车辆品牌</text>
@@ -96,7 +96,7 @@
             <text class="editable-item_arrow"></text>
           </view>
         </view>
-        <view class="editable-item" @tap="editSystem">
+        <view :class="{'editable-item': true, error: submitError.system}" @tap="editSystem">
           <view class="editable-item_title">驱动系统</view>
           <view class="editable-item_content">
             <text class="editable-item_content_add" wx:if="{{car.system == null}}">添加驱动系统</text>
@@ -104,7 +104,7 @@
             <text class="editable-item_arrow"></text>
           </view>
         </view>
-        <view class="editable-item" @tap="editCompany">
+        <view :class="{'editable-item': true, error: submitError.company}" @tap="editCompany">
           <view class="editable-item_title">车辆所属公司</view>
           <view class="editable-item_content">
             <text class="editable-item_content_add" wx:if="{{car.company == null}}">添加车辆所属公司</text>
@@ -112,7 +112,7 @@
             <text class="editable-item_arrow"></text>
           </view>
         </view>
-        <view class="editable-item" @tap="editBelongTo">
+        <view :class="{'editable-item': true, error: submitError.belongTo}" @tap="editBelongTo">
           <view class="editable-item_title">车辆所属地</view>
           <view class="editable-item_content">
             <text class="editable-item_content_add" wx:if="{{car.belongTo == null}}">添加车辆所属地</text>
@@ -142,7 +142,7 @@
       </view>
     </view>
     <view class="car_submit">
-      <button class="btn car_submit_btn" @tap="updateProfile">确认提交</button>
+      <button class="btn car_submit_btn" @tap="submitProfile">确认提交</button>
     </view>
   </view>
 </template>
@@ -151,7 +151,7 @@
   import wepy from 'wepy'
   import { connect } from 'wepy-redux'
 
-  import { addCarImage, deleteCarImage, updateCarImage } from '../../actions/car'
+  import { addCarImage, deleteCarImage, updateCarImage, addCar } from '../../actions/car'
   import { API_BASE } from '../../utils/api'
   import { uploadFiles } from '../../actions/upload'
 
@@ -166,7 +166,8 @@
     addCarImage,
     deleteCarImage,
     updateCarImage,
-    uploadFiles
+    uploadFiles,
+    addCar
   })
   export default class ProfileCar extends wepy.page {
     config = {
@@ -177,7 +178,8 @@
       type: 'add',
       carInfo: {},
       tempImagesPaths: [],
-      apiBase: API_BASE
+      submitError: {},
+      pageHadShown: false
     }
 
     computed = {
@@ -196,7 +198,7 @@
         })
       },
 
-      editLicense () {
+      editLicense ()      {
         wepy.navigateTo({
           url: '../edit/car/license'
         })
@@ -265,13 +267,72 @@
         }
       },
 
-      async updateProfile () {
-        // // 有图片先上传图片
-        // console.log(this.car.images)
-        // if (this.car.images.length) {
-        //   await this.methods.uploadFiles(this.car.images)
-        // }
+      async submitProfile () {
+        const res = this.checkCarProfile()
+        this.submitError = res.submitError
+        if (res.hasError) {
+          return
+        }
+        const car = { ...this.car }
+        car.images = this.files
+        await this.methods.addCar({
+          ...car
+        })
       }
+    }
+
+    checkCarProfile () {
+      const car = this.car
+      let hasError = false
+      const submitError = {}
+      if (!car.license || (car.license.length !== 7 && car.license.length !== 8)) {
+        submitError.license = true
+        hasError = true
+      }
+      if (!car.number) {
+        submitError.number = true
+        hasError = true
+      }
+      if (!car.age) {
+        submitError.age = true
+        hasError = true
+      }
+      if (!car.brand) {
+        submitError.brand = true
+        hasError = true
+      }
+      if (!car.system) {
+        submitError.system = true
+        hasError = true
+      }
+      if (!car.company) {
+        submitError.company = true
+        hasError = true
+      }
+      if (!car.belongTo || !car.belongTo.length) {
+        submitError.belongTo = true
+        hasError = true
+      }
+      return {
+        hasError,
+        submitError
+      }
+    }
+
+    onLoad () {
+      this.pageHadShown = false
+    }
+
+    onShow () {
+      if (this.pageHadShown) {
+        this.pageHadShown = true
+        const res = this.checkCarProfile()
+        this.submitError = res.submitError
+      }
+    }
+
+    onHide () {
+      this.pageHadShown = true
     }
   }
 </script>

@@ -1,12 +1,25 @@
 <style lang="scss">
   .age {
-
+    &_picker {
+      box-sizing: border-box;
+      width: 100%;
+      height: 100rpx;
+      line-height: 100rpx;
+      background: #FFFFFF;
+      border-bottom: 2rpx solid #DADADA;
+      font-size: 28rpx;
+      padding-left: 30rpx;
+    }
   }
 </style>
 
 <template>
   <view class="container age">
-    <EditInput type="number" :val.sync="age" placeholder="请输入使用年限" :onInput="onInputHandler" />
+    <picker @change="carAgeChangeHandler" value="{{ageIndex}}" range="{{yearList}}">
+      <view class="age_picker">
+        {{ageShow || yearList[ageIndex]}}
+      </view>
+    </picker>
   </view>
 </template>
 
@@ -14,7 +27,6 @@
   import wepy from 'wepy'
   import { connect } from 'wepy-redux'
 
-  import EditInput from '../../../components/editInput'
   import { inputCarAge } from '../../../actions/car'
 
   @connect({
@@ -29,12 +41,32 @@
       navigationBarTitleText: '修改使用年限'
     }
 
-    components = {
-      EditInput
+    data = {
+      ageIndex: 0,
+      yearList: (function () {
+        const currentYear = new Date().getFullYear()
+        const region = 20
+        const years = []
+        for (let i = currentYear; i > currentYear - region; i--) {
+          years.push(`${i}`)
+        }
+        return years
+      })()
     }
 
-    onInputHandler = (val) => {
-      this.methods.inputCarAge(val)
+    computed = {
+      ageShow () {
+        if (this.age) {
+          return new Date(this.age).getFullYear()
+        }
+        return null
+      }
+    }
+
+    methods = {
+      carAgeChangeHandler (e) {
+        this.methods.inputCarAge(this.yearList[e.detail.value])
+      }
     }
   }
 </script>

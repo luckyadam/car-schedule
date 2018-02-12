@@ -101,6 +101,13 @@ form {
     border-bottom: 3rpx solid #333333;
     transform: rotate(-45deg);
   }
+  &.error {
+    .editable-item_content {
+      &_add,&_edit {
+        color: #EB3434;
+      }
+    }
+  }
 }
 
 .btn {
