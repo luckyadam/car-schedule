@@ -5,6 +5,52 @@
         padding: 20rpx 0;
       }
     }
+    &_certificate {
+      &_line {
+        display: flex;
+        margin-top: 30rpx;
+      }
+      &_item {
+        flex: 1;
+        width: 100%;
+        margin-right: 20rpx;
+        position: relative;
+        &_img {
+          width: 300rpx;
+          height: 200rpx;
+        }
+        &_overlay {
+          position: absolute;
+          width: 100%;
+          height: 100%;
+          top: 0;
+          left: 0;
+          background-color: rgba(255,255,255, .7);
+          text-align: center;
+          &.uploading {
+            .loading {
+              position: absolute;
+              top: 50%;
+              left: 50%;
+              margin-top: -14rpx;
+              margin-left: -14rpx;
+            }
+          }
+        }
+        &_tip {
+          color: #A4A4A4;
+          font-size: 20rpx;
+          padding-top: 60rpx;
+        }
+        &_add {
+          font-size: 40rpx;
+          margin-bottom: 20rpx;
+          &:before {
+            content: '\e90d';
+          }
+        }
+      }
+    }
     &_submit {
       padding-top: 10rpx;
     }
@@ -13,7 +59,10 @@
 
 <template>
   <view class="container profile region">
-    <view>
+    <view class="toptip warning" wx:if="{{user.status === -1}}">资料审核中</view>
+    <view class="toptip success" wx:elif="{{user.status === 0}}">资料审核已通过</view>
+    <view class="toptip error" wx:else="{{user.status === 1}}">资料审核未通过</view>
+    <view class="container_inner">
       <view class="region_section profile_info">
         <view class="region_title">个人信息</view>
         <view class="region_section_main">
@@ -47,6 +96,67 @@
           </view>
         </view>
       </view>
+      <view class="region_section profile_certificate" wx:if="{{user.role === 'driver'}}">
+        <view class="region_title">证件信息</view>
+        <view class="region_section_main">
+          <view class="profile_certificate_line">
+            <view class="profile_certificate_driver profile_certificate_item" @tap="chooseDriverLicensePos">
+              <image wx:if="{{!user.driverLicensePos}}" mode="aspectFill" src="../../assets/driver_license_up.jpg" class="profile_certificate_item_img" />
+              <image wx:else src="{{driverLicensePosShow.path}}" mode="aspectFill" class="profile_certificate_item_img" />
+              <view class="profile_certificate_item_overlay" wx:if="{{!user.driverLicensePos}}">
+                <view class="profile_certificate_item_tip">
+                  <view class="profile_certificate_item_add car-icons"></view>
+                  <view>驾驶证主页</view>
+                </view>
+              </view>
+              <view class="profile_certificate_item_overlay uploading" wx:if="{{user.driverLicensePos && user.driverLicensePos.isUploading}}">
+                <view class="loading"></view>
+              </view>
+            </view>
+            <view class="profile_certificate_driver profile_certificate_item" @tap="chooseDriverLicenseOpp">
+              <image wx:if="{{!user.driverLicenseOpp}}" mode="aspectFill" src="../../assets/driver_license_down.jpg" class="profile_certificate_item_img" />
+              <image wx:else src="{{driverLicenseOppShow.path}}" mode="aspectFill" class="profile_certificate_item_img" />
+              <view class="profile_certificate_item_overlay" wx:if="{{!user.driverLicenseOpp}}">
+                <view class="profile_certificate_item_tip">
+                  <view class="profile_certificate_item_add car-icons"></view>
+                  <view>驾驶证副页</view>
+                </view>
+              </view>
+              <view class="profile_certificate_item_overlay uploading" wx:if="{{user.driverLicenseOpp && user.driverLicenseOpp.isUploading}}">
+                <view class="loading"></view>
+              </view>
+            </view>
+          </view>
+          <view class="profile_certificate_line">
+            <view class="profile_certificate_driver profile_certificate_item" @tap="chooseWorkLicensePos">
+              <image wx:if="{{!user.workLicensePos}}" mode="aspectFill" src="../../assets/work_license_up.jpg" class="profile_certificate_item_img" />
+              <image wx:else src="{{workLicensePosShow.path}}" mode="aspectFill" class="profile_certificate_item_img" />
+              <view class="profile_certificate_item_overlay" wx:if="{{!user.workLicensePos}}">
+                <view class="profile_certificate_item_tip">
+                  <view class="profile_certificate_item_add car-icons"></view>
+                  <view>上岗证正面</view>
+                </view>
+              </view>
+              <view class="profile_certificate_item_overlay uploading" wx:if="{{user.workLicensePos && user.workLicensePos.isUploading}}">
+                <view class="loading"></view>
+              </view>
+            </view>
+            <view class="profile_certificate_driver profile_certificate_item" @tap="chooseWorkLicenseOpp">
+              <image wx:if="{{!user.workLicenseOpp}}" mode="aspectFill" src="../../assets/work_license_down.jpg" class="profile_certificate_item_img" />
+              <image wx:else src="{{workLicenseOppShow.path}}" mode="aspectFill" class="profile_certificate_item_img" />
+              <view class="profile_certificate_item_overlay" wx:if="{{!user.workLicenseOpp}}">
+                <view class="profile_certificate_item_tip">
+                  <view class="profile_certificate_item_add car-icons"></view>
+                  <view>上岗证背面</view>
+                </view>
+              </view>
+              <view class="profile_certificate_item_overlay uploading" wx:if="{{user.workLicenseOpp && user.workLicenseOpp.isUploading}}">
+                <view class="loading"></view>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
       <view class="region_section profile_car" wx:if="{{user.role === 'driver'}}">
         <view class="region_title">车辆信息</view>
         <view class="region_section_main">
@@ -69,17 +179,28 @@
 
   import TabBar from '../../components/tabBar'
 
-  import { isEmptyStr, isValidPhoneNumber, isValidIdentifyId } from '../../utils/validate'
-  import { updateUser } from '../../actions/user'
+  import { isChooseTempImage, isEmptyStr, isValidPhoneNumber, isValidIdentifyId } from '../../utils/validate'
+  import { updateUser, setUserDriverLicensePos, setUserDriverLicenseOpp, setUserWorkLicensePos, setUserWorkLicenseOpp } from '../../actions/user'
   import { initCar } from '../../actions/car'
+  import { API_BASE } from '../../utils/api'
+  import { uploadFiles, uploadFilesInit } from '../../actions/upload'
 
   @connect({
     user (state) {
       return state.user
+    },
+    files (state) {
+      return state.upload.files
     }
   }, {
     updateUser,
-    initCar
+    initCar,
+    uploadFiles,
+    uploadFilesInit,
+    setUserDriverLicensePos,
+    setUserDriverLicenseOpp,
+    setUserWorkLicensePos,
+    setUserWorkLicenseOpp
   })
   export default class Profile extends wepy.page {
     config = {
@@ -88,6 +209,54 @@
 
     components = {
       TabBar
+    }
+
+    data = {
+      certificateUploadCount: 0,
+      certificateUploadIndex: {}
+    }
+
+    computed = {
+      driverLicensePosShow () {
+        if (this.user && this.user.driverLicensePos) {
+          const driverLicensePos = { ...this.user.driverLicensePos }
+          if (!isChooseTempImage(driverLicensePos.path)) {
+            driverLicensePos.path = `${API_BASE}${driverLicensePos.path}`
+          }
+          return driverLicensePos
+        }
+        return null
+      },
+      driverLicenseOppShow () {
+        if (this.user && this.user.driverLicenseOpp) {
+          const driverLicenseOpp = { ...this.user.driverLicenseOpp }
+          if (!isChooseTempImage(driverLicenseOpp.path)) {
+            driverLicenseOpp.path = `${API_BASE}${driverLicenseOpp.path}`
+          }
+          return driverLicenseOpp
+        }
+        return null
+      },
+      workLicensePosShow () {
+        if (this.user && this.user.workLicensePos) {
+          const workLicensePos = { ...this.user.workLicensePos }
+          if (!isChooseTempImage(workLicensePos.path)) {
+            workLicensePos.path = `${API_BASE}${workLicensePos.path}`
+          }
+          return workLicensePos
+        }
+        return null
+      },
+      workLicenseOppShow () {
+        if (this.user && this.user.workLicenseOpp) {
+          const workLicenseOpp = { ...this.user.workLicenseOpp }
+          if (!isChooseTempImage(workLicenseOpp.path)) {
+            workLicenseOpp.path = `${API_BASE}${workLicenseOpp.path}`
+          }
+          return workLicenseOpp
+        }
+        return null
+      },
     }
 
     methods = {
@@ -110,15 +279,158 @@
         })
       },
 
+      async chooseDriverLicensePos () {
+        try {
+          const res = await wepy.chooseImage({
+            count: 1,
+            sizeType: ['original', 'compressed'],
+            sourceType: ['album', 'camera']
+          })
+          const files = res.tempFiles.map(file => file)
+          this.methods.setUserDriverLicensePos(files[0])
+          await this.methods.uploadFiles(files, {
+            beforeFileUpload: () => {
+              this.certificateUploadIndex[0] = this.certificateUploadCount
+              this.certificateUploadCount++
+              const driverLicensePos = this.user.driverLicensePos
+              driverLicensePos.isUploading = true
+              this.methods.setUserDriverLicensePos(driverLicensePos)
+            },
+            uploadFileSuccess: (index, res) => {
+              const driverLicensePos = this.user.driverLicensePos
+              driverLicensePos.isUploading = false
+              this.methods.setUserDriverLicensePos(driverLicensePos)
+            },
+            uploadFileError: (index, res) => {
+              const driverLicensePos = this.user.driverLicensePos
+              driverLicensePos.isUploading = false
+              driverLicensePos.isUploadError = true
+              this.methods.setUserDriverLicensePos(driverLicensePos)
+            }
+          })
+        } catch (err) {
+          console.log(err)
+        }
+      },
+
+      async chooseDriverLicenseOpp () {
+        try {
+          const res = await wepy.chooseImage({
+            count: 1,
+            sizeType: ['original', 'compressed'],
+            sourceType: ['album', 'camera']
+          })
+          const files = res.tempFiles.map(file => file)
+          this.methods.setUserDriverLicenseOpp(files[0])
+          await this.methods.uploadFiles(files, {
+            beforeFileUpload: () => {
+              this.certificateUploadIndex[1] = this.certificateUploadCount
+              this.certificateUploadCount++
+              const driverLicenseOpp = this.user.driverLicenseOpp
+              driverLicenseOpp.isUploading = true
+              this.methods.setUserDriverLicenseOpp(driverLicenseOpp)
+            },
+            uploadFileSuccess: (index, res) => {
+              const driverLicenseOpp = this.user.driverLicenseOpp
+              driverLicenseOpp.isUploading = false
+              this.methods.setUserDriverLicenseOpp(driverLicenseOpp)
+            },
+            uploadFileError: (index, res) => {
+              const driverLicenseOpp = this.user.driverLicenseOpp
+              driverLicenseOpp.isUploading = false
+              driverLicenseOpp.isUploadError = true
+              this.methods.setUserDriverLicenseOpp(driverLicenseOpp)
+            }
+          })
+        } catch (err) {
+          console.log(err)
+        }
+      },
+
+      async chooseWorkLicensePos () {
+        try {
+          const res = await wepy.chooseImage({
+            count: 1,
+            sizeType: ['original', 'compressed'],
+            sourceType: ['album', 'camera']
+          })
+          const files = res.tempFiles.map(file => file)
+          this.methods.setUserWorkLicensePos(files[0])
+          await this.methods.uploadFiles(files, {
+            beforeFileUpload: () => {
+              this.certificateUploadIndex[2] = this.certificateUploadCount
+              this.certificateUploadCount++
+              const workLicensePos = this.user.workLicensePos
+              workLicensePos.isUploading = true
+              this.methods.setUserWorkLicensePos(workLicensePos)
+            },
+            uploadFileSuccess: (index, res) => {
+              const workLicensePos = this.user.workLicensePos
+              workLicensePos.isUploading = false
+              this.methods.setUserWorkLicensePos(workLicensePos)
+            },
+            uploadFileError: (index, res) => {
+              const workLicensePos = this.user.workLicensePos
+              workLicensePos.isUploading = false
+              workLicensePos.isUploadError = true
+              this.methods.setUserWorkLicensePos(workLicensePos)
+            }
+          })
+        } catch (err) {
+          console.log(err)
+        }
+      },
+
+      async chooseWorkLicenseOpp () {
+        try {
+          const res = await wepy.chooseImage({
+            count: 1,
+            sizeType: ['original', 'compressed'],
+            sourceType: ['album', 'camera']
+          })
+          const files = res.tempFiles.map(file => file)
+          this.methods.setUserWorkLicenseOpp(files[0])
+          await this.methods.uploadFiles(files, {
+            beforeFileUpload: () => {
+              this.certificateUploadIndex[3] = this.certificateUploadCount
+              this.certificateUploadCount++
+              const workLicenseOpp = this.user.workLicenseOpp
+              workLicenseOpp.isUploading = true
+              this.methods.setUserWorkLicenseOpp(workLicenseOpp)
+            },
+            uploadFileSuccess: (index, res) => {
+              const workLicenseOpp = this.user.workLicenseOpp
+              workLicenseOpp.isUploading = false
+              this.methods.setUserWorkLicenseOpp(workLicenseOpp)
+            },
+            uploadFileError: (index, res) => {
+              const workLicenseOpp = this.user.workLicenseOpp
+              workLicenseOpp.isUploading = false
+              workLicenseOpp.isUploadError = true
+              this.methods.setUserWorkLicenseOpp(workLicenseOpp)
+            }
+          })
+        } catch (err) {
+          console.log(err)
+        }
+      },
+
       updateProfile () {
+        const files = this.files
+        const certificateUploadIndex = this.certificateUploadIndex
         const { nickname, username, telephone, avatarUrl, role } = this.user
-        this.methods.updateUser({
+        const params = {
           nickname,
           username,
           telephone,
           avatarUrl,
           role
-        })
+        }
+        params.driverLicensePos = this.files[certificateUploadIndex['0']] || undefined
+        params.driverLicenseOpp = this.files[certificateUploadIndex['1']] || undefined
+        params.workLicensePos = this.files[certificateUploadIndex['2']] || undefined
+        params.workLicenseOpp = this.files[certificateUploadIndex['3']] || undefined
+        this.methods.updateUser(params)
       }
     }
   }

@@ -1,0 +1,202 @@
+page {
+  background-color: #F8F8F8;
+  height: 100%;
+  font-size: 32rpx;
+  line-height: 1.6;
+  color: #333333;
+}
+checkbox, radio {
+  margin-right: 10rpx;
+}
+
+form {
+  width: 100%;
+}
+
+/* lib */
+.strong {
+  font-weight: bold;
+}
+.tc {
+  text-align: center;
+}
+
+@font-face {
+  font-family: 'car_iconfonts';
+  src:  url('../assets/car_iconfonts.eot?c67orl');
+  src:  url('../assets/car_iconfonts.eot?c67orl#iefix') format('embedded-opentype'),
+    url('../assets/car_iconfonts.ttf?c67orl') format('truetype'),
+    url('../assets/car_iconfonts.woff?c67orl') format('woff'),
+    url('../assets/car_iconfonts.svg?c67orl#car_iconfonts') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* page */
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  font-size: 32rpx;
+  font-family: -apple-system-font,Helvetica Neue,Helvetica,sans-serif;
+  &_inner {
+    padding-bottom: 120rpx;
+  }
+}
+
+.edit-input {
+  &_box {
+    box-sizing: border-box;
+    width: 100%;
+    height: 100rpx;
+    line-height: 100rpx;
+    background: #FFFFFF;
+    border-bottom: 1px solid #DADADA;
+    font-size: 28rpx;
+    padding-left: 30rpx;
+  }
+}
+
+.region {
+  &_section {
+    padding: 30rpx 30rpx 10rpx 30rpx;
+    margin-bottom: 20rpx;
+    background: #ffffff;
+    &_main {
+      padding: 0 30rpx 0 50rpx;
+      .editable-item:last-child {
+        border-bottom: 0;
+      }
+    }
+  }
+  &_title {
+    color: #EB3034;
+    font-size: 32rpx;
+  }
+}
+
+.editable-item {
+  display: flex;
+  justify-content: space-between;
+  font-size: 28rpx;
+  height: 80rpx;
+  line-height: 80rpx;
+  border-bottom: 1rpx dashed #DADADA;
+  &_title {
+    color: #A4A4A4;
+  }
+  &_content {
+    &_add {
+      color: #A4A4A4;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    &_edit {
+      color: #333333;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    &_img {
+      display: inline-block;
+      width: 60rpx;
+      height: 60rpx;
+      border-radius: 50%;
+    }
+  }
+  &_arrow {
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 8rpx;
+    height: 15rpx;
+    width: 15rpx;
+    border-right: 3rpx solid #333333;
+    border-bottom: 3rpx solid #333333;
+    transform: rotate(-45deg);
+  }
+  &.error {
+    .editable-item_content {
+      &_add,&_edit {
+        color: #EB3434;
+      }
+    }
+  }
+}
+
+.btn {
+  width: 300rpx;
+  height: 80rpx;
+  border-radius: 40rpx;
+  color: #FFFFFF;
+  font-size: 32rpx;
+  background: linear-gradient(to right, #EB3434, #EB7234);
+  border: 0;
+  &[disabled] {
+    background: #DADADA;
+    color: #FFFFFF;
+  }
+}
+.btn-add {
+  box-sizing: border-box;
+  width: 610rpx;
+  height: 60rpx;
+  line-height: 60rpx;
+  border: 1rpx dashed #DADADA;
+  text-align: center;
+  color: #A4A4A4;
+  font-size: 24rpx;
+  border-radius: 0;
+  background: transparent;
+  appearance: none;
+}
+
+.loading {
+  border-radius: 100%;
+  margin: 4rpx;
+  border: 4rpx solid #fff;
+  border-bottom-color: transparent;
+  height: 26rpx;
+  width: 26rpx;
+  animation: rotate .75s 0s linear infinite;
+}
+.car-icons {
+  font-family: 'car_iconfonts';
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+}
+
+@keyframes rotate {
+  0% {
+    transform: rotate(0) scale(1)
+  }
+
+  50% {
+    transform: rotate(180deg) scale(.6)
+  }
+
+  100% {
+    transform: rotate(360deg) scale(1)
+  }
+}
+
+.toptip {
+  width: 100%;
+  height: 60rpx;
+  line-height: 60rpx;
+  text-align: center;
+  color: #FFFFFF;
+  font-size: 24rpx;
+  &.warning {
+    background-color: #F2E37A;
+  }
+  &.success {
+    background-color: #B5E4B2;
+  }
+  &.error {
+    background-color: #F1BEBE;
+  }
+}

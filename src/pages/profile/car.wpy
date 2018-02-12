@@ -153,7 +153,7 @@
 
   import { addCarImage, deleteCarImage, updateCarImage, addCar } from '../../actions/car'
   import { API_BASE } from '../../utils/api'
-  import { uploadFiles } from '../../actions/upload'
+  import { uploadFiles, uploadFilesInit } from '../../actions/upload'
 
   @connect({
     car (state) {
@@ -167,6 +167,7 @@
     deleteCarImage,
     updateCarImage,
     uploadFiles,
+    uploadFilesInit,
     addCar
   })
   export default class ProfileCar extends wepy.page {
@@ -333,6 +334,10 @@
 
     onHide () {
       this.pageHadShown = true
+    }
+
+    onUnload () {
+      this.methods.uploadFilesInit()
     }
   }
 </script>

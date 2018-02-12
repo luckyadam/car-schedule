@@ -11,7 +11,11 @@ import {
   UPDATE_USER,
   UPDATE_USER_SUCCESS,
   UPDATE_USER_ERROR,
-  USER_LOGIN_ERROR
+  USER_LOGIN_ERROR,
+  SET_USER_DRTVER_LICENSE_POS,
+  SET_USER_DRTVER_LICENSE_OPP,
+  SET_USER_WORK_LICENSE_POS,
+  SET_USER_WORK_LICENSE_OPP
 } from '../constants/user'
 import { API_USER } from '../utils/api'
 
@@ -21,6 +25,10 @@ export const getUserError = createAction(GET_USER_ERROR, errorObj => ({ errorObj
 export const setUserRole = createAction(SET_USER_ROLE, role => ({ role }))
 export const inputUsername = createAction(USER_USERNAME_INPUT, username => ({ username }))
 export const inputTelephone = createAction(USER_TELEPHONE_INPUT, telephone => ({ telephone }))
+export const setUserDriverLicensePos = createAction(SET_USER_DRTVER_LICENSE_POS, driverLicensePos => ({ driverLicensePos }))
+export const setUserDriverLicenseOpp = createAction(SET_USER_DRTVER_LICENSE_OPP, driverLicenseOpp => ({ driverLicenseOpp }))
+export const setUserWorkLicensePos = createAction(SET_USER_WORK_LICENSE_POS, workLicensePos => ({ workLicensePos }))
+export const setUserWorkLicenseOpp = createAction(SET_USER_WORK_LICENSE_OPP, workLicenseOpp => ({ workLicenseOpp }))
 
 export const updateUserIng = createAction(UPDATE_USER)
 export const updateUserError = createAction(UPDATE_USER_ERROR)
@@ -103,7 +111,7 @@ export function updateUser (user) {
         await wepy.hideLoading()
         dispatch(updateUserSuccess(userInfo))
         await wepy.showToast({
-          title: '修改成功',
+          title: '提交审核成功',
           icon: 'success'
         })
       } else {

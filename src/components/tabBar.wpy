@@ -1,6 +1,7 @@
 <style type="scss">
 .tabbar {
   position: fixed;
+  left: 0;
   bottom: 0;
   height: 100rpx;
   width: 100%;

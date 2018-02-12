@@ -9,7 +9,11 @@ import {
   UPDATE_USER,
   UPDATE_USER_SUCCESS,
   UPDATE_USER_ERROR,
-  USER_LOGIN_ERROR
+  USER_LOGIN_ERROR,
+  SET_USER_DRTVER_LICENSE_POS,
+  SET_USER_DRTVER_LICENSE_OPP,
+  SET_USER_WORK_LICENSE_POS,
+  SET_USER_WORK_LICENSE_OPP
 } from '../constants/user'
 
 export default handleActions({
@@ -22,11 +26,38 @@ export default handleActions({
   },
 
   [GET_USER_SUCCESS] (state, action) {
+    const payload = { ...action.payload }
+    const {
+      driverLicensePos,
+      driverLicenseOpp,
+      workLicensePos,
+      workLicenseOpp
+    } = payload
+    if (driverLicensePos) {
+      payload.driverLicensePos = {
+        path: driverLicensePos
+      }
+    }
+    if (driverLicenseOpp) {
+      payload.driverLicenseOpp = {
+        path: driverLicenseOpp
+      }
+    }
+    if (workLicensePos) {
+      payload.workLicensePos = {
+        path: workLicensePos
+      }
+    }
+    if (workLicenseOpp) {
+      payload.workLicenseOpp = {
+        path: workLicenseOpp
+      }
+    }
     return {
       ...state,
       isFetching: false,
       isError: false,
-      ...action.payload
+      ...payload
     }
   },
 
@@ -91,6 +122,34 @@ export default handleActions({
       isFetching: false,
       loginError: true
     }
+  },
+
+  [SET_USER_DRTVER_LICENSE_POS] (state, action) {
+    return {
+      ...state,
+      ...action.payload
+    }
+  },
+
+  [SET_USER_DRTVER_LICENSE_OPP] (state, action) {
+    return {
+      ...state,
+      ...action.payload
+    }
+  },
+
+  [SET_USER_WORK_LICENSE_POS] (state, action) {
+    return {
+      ...state,
+      ...action.payload
+    }
+  },
+
+  [SET_USER_WORK_LICENSE_OPP] (state, action) {
+    return {
+      ...state,
+      ...action.payload
+    }
   }
 }, {
   isFetching: false,
@@ -101,6 +160,16 @@ export default handleActions({
   telephone: null,
   avatarUrl: null,
   role: null,
+  company: null,
+  companyTel: null,
+  companyFax: null,
+  companyAddr: null,
+  driverLicensePos: null,
+  driverLicenseOpp: null,
+  workLicensePos: null,
+  workLicenseOpp: null,
+  status: 0,
+  auditOpinion: null,
   errorObj: null,
   loginError: false
 })

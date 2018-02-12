@@ -4,7 +4,8 @@ import wepy from 'wepy'
 import {
   UPLOAD_FILES_START,
   UPLOAD_FILES_SUCCESS,
-  UPLOAD_FILES_ERROR
+  UPLOAD_FILES_ERROR,
+  UPLOAD_FILES_INIT
 } from '../constants/upload'
 import { userLoginError } from '../actions/user'
 import { API_FILE } from '../utils/api'
@@ -12,6 +13,7 @@ import { API_FILE } from '../utils/api'
 export const uploadFilesStart = createAction(UPLOAD_FILES_START)
 export const uploadFilesSuccess = createAction(UPLOAD_FILES_SUCCESS, files => ({ files }))
 export const uploadFilesError = createAction(UPLOAD_FILES_ERROR)
+export const uploadFilesInit = createAction(UPLOAD_FILES_INIT)
 
 export function uploadFiles (files, opts) {
   return async dispatch => {
@@ -39,8 +41,10 @@ export function uploadFiles (files, opts) {
             result.push(null)
             opts.uploadFileError && opts.uploadFileError(index, null)
           }
+          if (index === files.length - 1) {
+            dispatch(uploadFilesSuccess(result))
+          }
         })
-        dispatch(uploadFilesSuccess(result))
       } else {
         dispatch(userLoginError())
       }
