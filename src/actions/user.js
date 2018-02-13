@@ -8,6 +8,10 @@ import {
   SET_USER_ROLE,
   USER_USERNAME_INPUT,
   USER_TELEPHONE_INPUT,
+  USER_COMPANY_INPUT,
+  USER_COMPANY_TEL_INPUT,
+  USER_COMPANY_FAX_INPUT,
+  USER_COMPANY_ADDR_INPUT,
   UPDATE_USER,
   UPDATE_USER_SUCCESS,
   UPDATE_USER_ERROR,
@@ -15,7 +19,9 @@ import {
   SET_USER_DRTVER_LICENSE_POS,
   SET_USER_DRTVER_LICENSE_OPP,
   SET_USER_WORK_LICENSE_POS,
-  SET_USER_WORK_LICENSE_OPP
+  SET_USER_WORK_LICENSE_OPP,
+  ADD_USER_CAR,
+  UPDATE_USER_CAR
 } from '../constants/user'
 import { API_USER } from '../utils/api'
 
@@ -25,6 +31,10 @@ export const getUserError = createAction(GET_USER_ERROR, errorObj => ({ errorObj
 export const setUserRole = createAction(SET_USER_ROLE, role => ({ role }))
 export const inputUsername = createAction(USER_USERNAME_INPUT, username => ({ username }))
 export const inputTelephone = createAction(USER_TELEPHONE_INPUT, telephone => ({ telephone }))
+export const inputCompany = createAction(USER_COMPANY_INPUT, company => ({ company }))
+export const inputCompanyTel = createAction(USER_COMPANY_TEL_INPUT, companyTel => ({ companyTel }))
+export const inputCompanyFax = createAction(USER_COMPANY_FAX_INPUT, companyFax => ({ companyFax }))
+export const inputCompanyAddr = createAction(USER_COMPANY_ADDR_INPUT, companyAddr => ({ companyAddr }))
 export const setUserDriverLicensePos = createAction(SET_USER_DRTVER_LICENSE_POS, driverLicensePos => ({ driverLicensePos }))
 export const setUserDriverLicenseOpp = createAction(SET_USER_DRTVER_LICENSE_OPP, driverLicenseOpp => ({ driverLicenseOpp }))
 export const setUserWorkLicensePos = createAction(SET_USER_WORK_LICENSE_POS, workLicensePos => ({ workLicensePos }))
@@ -34,6 +44,9 @@ export const updateUserIng = createAction(UPDATE_USER)
 export const updateUserError = createAction(UPDATE_USER_ERROR)
 export const updateUserSuccess = createAction(UPDATE_USER_SUCCESS)
 export const userLoginError = createAction(USER_LOGIN_ERROR)
+
+export const addUserCar = createAction(ADD_USER_CAR, car => ({ car }))
+export const updateUserCar = createAction(UPDATE_USER_CAR, (index, car) => ({ index, car }))
 
 export async function fetchInitialUserInfo () {
   try {

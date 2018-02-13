@@ -6,6 +6,10 @@ import {
   SET_USER_ROLE,
   USER_USERNAME_INPUT,
   USER_TELEPHONE_INPUT,
+  USER_COMPANY_INPUT,
+  USER_COMPANY_TEL_INPUT,
+  USER_COMPANY_FAX_INPUT,
+  USER_COMPANY_ADDR_INPUT,
   UPDATE_USER,
   UPDATE_USER_SUCCESS,
   UPDATE_USER_ERROR,
@@ -13,7 +17,9 @@ import {
   SET_USER_DRTVER_LICENSE_POS,
   SET_USER_DRTVER_LICENSE_OPP,
   SET_USER_WORK_LICENSE_POS,
-  SET_USER_WORK_LICENSE_OPP
+  SET_USER_WORK_LICENSE_OPP,
+  ADD_USER_CAR,
+  UPDATE_USER_CAR
 } from '../constants/user'
 
 export default handleActions({
@@ -80,14 +86,42 @@ export default handleActions({
   [USER_USERNAME_INPUT] (state, action) {
     return {
       ...state,
-      username: action.payload.username
+      ...action.payload
     }
   },
 
   [USER_TELEPHONE_INPUT] (state, action) {
     return {
       ...state,
-      telephone: action.payload.telephone
+      ...action.payload
+    }
+  },
+
+  [USER_COMPANY_INPUT] (state, action) {
+    return {
+      ...state,
+      ...action.payload
+    }
+  },
+
+  [USER_COMPANY_TEL_INPUT] (state, action) {
+    return {
+      ...state,
+      ...action.payload
+    }
+  },
+
+  [USER_COMPANY_FAX_INPUT] (state, action) {
+    return {
+      ...state,
+      ...action.payload
+    }
+  },
+
+  [USER_COMPANY_ADDR_INPUT] (state, action) {
+    return {
+      ...state,
+      ...action.payload
     }
   },
 
@@ -150,6 +184,31 @@ export default handleActions({
       ...state,
       ...action.payload
     }
+  },
+
+  [ADD_USER_CAR] (state, action) {
+    let cars = state.cars.concat()
+    const car = action.payload.car
+    if (Array.isArray(car)) {
+      cars = cars.concat(car)
+    } else {
+      cars.push(action.payload.car)
+    }
+    return {
+      ...state,
+      cars
+    }
+  },
+
+  [UPDATE_USER_CAR] (state, action) {
+    let cars = state.cars.concat()
+    const index = action.payload.index
+    const car = action.payload.car
+    cars.splice(index, 1, car)
+    return {
+      ...state,
+      cars
+    }
   }
 }, {
   isFetching: false,
@@ -170,6 +229,7 @@ export default handleActions({
   workLicenseOpp: null,
   status: 0,
   auditOpinion: null,
+  cars: [],
   errorObj: null,
   loginError: false
 })

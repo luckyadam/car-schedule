@@ -56,5 +56,11 @@
         this.methods.inputCarSystem(this.systemList[e.detail.value])
       }
     }
+
+    onLoad () {
+      if (!this.system) {
+        this.methods.inputCarSystem(this.systemList[this.systemIndex])
+      }
+    }
   }
 </script>

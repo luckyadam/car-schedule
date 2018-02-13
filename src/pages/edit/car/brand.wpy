@@ -58,5 +58,11 @@
         this.methods.inputCarBrand(this.brandList[e.detail.value])
       }
     }
+
+    onLoad () {
+      if (!this.brand) {
+        this.methods.inputCarBrand(this.brandList[this.brandIndex])
+      }
+    }
   }
 </script>

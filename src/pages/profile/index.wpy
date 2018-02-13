@@ -1,6 +1,42 @@
 <style lang="scss">
   .profile {
     &_car {
+      &_item {
+        padding: 20rpx 0;
+        border-bottom: 2rpx dashed #DADADA;
+        &:last-child {
+          border-bottom: 0;
+        }
+      }
+      &_top {
+        display: flex;
+        align-items: center;
+        margin-bottom: 12rpx;
+      }
+      &_license {
+        flex: 1;
+        width: 100%;
+        font-size: 28rpx;
+      }
+      &_status {
+        width: 100rpx;
+        height: 28rpx;
+        border-radius: 14rpx;
+        text-align: center;
+        line-height: 28rpx;
+        font-size: 20rpx;
+        color: #ffffff;
+      }
+      &_bottom {
+        display: flex;
+        align-items: center;
+      }
+      &_desc {
+        flex: 1;
+        width: 100%;
+        color: #A4A4A4;
+        font-size: 24rpx;
+      }
       &_add {
         padding: 20rpx 0;
       }
@@ -58,10 +94,11 @@
 </style>
 
 <template>
+  <wxs module="filter" src="../../filter/filter.wxs"></wxs>
   <view class="container profile region">
     <view class="toptip warning" wx:if="{{user.status === -1}}">资料审核中</view>
     <view class="toptip success" wx:elif="{{user.status === 0}}">资料审核已通过</view>
-    <view class="toptip error" wx:else="{{user.status === 1}}">资料审核未通过</view>
+    <view class="toptip error" wx:elif="{{user.status === 1}}">资料审核未通过</view>
     <view class="container_inner">
       <view class="region_section profile_info">
         <view class="region_title">个人信息</view>
@@ -75,23 +112,29 @@
           <view class="editable-item">
             <view class="editable-item_title">昵称</view>
             <view class="editable-item_content">
-              <text class="editable-item_content_edit">{{user.nickname}}</text>
+              <text class="editable-item_content_edit disabled">{{user.nickname}}</text>
             </view>
           </view>
           <view class="editable-item" @tap="editUsername">
             <view class="editable-item_title">姓名</view>
             <view class="editable-item_content">
               <text class="editable-item_content_add" wx:if="{{!user.username}}">请添加姓名</text>
-              <text class="editable-item_content_edit" wx:else>{{user.username}}</text>
-              <text class="editable-item_arrow"></text>
+              <text :class="{'editable-item_content_edit': true, disabled: user.status === 0}" wx:else>{{user.username}}</text>
+              <text class="editable-item_arrow arrow-right" wx:if="{{user.status !== 0}}"></text>
             </view>
           </view>
           <view class="editable-item" @tap="editTelephone">
             <view class="editable-item_title">手机号码</view>
             <view class="editable-item_content">
               <text class="editable-item_content_add" wx:if="{{!user.telephone}}">请添加手机号码</text>
-              <text class="editable-item_content_edit" wx:else>{{user.telephone}}</text>
-              <text class="editable-item_arrow"></text>
+              <text :class="{'editable-item_content_edit': true, disabled: user.status === 0}" wx:else>{{user.telephone}}</text>
+              <text class="editable-item_arrow arrow-right" wx:if="{{user.status !== 0}}"></text>
+            </view>
+          </view>
+          <view class="editable-item">
+            <view class="editable-item_title">身份</view>
+            <view class="editable-item_content">
+              <text class="editable-item_content_edit disabled">{{roleShow}}</text>
             </view>
           </view>
         </view>
@@ -160,8 +203,59 @@
       <view class="region_section profile_car" wx:if="{{user.role === 'driver'}}">
         <view class="region_title">车辆信息</view>
         <view class="region_section_main">
+          <view class="profile_car_list" wx:if="{{user.cars.length}}">
+            <view class="profile_car_item" wx:for="{{user.cars}}" wx:key="{{item.license}}" @tap="viewCar" data-idx="{{index}}">
+              <view class="profile_car_top">
+                <view class="profile_car_license">{{item.license}}</view>
+                <view class="profile_car_status warning" wx:if="{{item.status === -1}}">审核中</view>
+                <view class="profile_car_status success" wx:elif="{{item.status === 0}}">审核通过</view>
+                <view class="profile_car_status error" wx:else="{{item.status === 1}}">审核未通过</view>
+              </view>
+              <view class="profile_car_bottom">
+                <view class="profile_car_desc">{{item.number}}座，{{item.brand}}客车，{{item.system}}，{{filter.formatYear(item.age)}}年</view>
+                <view class="profile_car_arrow arrow-right"></view>
+              </view>
+            </view>
+          </view>
           <view class="profile_car_add">
             <button class="profile_car_add_button btn-add" @tap="addCar">添加车辆</button>
+          </view>
+        </view>
+      </view>
+      <view class="region_section profile_company" wx:elif="{{user.role === 'travel'}}">
+        <view class="region_title">公司信息</view>
+        <view class="region_section_main">
+          <view class="editable-item" @tap="editCompany">
+            <view class="editable-item_title">名称</view>
+            <view class="editable-item_content">
+              <text class="editable-item_content_add" wx:if="{{!user.company}}">请添加名称</text>
+              <text :class="{'editable-item_content_edit': true, disabled: user.status === 0}" wx:else>{{user.company}}</text>
+              <text class="editable-item_arrow arrow-right" wx:if="{{user.status !== 0}}"></text>
+            </view>
+          </view>
+          <view class="editable-item" @tap="editCompanyTel">
+            <view class="editable-item_title">联系电话</view>
+            <view class="editable-item_content">
+              <text class="editable-item_content_add" wx:if="{{!user.companyTel}}">请添加联系电话</text>
+              <text :class="{'editable-item_content_edit': true, disabled: user.status === 0}" wx:else>{{user.companyTel}}</text>
+              <text class="editable-item_arrow arrow-right" wx:if="{{user.status !== 0}}"></text>
+            </view>
+          </view>
+          <view class="editable-item" @tap="editCompanyFax">
+            <view class="editable-item_title">传真</view>
+            <view class="editable-item_content">
+              <text class="editable-item_content_add" wx:if="{{!user.companyFax}}">请添加传真</text>
+              <text :class="{'editable-item_content_edit': true, disabled: user.status === 0}" wx:else>{{user.companyFax}}</text>
+              <text class="editable-item_arrow arrow-right" wx:if="{{user.status !== 0}}"></text>
+            </view>
+          </view>
+          <view class="editable-item" @tap="editCompanyAddr">
+            <view class="editable-item_title">地址</view>
+            <view class="editable-item_content">
+              <text class="editable-item_content_add" wx:if="{{!user.companyAddr}}">请添加地址</text>
+              <text :class="{'editable-item_content_edit': true, disabled: user.status === 0}" wx:else>{{user.companyAddr}}</text>
+              <text class="editable-item_arrow arrow-right" wx:if="{{user.status !== 0}}"></text>
+            </view>
           </view>
         </view>
       </view>
@@ -181,9 +275,10 @@
 
   import { isChooseTempImage, isEmptyStr, isValidPhoneNumber, isValidIdentifyId } from '../../utils/validate'
   import { updateUser, setUserDriverLicensePos, setUserDriverLicenseOpp, setUserWorkLicensePos, setUserWorkLicenseOpp } from '../../actions/user'
-  import { initCar } from '../../actions/car'
+  import { initCar, fetchCars } from '../../actions/car'
   import { API_BASE } from '../../utils/api'
   import { uploadFiles, uploadFilesInit } from '../../actions/upload'
+  import { ROLE } from '../../constants/user'
 
   @connect({
     user (state) {
@@ -195,6 +290,7 @@
   }, {
     updateUser,
     initCar,
+    fetchCars,
     uploadFiles,
     uploadFilesInit,
     setUserDriverLicensePos,
@@ -217,6 +313,15 @@
     }
 
     computed = {
+      roleShow () {
+        if (this.user && this.user.role) {
+          return {
+            [ROLE.DRIVER]: '司机',
+            [ROLE.TRAVEL]: '旅行社'
+          }[this.user.role]
+        }
+        return '司机'
+      },
       driverLicensePosShow () {
         if (this.user && this.user.driverLicensePos) {
           const driverLicensePos = { ...this.user.driverLicensePos }
@@ -260,22 +365,74 @@
     }
 
     methods = {
-      addCar () {
+      async addCar () {
+        if (this.user.status === -1) {
+          await wepy.showToast({
+            icon: 'none',
+            title: '资料审核中，不能添加车辆！'
+          })
+          return
+        }
+        if (this.user.status === 1) {
+          await wepy.showToast({
+            icon: 'none',
+            title: '资料审核未通过，不能添加车辆！'
+          })
+          return
+        }
         this.methods.initCar()
         wepy.navigateTo({
-          url: './car'
+          url: './car?type=add'
+        })
+      },
+
+      viewCar (e) {
+        const idx = e.currentTarget.dataset.idx
+        this.methods.initCar(this.user.cars[idx])
+        wepy.navigateTo({
+          url: `./car?type=edit&idx=${idx}`
         })
       },
 
       editUsername () {
+        if (this.user.status === 0) {
+          return
+        }
         wepy.navigateTo({
           url: '../edit/username'
         })
       },
 
       editTelephone () {
+        if (this.user.status === 0) {
+          return
+        }
         wepy.navigateTo({
           url: '../edit/telephone'
+        })
+      },
+
+      editCompany () {
+        wepy.navigateTo({
+          url: '../edit/company'
+        })
+      },
+
+      editCompanyTel () {
+        wepy.navigateTo({
+          url: '../edit/companyTel'
+        })
+      },
+
+      editCompanyFax () {
+        wepy.navigateTo({
+          url: '../edit/companyFax'
+        })
+      },
+
+      editCompanyAddr () {
+        wepy.navigateTo({
+          url: '../edit/companyAddr'
         })
       },
 
@@ -432,6 +589,10 @@
         params.workLicenseOpp = this.files[certificateUploadIndex['3']] || undefined
         this.methods.updateUser(params)
       }
+    }
+
+    async onLoad () {
+      await this.methods.fetchCars()
     }
   }
 </script>

@@ -95,6 +95,9 @@ form {
       color: #333333;
       display: inline-block;
       vertical-align: middle;
+      &.disabled {
+        color: #A4A4A4;
+      }
     }
     &_img {
       display: inline-block;
@@ -107,13 +110,9 @@ form {
     display: inline-block;
     vertical-align: middle;
     margin-left: 8rpx;
-    height: 15rpx;
-    width: 15rpx;
-    border-right: 3rpx solid #333333;
-    border-bottom: 3rpx solid #333333;
-    transform: rotate(-45deg);
   }
   &.error {
+    background-color: transparent;
     .editable-item_content {
       &_add,&_edit {
         color: #EB3434;
@@ -190,13 +189,24 @@ form {
   text-align: center;
   color: #FFFFFF;
   font-size: 24rpx;
-  &.warning {
-    background-color: #F2E37A;
-  }
-  &.success {
-    background-color: #B5E4B2;
-  }
-  &.error {
-    background-color: #F1BEBE;
-  }
+}
+
+.warning {
+  background-color: #F2E37A;
+}
+
+.success {
+  background-color: #B5E4B2;
+}
+
+.error {
+  background-color: #F1BEBE;
+}
+
+.arrow-right {
+  height: 15rpx;
+  width: 15rpx;
+  border-right: 3rpx solid #333333;
+  border-bottom: 3rpx solid #333333;
+  transform: rotate(-45deg);
 }

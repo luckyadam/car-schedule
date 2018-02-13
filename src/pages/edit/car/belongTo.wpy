@@ -91,5 +91,11 @@
         }
       }
     }
+
+    onLoad () {
+      if (!this.belongTo || !this.belongTo.length) {
+        this.methods.inputCarBelongTo([this.provinceList[0][0], this.cityList['0'][0]])
+      }
+    }
   }
 </script>

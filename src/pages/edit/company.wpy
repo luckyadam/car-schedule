@@ -1,0 +1,39 @@
+<style lang="scss">
+</style>
+
+<template>
+  <view class="container">
+    <view>
+      <EditInput :val.sync="company" placeholder="请输入公司名称" :onInput="onInputHandler" />
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import { connect } from 'wepy-redux'
+
+  import EditInput from '../../components/editInput'
+  import { inputCompany } from '../../actions/user'
+
+  @connect({
+    company (state) {
+      return state.user.company
+    }
+  }, {
+    inputCompany
+  })
+  export default class EditCompany extends wepy.page {
+    config = {
+      navigationBarTitleText: '修改公司名称'
+    }
+
+    components = {
+      EditInput
+    }
+
+    onInputHandler = (val) => {
+      this.methods.inputCompany(val)
+    }
+  }
+</script>

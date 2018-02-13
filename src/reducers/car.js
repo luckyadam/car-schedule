@@ -21,6 +21,7 @@ const initCarData = {
   system: null, // 驱动系统
   company: null,  // 所属公司
   belongTo: null,  // 所属地
+  status: -2,
   images: []  // 车辆图片
 }
 

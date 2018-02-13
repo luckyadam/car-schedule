@@ -1,0 +1,39 @@
+<style lang="scss">
+</style>
+
+<template>
+  <view class="container">
+    <view>
+      <EditInput :val.sync="companyAddr" placeholder="请输入公司地址" :onInput="onInputHandler" />
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import { connect } from 'wepy-redux'
+
+  import EditInput from '../../components/editInput'
+  import { inputCompanyAddr } from '../../actions/user'
+
+  @connect({
+    companyAddr (state) {
+      return state.user.companyAddr
+    }
+  }, {
+    inputCompanyAddr
+  })
+  export default class EditCompanyAddr extends wepy.page {
+    config = {
+      navigationBarTitleText: '修改公司地址'
+    }
+
+    components = {
+      EditInput
+    }
+
+    onInputHandler = (val) => {
+      this.methods.inputCompanyAddr(val)
+    }
+  }
+</script>

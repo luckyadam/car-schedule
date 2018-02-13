@@ -1,0 +1,6 @@
+module.exports = {
+  formatYear: function (date) {
+    date = getDate(date)
+    return date.getFullYear()
+  }
+}

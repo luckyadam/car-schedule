@@ -68,5 +68,11 @@
         this.methods.inputCarAge(this.yearList[e.detail.value])
       }
     }
+
+    onLoad () {
+      if (!this.age) {
+        this.methods.inputCarAge(this.yearList[this.ageIndex])
+      }
+    }
   }
 </script>

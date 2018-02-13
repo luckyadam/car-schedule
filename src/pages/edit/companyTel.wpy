@@ -1,0 +1,39 @@
+<style lang="scss">
+</style>
+
+<template>
+  <view class="container">
+    <view>
+      <EditInput :val.sync="companyTel" placeholder="请输入公司联系电话" :onInput="onInputHandler" />
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import { connect } from 'wepy-redux'
+
+  import EditInput from '../../components/editInput'
+  import { inputCompanyTel } from '../../actions/user'
+
+  @connect({
+    companyTel (state) {
+      return state.user.companyTel
+    }
+  }, {
+    inputCompanyTel
+  })
+  export default class EditCompanyFax extends wepy.page {
+    config = {
+      navigationBarTitleText: '修改公司联系电话'
+    }
+
+    components = {
+      EditInput
+    }
+
+    onInputHandler = (val) => {
+      this.methods.inputCompanyTel(val)
+    }
+  }
+</script>

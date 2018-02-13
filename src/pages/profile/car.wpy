@@ -51,6 +51,18 @@
           }
         }
       }
+      &_close {
+        position: absolute;
+        width: 40rpx;
+        height: 40rpx;
+        font-family: 'car_iconfonts';
+        font-size: 40rpx;
+        top: 10rpx;
+        right: 10rpx;
+        &:after {
+          content: '\e904'
+        }
+      }
     }
   }
   &_submit {
@@ -61,6 +73,9 @@
 
 <template>
   <view class="container car region">
+    <view class="toptip warning" wx:if="{{car.status === -1}}">资料审核中</view>
+    <view class="toptip success" wx:elif="{{car.status === 0}}">资料审核已通过</view>
+    <view class="toptip error" wx:elif="{{car.status === 1}}">资料审核未通过</view>
     <view class="region_section">
       <view class="region_title">基本信息</view>
       <view class="region_section_main">
@@ -69,7 +84,7 @@
           <view class="editable-item_content">
             <text class="editable-item_content_add" wx:if="{{car.license == null}}">添加车牌号码</text>
             <text class="editable-item_content_edit" wx:else>{{car.license}}</text>
-            <text class="editable-item_arrow"></text>
+            <text class="editable-item_arrow arrow-right" wx:if="{{type === 'add'}}"></text>
           </view>
         </view>
         <view :class="{'editable-item': true, error: submitError.number}" @tap="editNumber">
@@ -77,15 +92,15 @@
           <view class="editable-item_content">
             <text class="editable-item_content_add" wx:if="{{car.number == null}}">添加核载人数</text>
             <text class="editable-item_content_edit" wx:else>{{car.number}}人</text>
-            <text class="editable-item_arrow"></text>
+            <text class="editable-item_arrow arrow-right"></text>
           </view>
         </view>
         <view :class="{'editable-item': true, error: submitError.age}" @tap="editAge">
           <view class="editable-item_title">出厂年份</view>
           <view class="editable-item_content">
             <text class="editable-item_content_add" wx:if="{{car.age == null}}">添加出厂年份</text>
-            <text class="editable-item_content_edit" wx:else>{{car.age}}年</text>
-            <text class="editable-item_arrow"></text>
+            <text class="editable-item_content_edit" wx:else>{{ageShow}}年</text>
+            <text class="editable-item_arrow arrow-right"></text>
           </view>
         </view>
         <view :class="{'editable-item': true, error: submitError.brand}" @tap="editBrand">
@@ -93,7 +108,7 @@
           <view class="editable-item_content">
             <text class="editable-item_content_add" wx:if="{{car.brand == null}}">添加车辆品牌</text>
             <text class="editable-item_content_edit" wx:else>{{car.brand}}</text>
-            <text class="editable-item_arrow"></text>
+            <text class="editable-item_arrow arrow-right"></text>
           </view>
         </view>
         <view :class="{'editable-item': true, error: submitError.system}" @tap="editSystem">
@@ -101,7 +116,7 @@
           <view class="editable-item_content">
             <text class="editable-item_content_add" wx:if="{{car.system == null}}">添加驱动系统</text>
             <text class="editable-item_content_edit" wx:else>{{car.system}}</text>
-            <text class="editable-item_arrow"></text>
+            <text class="editable-item_arrow arrow-right"></text>
           </view>
         </view>
         <view :class="{'editable-item': true, error: submitError.company}" @tap="editCompany">
@@ -109,7 +124,7 @@
           <view class="editable-item_content">
             <text class="editable-item_content_add" wx:if="{{car.company == null}}">添加车辆所属公司</text>
             <text class="editable-item_content_edit" wx:else>{{car.company}}</text>
-            <text class="editable-item_arrow"></text>
+            <text class="editable-item_arrow arrow-right"></text>
           </view>
         </view>
         <view :class="{'editable-item': true, error: submitError.belongTo}" @tap="editBelongTo">
@@ -117,7 +132,7 @@
           <view class="editable-item_content">
             <text class="editable-item_content_add" wx:if="{{car.belongTo == null}}">添加车辆所属地</text>
             <text class="editable-item_content_edit" wx:else>{{belongToShow}}</text>
-            <text class="editable-item_arrow"></text>
+            <text class="editable-item_arrow arrow-right"></text>
           </view>
         </view>
       </view>
@@ -125,15 +140,16 @@
     <view class="region_section car_images">
       <view class="region_title">车辆照片</view>
       <view class="region_section_main">
-        <view class="car_images_list" wx:if="{{car.images.length}}">
-          <view wx:for="{{car.images}}" wx:key="{{item.path}}" class="car_images_list_item">
-            <image class="car_images_list_img" mode="aspectFill" src="{{item.path}}" />
+        <view class="car_images_list" wx:if="{{imagesShow.length}}">
+          <view wx:for="{{imagesShow}}" wx:key="{{item.path}}" class="car_images_list_item">
+            <image class="car_images_list_img" mode="aspectFill" src="{{item.path}}" @tap="previewImage" data-idx="{{index}}" />
             <view class="car_images_list_overlay uploading" wx:if="{{item.isUploading}}">
               <view class="loading"></view>
             </view>
             <view class="car_images_list_overlay error" wx:if="{{item.isUploadError}}">
               <view class="tip">上传失败</view>
             </view>
+            <view class="car_images_list_close" @tap="deleteImage" data-idx="{{index}}"></view>
           </view>
         </view>
         <view class="car_images_add">
@@ -151,8 +167,9 @@
   import wepy from 'wepy'
   import { connect } from 'wepy-redux'
 
-  import { addCarImage, deleteCarImage, updateCarImage, addCar } from '../../actions/car'
+  import { addCarImage, deleteCarImage, updateCarImage, addCar, updateCar } from '../../actions/car'
   import { API_BASE } from '../../utils/api'
+  import { isChooseTempImage } from '../../utils/validate'
   import { uploadFiles, uploadFilesInit } from '../../actions/upload'
 
   @connect({
@@ -168,7 +185,8 @@
     updateCarImage,
     uploadFiles,
     uploadFilesInit,
-    addCar
+    addCar,
+    updateCar
   })
   export default class ProfileCar extends wepy.page {
     config = {
@@ -177,6 +195,7 @@
 
     data = {
       type: 'add',
+      idx: -1,
       carInfo: {},
       tempImagesPaths: [],
       submitError: {},
@@ -189,6 +208,38 @@
           return this.car.belongTo.join('，')
         }
         return ''
+      },
+
+      imagesShow () {
+        if (this.car && this.car.images && this.car.images.length) {
+          const images = this.car.images.concat()
+          const imagesClone = images.map(image => {
+            if (typeof image === 'string') {
+              if (!isChooseTempImage(image)) {
+                return {
+                  path: `${API_BASE}${image}`
+                }
+              }
+              return {
+                path: image
+              }
+            } else {
+              if (!isChooseTempImage(image.path)) {
+                image.path = `${API_BASE}${image.path}`
+              }
+            }
+            return image
+          })
+          return imagesClone
+        }
+        return []
+      },
+
+      ageShow () {
+        if (this.car && this.car.age) {
+          return new Date(this.car.age).getFullYear()
+        }
+        return ''
       }
     }
 
@@ -199,10 +250,12 @@
         })
       },
 
-      editLicense ()      {
-        wepy.navigateTo({
-          url: '../edit/car/license'
-        })
+      editLicense () {
+        if (this.type === 'add') {
+          wepy.navigateTo({
+            url: '../edit/car/license'
+          })
+        }
       },
 
       editAge () {
@@ -254,18 +307,38 @@
             uploadFileSuccess: (index, res) => {
               const filesCopy = this.car.images.concat()
               filesCopy[len + index].isUploading = false
+              filesCopy[len + index].realPath = res
               this.methods.updateCarImage(filesCopy)
             },
             uploadFileError: (index, res) => {
               const filesCopy = this.car.images.concat()
               filesCopy[len + index].isUploading = false
               filesCopy[len + index].isUploadError = true
+              filesCopy[len + index].realPath = null
               this.methods.updateCarImage(filesCopy)
             }
           })
         } catch (err) {
           console.log(err)
         }
+      },
+
+      async previewImage (e) {
+        const idx = e.currentTarget.dataset.idx
+        const previewImageUrls = this.imagesShow.map(item => item.path)
+        try {
+          await wepy.previewImage({
+            urls: previewImageUrls,
+            current: previewImageUrls[idx]
+          })
+        } catch (err) {
+          console.log(err)
+        }
+      },
+
+      async deleteImage (e) {
+        const idx = e.currentTarget.dataset.idx
+        this.methods.deleteCarImage(idx)
       },
 
       async submitProfile () {
@@ -275,10 +348,21 @@
           return
         }
         const car = { ...this.car }
-        car.images = this.files
-        await this.methods.addCar({
-          ...car
+        car.images =  car.images.map(item => {
+          if (typeof item === 'object' && item.realPath) {
+            return item.realPath
+          }
+          return item
         })
+        if (this.type === 'add') {
+          await this.methods.addCar({
+            ...car
+          })
+        } else {
+          await this.methods.updateCar(this.idx, {
+            ...car
+          })
+        }
       }
     }
 
@@ -320,8 +404,12 @@
       }
     }
 
-    onLoad () {
+    onLoad (options) {
       this.pageHadShown = false
+      this.type = options.type
+      if (options.idx) {
+        this.idx = options.idx
+      }
     }
 
     onShow () {
