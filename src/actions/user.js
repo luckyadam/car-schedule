@@ -15,7 +15,8 @@ import {
   SET_USER_DRTVER_LICENSE_POS,
   SET_USER_DRTVER_LICENSE_OPP,
   SET_USER_WORK_LICENSE_POS,
-  SET_USER_WORK_LICENSE_OPP
+  SET_USER_WORK_LICENSE_OPP,
+  ADD_USER_CAR,
 } from '../constants/user'
 import { API_USER } from '../utils/api'
 
@@ -34,6 +35,8 @@ export const updateUserIng = createAction(UPDATE_USER)
 export const updateUserError = createAction(UPDATE_USER_ERROR)
 export const updateUserSuccess = createAction(UPDATE_USER_SUCCESS)
 export const userLoginError = createAction(USER_LOGIN_ERROR)
+
+export const addUserCar = createAction(ADD_USER_CAR, car => ({ car }))
 
 export async function fetchInitialUserInfo () {
   try {

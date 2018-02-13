@@ -14,6 +14,7 @@ import {
   CAR_IMAGES_UPDATE,
   INIT_CAR
 } from '../constants/car'
+import { addUserCar } from './user'
 import { API_CAR } from '../utils/api'
 
 export const inputCarLicense = createAction(CAR_LICENSE_INPUT, license => ({ license }))
@@ -53,10 +54,41 @@ export function addCar (car) {
           }
         })
         await wepy.hideLoading()
-        console.log(result)
+        if (result.statusCode === 200 || result.statusCode === 201) {
+          await wepy.showToast({
+            icon: 'none',
+            title: '添加车辆成功，等待审核！'
+          })
+          const carData = result.data
+          dispatch(addUserCar(carData))
+        }
       }
     } catch (err) {
       await wepy.hideLoading()
+      console.log(err)
+    }
+  }
+}
+
+export function fetchCars () {
+  return async dispatch => {
+    try {
+      const authorization = wepy.getStorageSync('authorization')
+      // 本地存在authorization，表示之前已经请求登录过
+      if (authorization) {
+        const result = await wepy.request({
+          url: API_CAR,
+          method: 'GET',
+          header: {
+            authorization: `JWT ${authorization}`
+          }
+        })
+        if (result.statusCode === 200 || result.statusCode === 201) {
+          const cars = result.data
+          dispatch(addUserCar(cars))
+        }
+      }
+    } catch (err) {
       console.log(err)
     }
   }

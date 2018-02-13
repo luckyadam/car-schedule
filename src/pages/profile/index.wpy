@@ -160,6 +160,20 @@
       <view class="region_section profile_car" wx:if="{{user.role === 'driver'}}">
         <view class="region_title">车辆信息</view>
         <view class="region_section_main">
+          <view class="profile_car_list" wx:if="{{user.cars.length}}">
+            <view class="profile_car_item" wx:for="{{user.cars}}" wx:key="{{item.license}}" @tap="viewCar" data-idx="{{index}}">
+              <view class="profile_car_top">
+                <view class="profile_car_license">{{item.license}}</view>
+                <view class="profile_car_status warning" wx:if="{{item.status === -1}}">审核中</view>
+                <view class="profile_car_status success" wx:elif="{{item.status === 0}}">审核通过</view>
+                <view class="profile_car_status error" wx:else="{{item.status === 1}}">审核未通过</view>
+              </view>
+              <view class="profile_car_bottom">
+                <view class="profile_car_desc">{{item.number}}座，{{item.brand}}客车，{{item.system}}，{{item.age}}年</view>
+                <view class="profile_car_arrow"></view>
+              </view>
+            </view>
+          </view>
           <view class="profile_car_add">
             <button class="profile_car_add_button btn-add" @tap="addCar">添加车辆</button>
           </view>
@@ -181,7 +195,7 @@
 
   import { isChooseTempImage, isEmptyStr, isValidPhoneNumber, isValidIdentifyId } from '../../utils/validate'
   import { updateUser, setUserDriverLicensePos, setUserDriverLicenseOpp, setUserWorkLicensePos, setUserWorkLicenseOpp } from '../../actions/user'
-  import { initCar } from '../../actions/car'
+  import { initCar, fetchCars } from '../../actions/car'
   import { API_BASE } from '../../utils/api'
   import { uploadFiles, uploadFilesInit } from '../../actions/upload'
 
@@ -195,6 +209,7 @@
   }, {
     updateUser,
     initCar,
+    fetchCars,
     uploadFiles,
     uploadFilesInit,
     setUserDriverLicensePos,
@@ -260,8 +275,30 @@
     }
 
     methods = {
-      addCar () {
+      async addCar () {
+        if (this.user.status === -1) {
+          await wepy.showToast({
+            icon: 'none',
+            title: '资料审核中，不能添加车辆！'
+          })
+          return
+        }
+        if (this.user.status === 1) {
+          await wepy.showToast({
+            icon: 'none',
+            title: '资料审核未通过，不能添加车辆！'
+          })
+          return
+        }
         this.methods.initCar()
+        wepy.navigateTo({
+          url: './car'
+        })
+      },
+
+      viewCar (e) {
+        const idx = e.currentTarget.dataset.idx
+        this.methods.initCar(this.user.cars[idx])
         wepy.navigateTo({
           url: './car'
         })
@@ -432,6 +469,10 @@
         params.workLicenseOpp = this.files[certificateUploadIndex['3']] || undefined
         this.methods.updateUser(params)
       }
+    }
+
+    async onLoad () {
+      await this.methods.fetchCars()
     }
   }
 </script>
