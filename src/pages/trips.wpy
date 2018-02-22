@@ -4,7 +4,11 @@
       &_hd {
         display: flex;
         background: linear-gradient(to bottom, #EB3434, #EB7234);
-        position: relative;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        z-index: 10;
         &_item {
           width: 100%;
           flex: 1;
@@ -39,6 +43,7 @@
       &_bd {
         background: #F5F5F5;
         padding: 20rpx;
+        margin-top: 80rpx;
         .trip-card {
           margin-bottom: 20rpx;
         }
