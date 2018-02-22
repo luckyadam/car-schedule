@@ -1,6 +1,47 @@
+function standardizedTime (time) {
+  if (time.indexOf('-') < 0 || time.indexOf('T') >= 0) {
+    return time
+  }
+  var timeArr = time.split(' ')
+  var dateArr = timeArr[0].split('-')
+  var year = dateArr[0]
+  var month = dateArr[1]
+  var day = dateArr[2]
+  return timeArr[1] ? month + '/' + day + '/' + year + ' ' + timeArr[1] : month + '/' + day + '/' + year
+}
+
 module.exports = {
   formatYear: function (date) {
-    date = getDate(date)
+    date = typeof date === 'string' ? getDate(standardizedTime(date)) : getDate(date)
     return date.getFullYear()
+  },
+
+  formatDate: function (date) {
+    if (date) {
+      date = typeof date === 'string' ? getDate(standardizedTime(date)) : getDate(date)
+    } else {
+      date = getDate()
+    }
+    var year = date.getFullYear()
+    var month = date.getMonth() + 1
+    if (month < 10) {
+      month = '0' + month
+    }
+    var day = date.getDate()
+    if (day < 10) {
+      day = '0' + day
+    }
+    return year + '-' + month + '-' + day
+  },
+
+  formateTime: function (date) {
+    if (date) {
+      date = typeof date === 'string' ? getDate(standardizedTime(date)) : getDate(date)
+    } else {
+      date = getDate()
+    }
+    var hour = date.getHours()
+    var minute = date.getMinutes()
+    return hour + ':' + minute
   }
 }

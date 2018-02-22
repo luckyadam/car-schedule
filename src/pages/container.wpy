@@ -1,0 +1,41 @@
+<style lang="scss">
+
+</style>
+
+<template>
+  <view class="tab">
+    <view class="tab_item tab_trip" hidden="{{currentTab !== 0}}">
+      sdsd
+    </view>
+    <view class="tab_item tab_publish" hidden="{{currentTab !== 1}}">
+      sdsd
+    </view>
+    <view class="tab_item tab_mine" hidden="{{currentTab !== 2}}">
+      sdsd
+    </view>
+    <TabBar :active.sync="currentTab" />
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import { connect } from 'wepy-redux'
+
+  import TabBar from '../components/tabBar'
+
+  export default class Container extends wepy.page {
+    config = {
+      navigationBarTitleText: 'wepy - 微信',
+      navigationBarTextStyle: 'white',
+      navigationBarBackgroundColor: '#3b3a40'
+    }
+
+    components = {
+      TabBar
+    }
+
+    data = {
+      currentTab: 0
+    }
+  }
+</script>

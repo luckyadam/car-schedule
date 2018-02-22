@@ -1,12 +1,12 @@
 import { combineReducers } from 'redux'
 import user from './user'
-import driver from './driver'
 import car from './car'
 import upload from './upload'
+import message from './message'
 
 export default combineReducers({
   user,
-  driver,
   car,
-  upload
+  upload,
+  message
 })

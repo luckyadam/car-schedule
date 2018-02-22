@@ -101,7 +101,7 @@
     <view class="toptip error" wx:elif="{{user.status === 1}}">资料审核未通过</view>
     <view class="container_inner">
       <view class="region_section profile_info">
-        <view class="region_title">个人信息</view>
+        <view class="region_title icon-me">个人信息</view>
         <view class="region_section_main">
           <view class="editable-item">
             <view class="editable-item_title">头像</view>
@@ -140,7 +140,7 @@
         </view>
       </view>
       <view class="region_section profile_certificate" wx:if="{{user.role === 'driver'}}">
-        <view class="region_title">证件信息</view>
+        <view class="region_title icon-information">证件信息</view>
         <view class="region_section_main">
           <view class="profile_certificate_line">
             <view class="profile_certificate_driver profile_certificate_item" @tap="chooseDriverLicensePos">
@@ -201,7 +201,7 @@
         </view>
       </view>
       <view class="region_section profile_car" wx:if="{{user.role === 'driver'}}">
-        <view class="region_title">车辆信息</view>
+        <view class="region_title icon-bus">车辆信息</view>
         <view class="region_section_main">
           <view class="profile_car_list" wx:if="{{user.cars.length}}">
             <view class="profile_car_item" wx:for="{{user.cars}}" wx:key="{{item.license}}" @tap="viewCar" data-idx="{{index}}">
@@ -223,7 +223,7 @@
         </view>
       </view>
       <view class="region_section profile_company" wx:elif="{{user.role === 'travel'}}">
-        <view class="region_title">公司信息</view>
+        <view class="region_title icon-information">公司信息</view>
         <view class="region_section_main">
           <view class="editable-item" @tap="editCompany">
             <view class="editable-item_title">名称</view>

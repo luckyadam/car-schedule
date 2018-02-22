@@ -23,11 +23,11 @@ form {
 
 @font-face {
   font-family: 'car_iconfonts';
-  src:  url('../assets/car_iconfonts.eot?c67orl');
-  src:  url('../assets/car_iconfonts.eot?c67orl#iefix') format('embedded-opentype'),
-    url('../assets/car_iconfonts.ttf?c67orl') format('truetype'),
-    url('../assets/car_iconfonts.woff?c67orl') format('woff'),
-    url('../assets/car_iconfonts.svg?c67orl#car_iconfonts') format('svg');
+  src:  url('https://storage.360buyimg.com/car-fonts/car_iconfonts.eot?c67orl');
+  src:  url('https://storage.360buyimg.com/car-fonts/car_iconfonts.eot?c67orl#iefix') format('embedded-opentype'),
+    url('https://storage.360buyimg.com/car-fonts/car_iconfonts.ttf?c67orl') format('truetype'),
+    url('https://storage.360buyimg.com/car-fonts/car_iconfonts.woff?c67orl') format('woff'),
+    url('https://storage.360buyimg.com/car-fonts/car_iconfonts.svg?c67orl#car_iconfonts') format('svg');
   font-weight: normal;
   font-style: normal;
 }
@@ -81,7 +81,9 @@ form {
   font-size: 28rpx;
   height: 80rpx;
   line-height: 80rpx;
+  // overflow: hidden;
   border-bottom: 1rpx dashed #DADADA;
+  align-items: center;
   &_title {
     color: #A4A4A4;
   }
@@ -97,6 +99,7 @@ form {
       vertical-align: middle;
       &.disabled {
         color: #A4A4A4;
+        background-color: transparent;
       }
     }
     &_img {
@@ -110,6 +113,9 @@ form {
     display: inline-block;
     vertical-align: middle;
     margin-left: 8rpx;
+  }
+  .uneditable {
+    color: #A4A4A4;
   }
   &.error {
     background-color: transparent;
@@ -132,6 +138,9 @@ form {
   &[disabled] {
     background: #DADADA;
     color: #FFFFFF;
+  }
+  &.cancel {
+    background: linear-gradient(to right, rgba(235,52,52,.5), rgba(235,114,52,.5));
   }
 }
 .btn-add {
@@ -189,6 +198,9 @@ form {
   text-align: center;
   color: #FFFFFF;
   font-size: 24rpx;
+  &_link {
+    border-bottom: 1rpx solid #FFFFFF;
+  }
 }
 
 .warning {
@@ -203,10 +215,126 @@ form {
   background-color: #F1BEBE;
 }
 
+.tipping {
+  background-color: #A6C2E3;
+}
+
+.disabled {
+  background-color: #DADADA;
+}
+
 .arrow-right {
   height: 15rpx;
   width: 15rpx;
   border-right: 3rpx solid #333333;
   border-bottom: 3rpx solid #333333;
   transform: rotate(-45deg);
+}
+
+.trip-card {
+  background-color: #FFFFFF;
+  padding: 20rpx;
+  border-radius: 7rpx;
+  &_hd {
+    display: flex;
+    align-items: center;
+    padding-bottom: 10rpx;
+    border-bottom: 2rpx dashed #DADADA;
+    &_time {
+      color: #A4A4A4;
+      font-size: 28rpx;
+      width: 100%;
+      flex: 1;
+    }
+    &_status {
+      width: 120rpx;
+      height: 40rpx;
+      border-radius: 20rpx;
+      font-size: 24rpx;
+      color: #FFFFFF;
+      text-align: center;
+      line-height: 40rpx;
+    }
+  }
+  &_bd {
+    padding: 10rpx 0;
+    color: #A4A4A4;
+    font-size: 28rpx;
+    &_location {
+      margin-bottom: 10rpx;
+    }
+  }
+}
+
+@mixin icon($size: 30rpx) {
+  font-family: 'car_iconfonts';
+  color: #EB3434;
+  font-size: $size;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.icon-small {
+  position: relative;
+  padding-left: 50rpx;
+  &:before {
+    @include icon()
+  }
+}
+
+.icon-clock {
+  @extend .icon-small;
+  &:before {
+    content: '\e903';
+  }
+}
+
+.icon-local {
+  @extend .icon-small;
+  &:before {
+    content: '\e90a';
+  }
+}
+
+.icon-bus {
+  @extend .icon-small;
+  &:before {
+    content: '\e901';
+  }
+}
+
+.icon-me {
+  @extend .icon-small;
+  &:before {
+    content: '\e90b';
+  }
+}
+
+.icon-information {
+  @extend .icon-small;
+  &:before {
+    content: '\e908';
+  }
+}
+
+.icon-people {
+  @extend .icon-small;
+  &:before {
+    content: '\e90c';
+  }
+}
+
+.icon-camera {
+  @extend .icon-small;
+  &:before {
+    content: '\e902';
+  }
+}
+
+.icon-guide {
+  @extend .icon-small;
+  &:before {
+    content: '\e907';
+  }
 }

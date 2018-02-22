@@ -1,0 +1,57 @@
+<style lang="scss">
+
+</style>
+
+<template>
+  <view class="trip-card" @tap="goToTrip" data-item="{{tripData}}">
+    <view class="trip-card_hd">
+      <view class="trip-card_hd_time icon-clock">{{tripData.startTime}}-{{tripData.endTime}}</view>
+      <view class="trip-card_hd_status{{tripData.type === 1 ? ' tipping': ''}}{{tripData.type === 2 ? ' warning': ''}}{{tripData.type === 3 ? ' success': ''}}{{tripData.type === 4 ? ' disabled': ''}}">{{tripData.statusShow}}</view>
+    </view>
+    <view class="trip-card_bd">
+      <view class="trip-card_bd_location icon-local">{{tripData.location}}</view>
+      <view class="trip-card_bd_car icon-bus">{{tripData.carShow}}</view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import { connect } from 'wepy-redux'
+
+  import { initMessage } from '../actions/message'
+
+  @connect({}, {
+    initMessage
+  })
+  export default class DriverTripCard extends wepy.component {
+    props = {
+      tripData: {
+        type: Object,
+        default: {
+          startTime: null,
+          endTime: null,
+          type: null,
+          status: null,
+          location: null,
+          car: null,
+          carShow: '',
+          statusShow: ''
+        }
+      }
+    }
+
+    methods = {
+      goToTrip (e) {
+        const message = { ...e.currentTarget.dataset.item }
+        delete message.carShow
+        delete message.statusShow
+        message.car = message.car.id
+        this.methods.initMessage(message)
+        wepy.navigateTo({
+          url: '../pages/trip?type=edit&from=list'
+        })
+      }
+    }
+  }
+</script>

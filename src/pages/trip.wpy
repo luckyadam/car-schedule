@@ -1,0 +1,439 @@
+<style lang="scss">
+  .trip {
+    &_description {
+      &_item {
+        line-height: 46rpx;
+        padding-top: 30rpx;
+        padding-bottom: 30rpx;
+        .editable-item_title {
+          width: 430rpx;
+        }
+      }
+    }
+    &_time {
+      .editable-item {
+        &_content {
+          display: flex;
+        }
+      }
+      &_picker,&_shower {
+        margin-left: 36rpx;
+      }
+    }
+    &_location,&_car,&_description {
+      .editable-item_title {
+        &_main {
+          color: #333333;
+          &.uneditable {
+            color: #A4A4A4;
+          }
+        }
+      }
+    }
+    &_location {
+      &_travel {
+        .editable-item {
+          &_title {
+            width: 100rpx;
+          }
+          &_content {
+            width: 100%;
+            flex: 1;
+            display: flex;
+            align-items: center;
+          }
+        }
+      }
+      &_main {
+        width: 100%;
+        flex: 1;
+      }
+    }
+    &_submit {
+      padding-top: 10rpx;
+    }
+  }
+</style>
+
+<template>
+  <view class="container trip region">
+    <wxs module="filter" src="../filter/filter.wxs"></wxs>
+    <view class="toptip tipping" wx:if="{{topTipShowStatus === 1}}">该行程已匹配成功，请按时出发</view>
+    <view class="toptip warning" wx:elif="{{topTipShowStatus === 2}}">正在为您努力匹配该行程</view>
+    <view class="toptip success" wx:elif="{{topTipShowStatus === 3}}">该行程已完成，您可以<text class="toptip_link">发布新的行程</text></view>
+    <view class="toptip disabled" wx:elif="{{topTipShowStatus === 4}}">该行程已过期，您可以<text class="toptip_link">发布新的行程</text></view>
+    <view class="container_inner">
+      <view class="region_section trip_time">
+        <view class="region_title icon-clock">空置时间</view>
+        <view class="region_section_main">
+          <view class="editable-item">
+            <view class="editable-item_title">起</view>
+            <view class="editable-item_content" wx:if="{{type === 'new'}}">
+              <picker class="trip_time_picker" mode="date" value="{{startTimeDateShow}}" @change="onStartTimeDateChange">
+                <view>{{startTimeDateShow}}</view>
+              </picker>
+              <picker class="trip_time_picker" mode="time" value="{{startTimeTimeShow}}" @change="onStartTimeTimeChange">
+                <view>{{startTimeTimeShow}}</view>
+              </picker>
+            </view>
+            <view class="editable-item_content uneditable" wx:else>
+              <view class="trip_time_shower">{{startTimeDateShow}}</view>
+              <view class="trip_time_shower">{{startTimeTimeShow}}</view>
+            </view>
+          </view>
+          <view class="editable-item">
+            <view class="editable-item_title">止</view>
+            <view class="editable-item_content" wx:if="{{type === 'new'}}">
+              <picker class="trip_time_picker" mode="date" value="{{endTimeDateShow}}" @change="onEndTimeDateChange">
+                <view>{{endTimeDateShow}}</view>
+              </picker>
+              <picker class="trip_time_picker" mode="time" value="{{endTimeTimeShow}}" @change="onEndTimeTimeChange">
+                <view>{{endTimeTimeShow}}</view>
+              </picker>
+            </view>
+            <view class="editable-item_content uneditable" wx:else>
+              <view class="trip_time_shower">{{endTimeDateShow}}</view>
+              <view class="trip_time_shower">{{endTimeTimeShow}}</view>
+            </view>
+          </view>
+        </view>
+      </view>
+      <view class="region_section trip_location" wx:if="{{user.role === ROLE.DRIVER}}">
+        <view class="region_title icon-local">空置地点</view>
+        <view class="region_section_main">
+          <view class="editable-item" @tap="chooseLocation">
+            <view class="editable-item_title"><text wx:if="{{!message.location}}">正在获取当前位置...</text><text wx:else :class="{'editable-item_title_main': true, uneditable: type !== 'new'}">{{message.location}}</text></view>
+            <view class="editable-item_content">
+              <view class="trip_arrow arrow-right" wx:if="{{type === 'new'}}"></view>
+            </view>
+          </view>
+        </view>
+      </view>
+      <view class="region_section trip_location trip_location_travel" wx:else>
+        <view class="region_title icon-local">接送地点</view>
+        <view class="region_section_main">
+          <view class="editable-item" @tap="chooseLocation">
+            <view class="editable-item_title">接</view>
+            <view class="editable-item_content">
+              <view class="trip_location_main"><text wx:if="{{!message.location}}">正在获取当前位置...</text><text wx:else :class="{'editable-item_content_main': true, uneditable: type !== 'new'}">{{message.location}}</text></view>
+              <view class="trip_arrow arrow-right" wx:if="{{type === 'new'}}"></view>
+            </view>
+          </view>
+          <view class="editable-item" @tap="chooseLocationSend">
+            <view class="editable-item_title">送</view>
+            <view class="editable-item_content">
+              <view class="trip_location_main"><text wx:if="{{!message.locationSend}}">正在获取当前位置...</text><text wx:else :class="{'editable-item_content_main': true, uneditable: type !== 'new'}">{{message.locationSend}}</text></view>
+              <view class="trip_arrow arrow-right" wx:if="{{type === 'new'}}"></view>
+            </view>
+          </view>
+        </view>
+      </view>
+      <view class="region_section trip_car" wx:if="{{user.role === ROLE.DRIVER}}">
+        <view class="region_title icon-bus">空置车辆</view>
+        <view class="region_section_main">
+          <picker @change="carPickerChange" value="{{carPickerIndex}}" range="{{carsList}}" wx:if="{{type === 'new'}}">
+            <view class="editable-item">
+              <view class="editable-item_title"><text wx:if="{{!message.car}}">请选择车辆</text><text wx:else class="editable-item_title_main">{{carShow}}</text></view>
+              <view class="editable-item_content">
+                <view class="trip_arrow arrow-right"></view>
+              </view>
+            </view>
+          </picker>
+          <view class="editable-item" wx:else>
+            <view class="editable-item_title"><text>{{carShow}}</text></view>
+            <view class="editable-item_content">
+            </view>
+          </view>
+        </view>
+      </view>
+      <view class="region_section trip_number" wx:if="{{user.role === ROLE.TRAVEL}}">
+        <view class="region_title icon-people">出行人数</view>
+        <view class="region_section_main">
+          <view class="editable-item">
+            <view class="editable-item_title"><text wx:if="{{!message.number}}">请填写出行人数</text><text wx:else class="editable-item_title_main">{{message.number}}</text></view>
+            <view class="editable-item_content">
+              <view class="trip_arrow arrow-right"></view>
+            </view>
+          </view>
+        </view>
+      </view>
+      <view class="region_section trip_guidename" wx:if="{{user.role === ROLE.TRAVEL}}">
+        <view class="region_title icon-guide">导游姓名</view>
+        <view class="region_section_main">
+          <view class="editable-item">
+            <view class="editable-item_title"><text wx:if="{{!message.guideName}}">请填写导游姓名</text><text wx:else class="editable-item_title_main">{{message.guideName}}</text></view>
+            <view class="editable-item_content">
+              <view class="trip_arrow arrow-right"></view>
+            </view>
+          </view>
+        </view>
+      </view>
+      <view class="region_section trip_guidtel" wx:if="{{user.role === ROLE.TRAVEL}}">
+        <view class="region_title icon-guide">导游电话</view>
+        <view class="region_section_main">
+          <view class="editable-item">
+            <view class="editable-item_title"><text wx:if="{{!message.guideTelphone}}">请填写导游电话</text><text wx:else class="editable-item_title_main">{{message.guideTelphone}}</text></view>
+            <view class="editable-item_content">
+              <view class="trip_arrow arrow-right"></view>
+            </view>
+          </view>
+        </view>
+      </view>
+      <view class="region_section trip_description">
+        <view class="region_title icon-information">行程备注</view>
+        <view class="region_section_main">
+          <view class="editable-item trip_description_item" @tap="editDescription">
+            <view class="editable-item_title"><text wx:if="{{!message.description}}">请填写您需要备注的信息，如注意事项等（选填）</text><text wx:else :class="{'editable-item_title_main': true, uneditable: type !== 'new'}">{{message.description}}</text></view>
+            <view class="editable-item_content">
+              <view class="trip_arrow arrow-right" wx:if="{{type === 'new'}}"></view>
+            </view>
+          </view>
+        </view>
+      </view>
+      <view class="trip_submit">
+        <button class="btn trip_submit_btn" @tap="publishTrip" wx:if="{{type === 'new'}}">确认发布</button>
+        <button class="btn trip_submit_btn cancel" @tap="cancelTrip" wx:elif="{{message.type === 2}}">取消行程</button>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import { connect } from 'wepy-redux'
+
+  import {
+    initMessage,
+    setMessageLocation,
+    setMessageLocationMap,
+    setMessageLocationSend,
+    setMessageLocationSendMap,
+    setMessageCar,
+    setMessageStartTime,
+    setMessageEndTime,
+    publishMessage,
+    cancelMessage
+  } from '../actions/message'
+
+  import QQMapWX from '../utils/qqmap-wx-jssdk'
+  import { formatDate, formatTime, standardizedTime } from '../utils/format'
+  import { ROLE } from '../constants/user'
+
+  @connect({
+    message (state) {
+      return state.message
+    },
+    user (state) {
+      return state.user
+    }
+  }, {
+    initMessage,
+    setMessageLocation,
+    setMessageLocationMap,
+    setMessageLocationSend,
+    setMessageLocationSendMap,
+    setMessageCar,
+    setMessageStartTime,
+    setMessageEndTime,
+    publishMessage,
+    cancelMessage
+  })
+  export default class Trip extends wepy.page {
+    data = {
+      carPickerIndex: 0,
+      type: 'new',
+      ROLE
+    }
+
+    computed = {
+      topTipShowStatus () {
+        if (this.message) {
+          if (this.message.endTime && new Date(this.message.endTime).getTime() < new Date().getTime() && !this.message.status) {
+            return 4
+          }
+          return this.message.type
+        }
+        return -1
+      },
+
+      startTimeDateShow () {
+        if (this.message) {
+          return formatDate(this.message.startTime)
+        }
+
+        return formatDate()
+      },
+
+      startTimeTimeShow () {
+        if (this.message) {
+          return formatTime(this.message.startTime)
+        }
+        return formatTime()
+      },
+
+      endTimeDateShow () {
+        const message = this.message
+        if (message) {
+          if (!message.endTime) {
+            let startTimeStamp = message.startTime ? new Date(message.startTime).getTime() : new Date().getTime()
+            return formatDate(startTimeStamp + 86400000)
+          }
+          return formatDate(message.endTime)
+        }
+
+        return formatDate(new Date().getTime() + 86400000)
+      },
+
+      endTimeTimeShow () {
+        if (this.message) {
+          return formatTime(this.message.endTime)
+        }
+        return formatTime()
+      },
+
+      carsList () {
+        if (this.user && this.user.cars.length) {
+          return this.user.cars.map(item => `${item.number}座，${item.brand}，${item.license}`)
+        }
+        return []
+      },
+
+      carShow () {
+        if (this.message && this.message.car && this.user && this.user.cars.length) {
+          const carId = this.message.car
+          let car
+          this.user.cars.forEach(item => {
+            if (item.id === carId) {
+              car = item
+            }
+          })
+          return `${car.number}座，${car.brand}，${car.license}`
+        }
+        return null
+      }
+    }
+
+    methods = {
+      async chooseLocation () {
+        if (this.type !== 'new') {
+          return
+        }
+        const locationMap = this.message.locationMap
+        if (locationMap) {
+          const chooseResult = await wepy.chooseLocation()
+          this.methods.setMessageLocationMap(Object.assign(this.message.locationMap, {
+            latitude: chooseResult.latitude,
+            longitude: chooseResult.longitude
+          }))
+          this.qqMapWX.reverseGeocoder({
+            location: {
+              latitude: chooseResult.latitude,
+              longitude: chooseResult.longitude
+            },
+            success: (res) => {
+              const { formatted_addresses, address, address_component } = res.result
+              this.methods.setMessageLocation(formatted_addresses.recommend)
+            },
+            fail (res) {
+              console.log(res)
+            }
+          })
+        }
+      },
+
+      carPickerChange (e) {
+        const idx = parseInt(e.detail.value, 10)
+        this.methods.setMessageCar(this.user.cars[idx].id)
+      },
+
+      editDescription () {
+        if (this.type !== 'new') {
+          return
+        }
+        wepy.navigateTo({
+          url: './edit/publish/description'
+        })
+      },
+
+      onStartTimeDateChange (e) {
+        const startTimeDate = e.detail.value
+        const startTimeTime = this.startTimeTimeShow
+        this.methods.setMessageStartTime(new Date(standardizedTime(`${startTimeDate} ${startTimeTime}`)).toString())
+      },
+
+      onStartTimeTimeChange (e) {
+        const startTimeDate = this.startTimeDateShow
+        const startTimeTime = e.detail.value
+        this.methods.setMessageStartTime(new Date(standardizedTime(`${startTimeDate} ${startTimeTime}`)).toString())
+      },
+
+      onEndTimeDateChange (e) {
+        const endTimeDate = e.detail.value
+        const endTimeTime = this.endTimeTimeShow
+        this.methods.setMessageEndTime(new Date(standardizedTime(`${endTimeDate} ${endTimeTime}`)).toString())
+      },
+
+      onEndTimeTimeChange (e) {
+        const endTimeDate = this.endTimeDateShow
+        const endTimeTime = e.detail.value
+        this.methods.setMessageEndTime(new Date(standardizedTime(`${endTimeDate} ${endTimeTime}`)).toString())
+      },
+
+      async publishTrip () {
+        if (!this.message.startTime) {
+          this.methods.setMessageStartTime(new Date(standardizedTime(`${this.startTimeDateShow} ${this.startTimeTimeShow}`)).toString())
+        }
+        if (!this.message.endTime) {
+          this.methods.setMessageEndTime(new Date(standardizedTime(`${this.endTimeDateShow} ${this.endTimeTimeShow}`)).toString())
+        }
+        await this.methods.publishMessage(this.user.role, { ...this.message })
+        if (!this.message.isError) {
+          this.type = 'edit'
+          this.$apply()
+        }
+      },
+
+      cancelTrip () {
+        this.methods.cancelMessage(this.user.role, {
+          messageId: this.message.id,
+          from: this.from
+        })
+      }
+    }
+
+    async onLoad (options) {
+      const { type, from } = options
+      this.type = type
+      this.from = from
+      this.qqMapWX = new QQMapWX({
+        key: 'YGWBZ-2726P-4TMDD-LERQY-RQE3O-ZCBFV'
+      })
+      if (type === 'new') {
+        await wepy.setNavigationBarTitle({ title: '发布空置信息' })
+        const location = await wepy.getLocation({ type: 'gcj02' })
+        this.methods.setMessageLocationMap(location)
+        if (this.user.role === ROLE.TRAVEL) {
+          this.methods.setMessageLocationSendMap(location)
+        }
+        this.qqMapWX.reverseGeocoder({
+          location: {
+            latitude: location.latitude,
+            longitude: location.longitude
+          },
+          success: (res) => {
+            const { formatted_addresses, address, address_component } = res.result
+            this.methods.setMessageLocation(formatted_addresses.recommend)
+            if (this.user.role === ROLE.TRAVEL) {
+              this.methods.setMessageLocationSend(formatted_addresses.recommend)
+            }
+          },
+          fail (res) {
+            console.log(res)
+          }
+        })
+      } else {
+        await wepy.setNavigationBarTitle({ title: '修改空置信息' })
+      }
+    }
+  }
+</script>

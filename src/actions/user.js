@@ -21,7 +21,10 @@ import {
   SET_USER_WORK_LICENSE_POS,
   SET_USER_WORK_LICENSE_OPP,
   ADD_USER_CAR,
-  UPDATE_USER_CAR
+  UPDATE_USER_CAR,
+  ADD_USER_MESSAGE,
+  UPDATE_USER_MESSAGE,
+  INIT_USER_MESSAGE
 } from '../constants/user'
 import { API_USER } from '../utils/api'
 
@@ -47,6 +50,10 @@ export const userLoginError = createAction(USER_LOGIN_ERROR)
 
 export const addUserCar = createAction(ADD_USER_CAR, car => ({ car }))
 export const updateUserCar = createAction(UPDATE_USER_CAR, (index, car) => ({ index, car }))
+
+export const addUserMessage = createAction(ADD_USER_MESSAGE, message => ({ message }))
+export const updateUserMessage = createAction(UPDATE_USER_MESSAGE, (index, message) => ({ index, message }))
+export const initUserMessage = createAction(INIT_USER_MESSAGE)
 
 export async function fetchInitialUserInfo () {
   try {

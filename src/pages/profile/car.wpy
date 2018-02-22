@@ -77,7 +77,7 @@
     <view class="toptip success" wx:elif="{{car.status === 0}}">资料审核已通过</view>
     <view class="toptip error" wx:elif="{{car.status === 1}}">资料审核未通过</view>
     <view class="region_section">
-      <view class="region_title">基本信息</view>
+      <view class="region_title icon-information">基本信息</view>
       <view class="region_section_main">
         <view :class="{'editable-item': true, error: submitError.license}" @tap="editLicense">
           <view class="editable-item_title">车牌号码</view>
@@ -138,7 +138,7 @@
       </view>
     </view>
     <view class="region_section car_images">
-      <view class="region_title">车辆照片</view>
+      <view class="region_title icon-camera">车辆照片</view>
       <view class="region_section_main">
         <view class="car_images_list" wx:if="{{imagesShow.length}}">
           <view wx:for="{{imagesShow}}" wx:key="{{item.path}}" class="car_images_list_item">

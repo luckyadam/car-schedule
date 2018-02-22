@@ -1,0 +1,47 @@
+<style lang="scss">
+  .description {
+    &_area {
+      box-sizing: border-box;
+      width: 100%;
+      height: 200rpx;
+      background: #FFFFFF;
+      border-bottom: 1px solid #DADADA;
+      font-size: 28rpx;
+      padding: 30rpx;
+    }
+  }
+</style>
+
+<template>
+  <view class="container description">
+    <view>
+      <textarea class="description_area" maxlength="-1" auto-focus placeholder="请输入行程备注" value="{{description}}" @input="onInputHandler" />
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import { connect } from 'wepy-redux'
+
+  import { setMessageDescription } from '../../../actions/message'
+
+  @connect({
+    description (state) {
+      return state.message.description
+    }
+  }, {
+    setMessageDescription
+  })
+  export default class EditMessageDescription extends wepy.page {
+    config = {
+      navigationBarTitleText: '修改行程备注'
+    }
+
+    methods = {
+      onInputHandler (e) {
+        this.methods.setMessageDescription(e.detail.value)
+      }
+    }
+  }
+</script>

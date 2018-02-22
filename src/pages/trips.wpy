@@ -1,0 +1,275 @@
+<style lang="scss">
+  .trips {
+    &_tab {
+      &_hd {
+        display: flex;
+        background: linear-gradient(to bottom, #EB3434, #EB7234);
+        position: relative;
+        &_item {
+          width: 100%;
+          flex: 1;
+          text-align: center;
+          color: rgba(255,255,255,.8);
+          height: 80rpx;
+          line-height: 80rpx;
+          font-size: 24rpx;
+          &.active {
+            color: #FFFFFF;
+          }
+        }
+        &_indicator {
+          width: 25%;
+          height: 6rpx;
+          bottom: 0;
+          left: 0;
+          background: #FFFFFF;
+          position: absolute;
+          transition: transform .2s ease-in-out;
+          &_active1 {
+            transform: translateX(100%);
+          }
+          &_active2 {
+            transform: translateX(200%);
+          }
+          &_active3 {
+            transform: translateX(300%);
+          }
+        }
+      }
+      &_bd {
+        background: #F5F5F5;
+        padding: 20rpx;
+        .trip-card {
+          margin-bottom: 20rpx;
+        }
+      }
+      &_title {
+        font-size: 26rpx;
+        color: #2D3036;
+        text-align: center;
+        padding: 15rpx 0;
+        &:before,&:after {
+          content: '';
+          display: inline-block;
+          width: 84rpx;
+          height: 14rpx;
+          background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA8AAAAQCAYAAAG+URWSAAAAAXNSR0IArs4c6QAAAYlJREFUKBVjYEAGhmbWJmC+g4MDD7IEhP3//39GW1tbUTDP0MQyElMJUMTMzE4RLqFnZNGAzKmHc/QNLYrgHCCDGZkDY6elpbH+/s9ap6+rdRomBqdBZhsbWynDBWAMoESVvpGlO4wPp4ESvkB7M+ACxDIMjC0DGLEp1jcyT2T4z4gZWED7A4FWlWNoMjS0stM3NK/FkNA3tdZGCS6YCnNzBxlsEkzAWBL4/vtHirqybDNMMZwG6QAq4IALIDGwegVJHoUJMuT9xx8J/xkZJIASZ7FGFIoOICc0NJSZnYs/4tuPP6CA+yfEzzH95PEjlwjabGRk6fGH4b8F0IxfnKwci06ePPAEZjhOzaB0+/fPXx+gwv+MzMxrLp4+ehWmCUZjaAYlnT///kb9Z2RkZmFg3nvu3NHDMMXoNFwzKPl/+vI7CRgYnIwMjBcvnD22gZGR8T+6BmQ+o5ubG/fL159AmoQZGf4/NDfRXzJr1qzfyIpwsRlB2enX39/6Arzsew4cOPAFl0Js4gA6DW0z5rpEDAAAAABJRU5ErkJggg==') 0 0 repeat-x;
+          background-size: 15rpx;
+        }
+        &:before {
+          margin-right: 20rpx;
+        }
+        &:after {
+          margin-left: 20rpx;
+        }
+      }
+    }
+  }
+</style>
+
+<template>
+  <view class="container trips">
+    <view class="trips_tab">
+      <view class="trips_tab_hd">
+        <view :class="{trips_tab_hd_item: true, active: tabActive === 0}" @tap="changeTab(0)">全部</view>
+        <view :class="{trips_tab_hd_item: true, active: tabActive === 1}" @tap="changeTab(1)">待出发</view>
+        <view :class="{trips_tab_hd_item: true, active: tabActive === 2}" @tap="changeTab(2)">待匹配</view>
+        <view :class="{trips_tab_hd_item: true, active: tabActive === 3}" @tap="changeTab(3)">已完成</view>
+        <view :class="{trips_tab_hd_indicator: true, trips_tab_hd_indicator_active1: tabActive === 1, trips_tab_hd_indicator_active2: tabActive === 2, trips_tab_hd_indicator_active3: tabActive === 3}"></view>
+      </view>
+      <view class="trips_tab_bd">
+        <view class="trips_tab_bd_item trips_tab_all" hidden="{{tabActive !== 0}}">
+          <view class="trips_tab trips_tab_all_newest" wx:if="{{allTrips.newestWillDepart}}">
+            <view class="trips_tab_title">即将出发</view>
+            <DriverTripCard tripData="{{allTrips.newestWillDepart}}" />
+          </view>
+          <view class="trips_tab trips_tab_all_others" wx:if="{{allTrips.others && allTrips.others.length}}">
+            <view class="trips_tab_title">其他行程</view>
+            <repeat for="{{allTrips.others}}" key="1_{{item.id}}" index="index" item="item">
+              <DriverTripCard :tripData="item" />
+            </repeat>
+          </view>
+        </view>
+        <view class="trips_tab_bd_item" hidden="{{tabActive !== 1}}">
+          <view wx:if="{{willDepartTrips.length}}">
+            <repeat for="{{willDepartTrips}}" key="2_{{item.id}}" index="index" item="item">
+              <DriverTripCard :tripData="item" />
+            </repeat>
+          </view>
+        </view>
+        <view class="trips_tab_bd_item" hidden="{{tabActive !== 2}}">
+          <view wx:if="{{waitMatchTrips.length}}">
+            <repeat for="{{waitMatchTrips}}" key="3_{{item.id}}" index="index" item="item">
+              <DriverTripCard :tripData="item" />
+            </repeat>
+          </view>
+        </view>
+        <view class="trips_tab_bd_item" hidden="{{tabActive !== 3}}">
+          <view wx:if="{{doneTrips.length}}">
+            <repeat for="{{doneTrips}}" key="4_{{item.id}}" index="index" item="item">
+              <DriverTripCard :tripData="item" />
+            </repeat>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import { connect } from 'wepy-redux'
+
+  import DriverTripCard from '../components/driverTripCard'
+  import { fetchMessages } from '../actions/message'
+  import { initUserMessage } from '../actions/user'
+
+  import { formatDate, formatTime } from '../utils/format'
+
+  @connect({
+    role (state) {
+      return state.user.role
+    },
+    messages (state) {
+      return state.user.messages
+    }
+  }, {
+    fetchMessages,
+    initUserMessage
+  })
+  export default class Trips extends wepy.page {
+    config = {
+      navigationBarTitleText: '我的行程',
+      enablePullDownRefresh: true
+    }
+
+    components = {
+      DriverTripCard
+    }
+
+    data = {
+      tabActive: 0
+    }
+
+    computed = {
+      allTrips () {
+        if (this.messages && this.messages.length) {
+          let newestWillDepart = null
+          let newestWillDepartIndex = -1
+          let messages = this.messages.concat()
+          messages = messages.map((item, index) => {
+            if (item.endTime && new Date(item.endTime).getTime() < new Date().getTime() && !item.status) {
+              item.type = 4
+            }
+            item.startTime = `${formatDate(item.startTime)} ${formatTime(item.startTime)}`
+            item.endTime = `${formatDate(item.endTime)} ${formatTime(item.endTime)}`
+            if (item.type === 1) {
+              item.statusShow = '待出发'
+            } else if (item.type === 2) {
+              item.statusShow = '待匹配'
+            } else if (item.type === 3) {
+              item.statusShow = '已完成'
+            } else if (item.type === 4) {
+              item.statusShow = '已过期'
+            }
+            if (item.car) {
+              item.carShow = `${item.car.number}座，${item.car.brand}`
+            }
+            if (item.type === 1) {
+              newestWillDepartIndex = index
+              newestWillDepart = item
+            }
+            return item
+          })
+          if (newestWillDepartIndex >= 0) {
+            messages.splice(newestWillDepartIndex, 1)
+          }
+          return {
+            newestWillDepart,
+            others: messages
+          }
+        }
+        return {
+          newestWillDepart: null,
+          others: []
+        }
+      },
+
+      willDepartTrips () {
+        if (this.messages && this.messages.length) {
+          const messages = this.messages.concat()
+          const willDepart = messages.map((item, index) => {
+            if (item.type === 1) {
+              item.statusShow = '待出发'
+              if (item.car) {
+                item.carShow = `${item.car.number}座，${item.car.brand}`
+              }
+              return item
+            }
+          }).filter(item => item)
+          return willDepart
+        }
+        return []
+      },
+
+      waitMatchTrips () {
+        if (this.messages && this.messages.length) {
+          const messages = this.messages.concat()
+          const waitMatch = messages.map((item, index) => {
+            if (item.type === 2) {
+              item.statusShow = '待匹配'
+              if (item.car) {
+                item.carShow = `${item.car.number}座，${item.car.brand}`
+              }
+              return item
+            }
+          }).filter(item => item)
+          return waitMatch
+        }
+        return []
+      },
+
+      doneTrips () {
+        if (this.messages && this.messages.length) {
+          const messages = this.messages.concat()
+          const done = messages.map((item, index) => {
+            if (item.type === 3) {
+              item.statusShow = '已完成'
+              if (item.car) {
+                item.carShow = `${item.car.number}座，${item.car.brand}`
+              }
+              return item
+            }
+          }).filter(item => item)
+          return done
+        }
+        return []
+      }
+    }
+
+    methods = {
+      changeTab (idx) {
+        this.tabActive = +idx
+      }
+    }
+
+    onLoad () {
+      this.methods.initUserMessage()
+      this.methods.fetchMessages(this.role, {
+        page: 0,
+        size: 20,
+        type: 0
+      })
+    }
+
+    async onPullDownRefresh () {
+      this.methods.initUserMessage()
+      await this.methods.fetchMessages(this.role, {
+        page: 0,
+        size: 20,
+        type: 0
+      })
+      wepy.stopPullDownRefresh()
+    }
+  }
+</script>

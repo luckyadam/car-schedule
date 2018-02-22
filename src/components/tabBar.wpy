@@ -37,15 +37,15 @@
 
 <template>
   <view class="tabbar">
-    <view class="tabbar_item tabbar_schedule{{active == 0 ? ' active' : ''}}" @tap="change(0)">
+    <view class="tabbar_item tabbar_schedule{{active == 0 ? ' active' : ''}}" @tap="goToList">
       <image class="tabbar_item_icon" src="../assets/schedule.svg"></image>
       <text class="tabbar_item_title">行程</text>
     </view>
-    <view class="tabbar_item tabbar_add{{active == 1 ? ' active' : ''}}" @tap="change(1)">
+    <view class="tabbar_item tabbar_add{{active == 1 ? ' active' : ''}}" @tap="goToPublish">
       <image class="tabbar_item_icon" src="../assets/add.svg"></image>
       <text class="tabbar_item_title">发布</text>
     </view>
-    <view class="tabbar_item tabbar_me{{active == 2 ? ' active' : ''}}" @tap="change(2)">
+    <view class="tabbar_item tabbar_me{{active == 2 ? ' active' : ''}}" @tap="goToMine">
       <image class="tabbar_item_icon" src="../assets/me.svg"></image>
       <text class="tabbar_item_title">我</text>
     </view>
@@ -54,7 +54,13 @@
 
 <script>
   import wepy from 'wepy'
+  import { connect } from 'wepy-redux'
 
+  import { initMessage } from '../actions/message'
+
+  @connect({}, {
+    initMessage
+  })
   export default class TabBar extends wepy.component {
     props = {
       active: {
@@ -66,8 +72,23 @@
     }
 
     methods = {
-      change (idx) {
-        this.active = +idx
+      goToList () {
+        this.active = 0
+        wepy.navigateTo({
+          url: '../trips'
+        })
+      },
+
+      goToPublish () {
+        this.active = 1
+        this.methods.initMessage()
+        wepy.navigateTo({
+          url: '../trip?type=new&from=add'
+        })
+      },
+
+      goToMine () {
+        this.active = 2
       }
     };
 

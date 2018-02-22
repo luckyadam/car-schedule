@@ -19,7 +19,10 @@ import {
   SET_USER_WORK_LICENSE_POS,
   SET_USER_WORK_LICENSE_OPP,
   ADD_USER_CAR,
-  UPDATE_USER_CAR
+  UPDATE_USER_CAR,
+  ADD_USER_MESSAGE,
+  UPDATE_USER_MESSAGE,
+  INIT_USER_MESSAGE
 } from '../constants/user'
 
 export default handleActions({
@@ -209,6 +212,38 @@ export default handleActions({
       ...state,
       cars
     }
+  },
+
+  [ADD_USER_MESSAGE] (state, action) {
+    let messages = state.messages.concat()
+    const message = action.payload.message
+    if (Array.isArray(message)) {
+      messages = messages.concat(message)
+    } else {
+      messages.push(action.payload.message)
+    }
+    return {
+      ...state,
+      messages
+    }
+  },
+
+  [UPDATE_USER_MESSAGE] (state, action) {
+    let messages = state.messages.concat()
+    const index = action.payload.index
+    const message = action.payload.message
+    messages.splice(index, 1, message)
+    return {
+      ...state,
+      messages
+    }
+  },
+
+  [INIT_USER_MESSAGE] (state) {
+    return {
+      ...state,
+      messages: []
+    }
   }
 }, {
   isFetching: false,
@@ -230,6 +265,7 @@ export default handleActions({
   status: 0,
   auditOpinion: null,
   cars: [],
+  messages: [],
   errorObj: null,
   loginError: false
 })
