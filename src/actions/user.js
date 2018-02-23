@@ -26,7 +26,8 @@ import {
   UPDATE_USER_CAR,
   ADD_USER_MESSAGE,
   UPDATE_USER_MESSAGE,
-  INIT_USER_MESSAGE
+  INIT_USER_MESSAGE,
+  SET_IS_NEW
 } from '../constants/user'
 import { API_USER } from '../utils/api'
 import { isEmptyObject } from '../utils'
@@ -59,6 +60,7 @@ export const updateUserCar = createAction(UPDATE_USER_CAR, (index, car) => ({ in
 export const addUserMessage = createAction(ADD_USER_MESSAGE, message => ({ message }))
 export const updateUserMessage = createAction(UPDATE_USER_MESSAGE, (index, message) => ({ index, message }))
 export const initUserMessage = createAction(INIT_USER_MESSAGE)
+export const setIsNew = createAction(SET_IS_NEW, isNew => ({ isNew }))
 
 export async function checkSettingStatus () {
   const setting = await wepy.getSetting()
@@ -117,6 +119,7 @@ export function fetchUser () {
           }
         }).then(userData => userData.data)
       } else { // 请求微信登录获取相关信息
+        dispatch(setIsNew(true))
         userInfo = await fetchInitialUserInfo()
       }
       await wepy.hideLoading()
@@ -154,6 +157,7 @@ export function updateUser (user) {
         await wepy.hideLoading()
         if (userInfo.statusCode === 200 || userInfo.statusCode === 201) {
           dispatch(updateUserSuccess(userInfo))
+          dispatch(setIsNew(false))
           await wepy.showToast({
             title: '提交审核成功',
             icon: 'success'

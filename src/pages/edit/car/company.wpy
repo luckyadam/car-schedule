@@ -6,7 +6,7 @@
 
 <template>
   <view class="container company">
-    <EditInput type="number" :val.sync="company" placeholder="请输入车辆所属公司" :onInput="onInputHandler" />
+    <EditInput type="text" :val.sync="company" placeholder="请输入车辆所属公司" :onInput="onInputHandler" />
   </view>
 </template>
 

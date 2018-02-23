@@ -62,7 +62,9 @@
         const message = { ...e.currentTarget.dataset.item }
         delete message.carShow
         delete message.statusShow
-        message.car = message.car.id
+        if (message.car) {
+          message.car = message.car.id
+        }
         this.methods.initMessage(message)
         this.methods.setTripInfo({
           type: 'edit',

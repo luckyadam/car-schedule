@@ -6,6 +6,7 @@
   import wepy from 'wepy'
   import { connect } from 'wepy-redux'
   import { fetchUser, checkSettingStatus } from '../actions/user'
+  import { ROLE } from '../constants/user'
 
   @connect({
     user (state) {
@@ -21,12 +22,12 @@
       if (user.isError && user.errorObj && user.errorObj.type === 'wx') {
         await checkSettingStatus()
       } else {
-        if (user.role) {
-          wepy.redirectTo({
+        if (user.role === ROLE.DRIVER || user.role === ROLE.TRAVEL) {
+          await wepy.redirectTo({
             url: './container?tab=2'
           })
         } else {
-          wepy.redirectTo({
+          await wepy.redirectTo({
             url: './choose'
           })
         }

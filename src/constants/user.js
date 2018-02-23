@@ -23,6 +23,7 @@ export const UPDATE_USER_CAR = 'UPDATE_USER_CAR'
 export const ADD_USER_MESSAGE = 'ADD_USER_MESSAGE'
 export const UPDATE_USER_MESSAGE = 'UPDATE_USER_MESSAGE'
 export const INIT_USER_MESSAGE = 'INIT_USER_MESSAGE'
+export const SET_IS_NEW = 'SET_IS_NEW'
 
 export const ROLE = {
   DRIVER: 'driver',

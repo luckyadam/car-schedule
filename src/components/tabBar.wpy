@@ -26,12 +26,12 @@
       font-size: 40rpx;
       &_trips {
         &:before {
-          content: '\e900';
+          content: '\e909';
         }
       }
       &_trip {
         &:before {
-          content: '\e909';
+          content: '\e900';
         }
       }
       &_me {
@@ -49,15 +49,15 @@
 
 <template>
   <view class="tabbar">
-    <view class="tabbar_item tabbar_schedule{{active == 0 ? ' active' : ''}}" @tap="goToList">
+    <view class="tabbar_item tabbar_schedule{{active === 0 ? ' active' : ''}}" @tap="goToList">
       <view class="tabbar_item_icon tabbar_item_icon_trips"></view>
       <text class="tabbar_item_title">行程</text>
     </view>
-    <view class="tabbar_item tabbar_add{{active == 1 ? ' active' : ''}}" @tap="goToPublish">
+    <view class="tabbar_item tabbar_add{{active === 1 ? ' active' : ''}}" @tap="goToPublish">
       <view class="tabbar_item_icon tabbar_item_icon_trip"></view>
       <text class="tabbar_item_title">发布</text>
     </view>
-    <view class="tabbar_item tabbar_me{{active == 2 ? ' active' : ''}}" @tap="goToMine">
+    <view class="tabbar_item tabbar_me{{active === 2 ? ' active' : ''}}" @tap="goToMine">
       <view class="tabbar_item_icon tabbar_item_icon_me"></view>
       <text class="tabbar_item_title">我</text>
     </view>
@@ -71,7 +71,11 @@
   import { initMessage } from '../actions/message'
   import { setTripInfo } from '../actions/trip'
 
-  @connect({}, {
+  @connect({
+    user (state) {
+      return state.user
+    }
+  }, {
     initMessage,
     setTripInfo
   })
@@ -83,12 +87,26 @@
     }
 
     methods = {
-      goToList () {
+      async goToList () {
+        if (this.user.status !== 0) {
+          await wepy.showToast({
+            icon: 'none',
+            title: '您的账号尚未审核通过'
+          })
+          return
+        }
         this.active = 0
         this.$emit('switchTab', 0)
       },
 
-      goToPublish () {
+      async goToPublish () {
+        if (this.user.status !== 0) {
+          await wepy.showToast({
+            icon: 'none',
+            title: '您的账号尚未审核通过'
+          })
+          return
+        }
         this.active = 1
         this.methods.initMessage()
         this.methods.setTripInfo({

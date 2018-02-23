@@ -60,6 +60,7 @@ export function addCar (car) {
             title: '添加车辆成功，等待审核！'
           })
           const carData = result.data
+          dispatch(initCar(carData))
           dispatch(addUserCar(carData))
         }
       }

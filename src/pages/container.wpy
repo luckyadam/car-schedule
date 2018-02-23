@@ -4,16 +4,16 @@
 
 <template>
   <view class="tab">
-    <view class="tab_item tab_trip" hidden="{{currentTab !== 0}}">
+    <view class="tab_item tab_trip" hidden="{{currentTabIndex !== 0}}">
       <Trips />
     </view>
-    <view class="tab_item tab_publish" hidden="{{currentTab !== 1}}">
+    <view class="tab_item tab_publish" hidden="{{currentTabIndex !== 1}}">
       <Trip />
     </view>
-    <view class="tab_item tab_mine" hidden="{{currentTab !== 2}}">
+    <view class="tab_item tab_mine" hidden="{{currentTabIndex !== 2}}">
       <Me />
     </view>
-    <TabBar :active.sync="currentTab" />
+    <TabBar :active.sync="currentTabIndex" />
   </view>
 </template>
 
@@ -29,6 +29,7 @@
   import { fetchMessages } from '../actions/message'
   import { initUserMessage, initUserCars } from '../actions/user'
   import { fetchCars } from '../actions/car'
+  import { ROLE } from '../constants/user'
 
   @connect({
     role (state) {
@@ -57,6 +58,12 @@
       currentTab: 0
     }
 
+    computed = {
+      currentTabIndex () {
+        return parseInt(this.currentTab)
+      }
+    }
+
     events = {
       switchTab: (idx) => {
         switch (idx) {
@@ -77,23 +84,25 @@
     }
 
     async onPullDownRefresh () {
-      if (this.currentTab === 0) {
+      if (this.currentTabIndex === 0) {
         this.methods.initUserMessage()
         await this.methods.fetchMessages(this.role, {
           page: 0,
           size: 20,
           type: 0
         })
-      } else if (this.currentTab === 2) {
-        this.methods.initUserCars()
-        await this.methods.fetchCars()
+      } else if (this.currentTabIndex === 2) {
+        if (this.role === ROLE.DRIVER) {
+          this.methods.initUserCars()
+          await this.methods.fetchCars()
+        }
       }
       wepy.stopPullDownRefresh()
     }
 
     onLoad (options) {
       const tab = options.tab || 0
-      this.currentTab = parseInt(tab, 10)
+      this.currentTab = tab
     }
   }
 </script>

@@ -377,6 +377,7 @@
           await this.methods.addCar({
             ...car
           })
+          this.type = 'edit'
         } else {
           await this.methods.updateCar(this.idx, {
             ...car

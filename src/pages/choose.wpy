@@ -158,7 +158,7 @@
 
       goToCompleteProfile () {
         wepy.navigateTo({
-          url: `./profile/index`
+          url: `./container?tab=2`
         })
       }
     }

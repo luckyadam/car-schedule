@@ -24,7 +24,8 @@ import {
   UPDATE_USER_CAR,
   ADD_USER_MESSAGE,
   UPDATE_USER_MESSAGE,
-  INIT_USER_MESSAGE
+  INIT_USER_MESSAGE,
+  SET_IS_NEW
 } from '../constants/user'
 
 export default handleActions({
@@ -263,6 +264,13 @@ export default handleActions({
       ...state,
       messages: []
     }
+  },
+
+  [SET_IS_NEW] (state, action) {
+    return {
+      ...state,
+      ...action.payload
+    }
   }
 }, {
   isFetching: false,
@@ -272,7 +280,7 @@ export default handleActions({
   username: null,
   telephone: null,
   avatarUrl: null,
-  role: null,
+  role: 'unknown',
   company: null,
   companyTel: null,
   companyFax: null,
@@ -286,5 +294,6 @@ export default handleActions({
   cars: [],
   messages: [],
   errorObj: null,
-  loginError: false
+  loginError: false,
+  isNew: false
 })
