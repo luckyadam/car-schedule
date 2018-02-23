@@ -8,6 +8,7 @@ import {
   SET_MESSAGE_DESCRIPTION,
   SET_MESSAGE_LOCATION_SEND,
   SET_MESSAGE_LOCATION_SEND_MAP,
+  SET_MESSAGE_NUMBER,
   SET_MESSAGE_GUIDE_NAME,
   SET_MESSAGE_GUIDE_TELEPHONE,
   PUBLISH_MESSAGE_ERROR,
@@ -101,6 +102,13 @@ export default handleActions({
   },
 
   [SET_MESSAGE_LOCATION_SEND_MAP] (state, action) {
+    return {
+      ...state,
+      ...action.payload
+    }
+  },
+
+  [SET_MESSAGE_NUMBER] (state, action) {
     return {
       ...state,
       ...action.payload

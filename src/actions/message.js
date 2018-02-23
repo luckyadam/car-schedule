@@ -10,6 +10,7 @@ import {
   SET_MESSAGE_DESCRIPTION,
   SET_MESSAGE_LOCATION_SEND,
   SET_MESSAGE_LOCATION_SEND_MAP,
+  SET_MESSAGE_NUMBER,
   SET_MESSAGE_GUIDE_NAME,
   SET_MESSAGE_GUIDE_TELEPHONE,
   PUBLISH_MESSAGE_ERROR,
@@ -28,8 +29,9 @@ export const setMessageCar = createAction(SET_MESSAGE_CAR, car => ({ car }))
 export const setMessageDescription = createAction(SET_MESSAGE_DESCRIPTION, description => ({ description }))
 export const setMessageLocationSend = createAction(SET_MESSAGE_LOCATION_SEND, locationSend => ({ locationSend }))
 export const setMessageLocationSendMap = createAction(SET_MESSAGE_LOCATION_SEND_MAP, locationSendMap => ({ locationSendMap }))
+export const setMessageNumber = createAction(SET_MESSAGE_NUMBER, number => ({ number }))
 export const setMessageGuideName = createAction(SET_MESSAGE_GUIDE_NAME, guideName => ({ guideName }))
-export const setMessageGuideTelephone = createAction(SET_MESSAGE_GUIDE_TELEPHONE, guideTelephone => ({ guideTelephone }))
+export const setMessageGuideTelephone = createAction(SET_MESSAGE_GUIDE_TELEPHONE, guideTelphone => ({ guideTelphone }))
 export const publishMessageError = createAction(PUBLISH_MESSAGE_ERROR, error => ({ error }))
 export const initMessage = createAction(INIT_MESSAGE, message => message)
 

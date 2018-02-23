@@ -1,0 +1,40 @@
+<style lang="scss">
+  .number {
+
+  }
+</style>
+
+<template>
+  <view class="container number">
+    <EditInput type="number" :val.sync="number" placeholder="请输入出行人数" :onInput="onInputHandler" />
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import { connect } from 'wepy-redux'
+
+  import EditInput from '../../../components/editInput'
+  import { setMessageNumber } from '../../../actions/message'
+
+  @connect({
+    number (state) {
+      return state.message.number
+    }
+  }, {
+    setMessageNumber
+  })
+  export default class EditNumber extends wepy.page {
+    config = {
+      navigationBarTitleText: '修改出行人数'
+    }
+
+    components = {
+      EditInput
+    }
+
+    onInputHandler = (val) => {
+      this.methods.setMessageNumber(val)
+    }
+  }
+</script>

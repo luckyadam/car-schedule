@@ -86,33 +86,33 @@
         <view class="trips_tab_bd_item trips_tab_all" hidden="{{tabActive !== 0}}">
           <view class="trips_tab trips_tab_all_newest" wx:if="{{allTrips.newestWillDepart}}">
             <view class="trips_tab_title">即将出发</view>
-            <DriverTripCard tripData="{{allTrips.newestWillDepart}}" />
+            <TripCard tripData="{{allTrips.newestWillDepart}}" />
           </view>
           <view class="trips_tab trips_tab_all_others" wx:if="{{allTrips.others && allTrips.others.length}}">
             <view class="trips_tab_title">其他行程</view>
             <repeat for="{{allTrips.others}}" key="1_{{item.id}}" index="index" item="item">
-              <DriverTripCard :tripData="item" />
+              <TripCard :tripData="item" />
             </repeat>
           </view>
         </view>
         <view class="trips_tab_bd_item" hidden="{{tabActive !== 1}}">
           <view wx:if="{{willDepartTrips.length}}">
             <repeat for="{{willDepartTrips}}" key="2_{{item.id}}" index="index" item="item">
-              <DriverTripCard :tripData="item" />
+              <TripCard :tripData="item" />
             </repeat>
           </view>
         </view>
         <view class="trips_tab_bd_item" hidden="{{tabActive !== 2}}">
           <view wx:if="{{waitMatchTrips.length}}">
             <repeat for="{{waitMatchTrips}}" key="3_{{item.id}}" index="index" item="item">
-              <DriverTripCard :tripData="item" />
+              <TripCard :tripData="item" />
             </repeat>
           </view>
         </view>
         <view class="trips_tab_bd_item" hidden="{{tabActive !== 3}}">
           <view wx:if="{{doneTrips.length}}">
             <repeat for="{{doneTrips}}" key="4_{{item.id}}" index="index" item="item">
-              <DriverTripCard :tripData="item" />
+              <TripCard :tripData="item" />
             </repeat>
           </view>
         </view>
@@ -125,7 +125,7 @@
   import wepy from 'wepy'
   import { connect } from 'wepy-redux'
 
-  import DriverTripCard from '../components/driverTripCard'
+  import TripCard from '../components/tripCard'
   import { fetchMessages } from '../actions/message'
   import { initUserMessage } from '../actions/user'
 
@@ -149,7 +149,7 @@
     }
 
     components = {
-      DriverTripCard
+      TripCard
     }
 
     data = {
@@ -184,6 +184,7 @@
               newestWillDepartIndex = index
               newestWillDepart = item
             }
+            item.role = this.role
             return item
           })
           if (newestWillDepartIndex >= 0) {
@@ -209,6 +210,7 @@
               if (item.car) {
                 item.carShow = `${item.car.number}座，${item.car.brand}`
               }
+              item.role = this.role
               return item
             }
           }).filter(item => item)
@@ -226,6 +228,7 @@
               if (item.car) {
                 item.carShow = `${item.car.number}座，${item.car.brand}`
               }
+              item.role = this.role
               return item
             }
           }).filter(item => item)
@@ -243,6 +246,7 @@
               if (item.car) {
                 item.carShow = `${item.car.number}座，${item.car.brand}`
               }
+              item.role = this.role
               return item
             }
           }).filter(item => item)

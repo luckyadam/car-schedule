@@ -35,7 +35,9 @@ export default class extends wepy.app {
       'pages/edit/car/system',
       'pages/edit/car/company',
       'pages/edit/car/belongTo',
-      'pages/edit/publish/location',
+      'pages/edit/publish/guideName',
+      'pages/edit/publish/guideTel',
+      'pages/edit/publish/number',
       'pages/edit/publish/description'
     ],
     window: {

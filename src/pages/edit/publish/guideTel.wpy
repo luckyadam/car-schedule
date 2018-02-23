@@ -1,0 +1,60 @@
+<style lang="scss">
+  .telephone {
+    &_tip {
+      color: #EB3434;
+      font-size: 24rpx;
+      padding: 10rpx 0 0 30rpx;
+    }
+  }
+</style>
+
+<template>
+  <view class="container telephone">
+    <EditInput :val.sync="guideTelphone" placeholder="请输入导游手机号" :onInput="onInputHandler" />
+    <view class="telephone_tip" wx:if="{{!telephoneValidate}}">
+      请输入正确的手机号
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import { connect } from 'wepy-redux'
+
+  import EditInput from '../../../components/editInput'
+  import { setMessageGuideTelephone } from '../../../actions/message'
+  import { isValidPhoneNumber } from '../../../utils/validate'
+
+  @connect({
+    guideTelphone (state) {
+      return state.message.guideTelphone
+    }
+  }, {
+    setMessageGuideTelephone
+  })
+  export default class EditTelephone extends wepy.page {
+    config = {
+      navigationBarTitleText: '修改导游手机'
+    }
+
+    components = {
+      EditInput
+    }
+
+    data = {
+      telephoneValidate: false
+    }
+
+    isValidPhoneNumber = isValidPhoneNumber
+
+    onInputHandler = (val) => {
+      if (isValidPhoneNumber(val)) {
+        this.methods.setMessageGuideTelephone(val)
+        this.telephoneValidate = true
+      } else {
+        this.telephoneValidate = false
+      }
+      this.$apply()
+    }
+  }
+</script>

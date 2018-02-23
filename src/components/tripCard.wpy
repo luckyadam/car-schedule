@@ -9,8 +9,15 @@
       <view class="trip-card_hd_status{{tripData.type === 1 ? ' tipping': ''}}{{tripData.type === 2 ? ' warning': ''}}{{tripData.type === 3 ? ' success': ''}}{{tripData.type === 4 ? ' disabled': ''}}">{{tripData.statusShow}}</view>
     </view>
     <view class="trip-card_bd">
-      <view class="trip-card_bd_location icon-local">{{tripData.location}}</view>
-      <view class="trip-card_bd_car icon-bus">{{tripData.carShow}}</view>
+      <view class="trip-card_bd_location icon-local">
+        <view wx:if="{{tripData.role === ROLE.DRIVER}}">{{tripData.location}}</view>
+        <view wx:else>
+          <view>接：{{tripData.location}}</view>
+          <view>送：{{tripData.locationSend}}</view>
+        </view>
+      </view>
+      <view class="trip-card_bd_car icon-bus" wx:if="{{tripData.role === ROLE.DRIVER}}">{{tripData.carShow}}</view>
+      <view class="trip-card_bd_people icon-people" wx:else>{{tripData.number}}人</view>
     </view>
   </view>
 </template>
@@ -20,11 +27,12 @@
   import { connect } from 'wepy-redux'
 
   import { initMessage } from '../actions/message'
+  import { ROLE } from '../constants/user'
 
   @connect({}, {
     initMessage
   })
-  export default class DriverTripCard extends wepy.component {
+  export default class TripCard extends wepy.component {
     props = {
       tripData: {
         type: Object,
@@ -34,11 +42,17 @@
           type: null,
           status: null,
           location: null,
+          locationSend: null,
+          number: null,
           car: null,
           carShow: '',
           statusShow: ''
         }
       }
+    }
+
+    data = {
+      ROLE
     }
 
     methods = {

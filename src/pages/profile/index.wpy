@@ -394,14 +394,6 @@
         })
       },
 
-      viewCar (e) {
-        const idx = e.currentTarget.dataset.idx
-        this.methods.initCar(this.user.cars[idx])
-        wepy.navigateTo({
-          url: './car'
-        })
-      },
-
       editUsername () {
         if (this.user.status === 0) {
           return

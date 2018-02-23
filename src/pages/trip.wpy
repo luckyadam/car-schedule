@@ -20,7 +20,7 @@
         margin-left: 36rpx;
       }
     }
-    &_location,&_car,&_description {
+    &_location,&_car,&_description,&_number,&_guidename,&_guidetel {
       .editable-item_title {
         &_main {
           color: #333333;
@@ -60,8 +60,8 @@
     <wxs module="filter" src="../filter/filter.wxs"></wxs>
     <view class="toptip tipping" wx:if="{{topTipShowStatus === 1}}">该行程已匹配成功，请按时出发</view>
     <view class="toptip warning" wx:elif="{{topTipShowStatus === 2}}">正在为您努力匹配该行程</view>
-    <view class="toptip success" wx:elif="{{topTipShowStatus === 3}}">该行程已完成，您可以<text class="toptip_link">发布新的行程</text></view>
-    <view class="toptip disabled" wx:elif="{{topTipShowStatus === 4}}">该行程已过期，您可以<text class="toptip_link">发布新的行程</text></view>
+    <view class="toptip success" wx:elif="{{topTipShowStatus === 3}}">该行程已完成，您可以<text class="toptip_link" @tap="publishNewTrip">发布新的行程</text></view>
+    <view class="toptip disabled" wx:elif="{{topTipShowStatus === 4}}">该行程已过期，您可以<text class="toptip_link" @tap="publishNewTrip">发布新的行程</text></view>
     <view class="container_inner">
       <view class="region_section trip_time">
         <view class="region_title icon-clock">空置时间</view>
@@ -149,10 +149,10 @@
       <view class="region_section trip_number" wx:if="{{user.role === ROLE.TRAVEL}}">
         <view class="region_title icon-people">出行人数</view>
         <view class="region_section_main">
-          <view class="editable-item">
+          <view class="editable-item" @tap="editNumber">
             <view class="editable-item_title"><text wx:if="{{!message.number}}">请填写出行人数</text><text wx:else class="editable-item_title_main">{{message.number}}</text></view>
             <view class="editable-item_content">
-              <view class="trip_arrow arrow-right"></view>
+              <view class="trip_arrow arrow-right" wx:if="{{type === 'new'}}"></view>
             </view>
           </view>
         </view>
@@ -160,21 +160,21 @@
       <view class="region_section trip_guidename" wx:if="{{user.role === ROLE.TRAVEL}}">
         <view class="region_title icon-guide">导游姓名</view>
         <view class="region_section_main">
-          <view class="editable-item">
+          <view class="editable-item" @tap="editGuideName">
             <view class="editable-item_title"><text wx:if="{{!message.guideName}}">请填写导游姓名</text><text wx:else class="editable-item_title_main">{{message.guideName}}</text></view>
             <view class="editable-item_content">
-              <view class="trip_arrow arrow-right"></view>
+              <view class="trip_arrow arrow-right" wx:if="{{type === 'new'}}"></view>
             </view>
           </view>
         </view>
       </view>
-      <view class="region_section trip_guidtel" wx:if="{{user.role === ROLE.TRAVEL}}">
+      <view class="region_section trip_guidetel" wx:if="{{user.role === ROLE.TRAVEL}}">
         <view class="region_title icon-guide">导游电话</view>
         <view class="region_section_main">
-          <view class="editable-item">
+          <view class="editable-item" @tap="editGuideTel">
             <view class="editable-item_title"><text wx:if="{{!message.guideTelphone}}">请填写导游电话</text><text wx:else class="editable-item_title_main">{{message.guideTelphone}}</text></view>
             <view class="editable-item_content">
-              <view class="trip_arrow arrow-right"></view>
+              <view class="trip_arrow arrow-right" wx:if="{{type === 'new'}}"></view>
             </view>
           </view>
         </view>
@@ -341,9 +341,63 @@
         }
       },
 
+      async chooseLocationSend () {
+        if (this.type !== 'new') {
+          return
+        }
+        const locationSendMap = this.message.locationSendMap
+        if (locationSendMap) {
+          const chooseResult = await wepy.chooseLocation()
+          this.methods.setMessageLocationSendMap(Object.assign(this.message.locationSendMap, {
+            latitude: chooseResult.latitude,
+            longitude: chooseResult.longitude
+          }))
+          this.qqMapWX.reverseGeocoder({
+            location: {
+              latitude: chooseResult.latitude,
+              longitude: chooseResult.longitude
+            },
+            success: (res) => {
+              const { formatted_addresses, address, address_component } = res.result
+              this.methods.setMessageLocationSend(formatted_addresses.recommend)
+            },
+            fail (res) {
+              console.log(res)
+            }
+          })
+        }
+      },
+
       carPickerChange (e) {
         const idx = parseInt(e.detail.value, 10)
         this.methods.setMessageCar(this.user.cars[idx].id)
+      },
+
+      editNumber () {
+        if (this.type !== 'new') {
+          return
+        }
+        wepy.navigateTo({
+          url: './edit/publish/number'
+        })
+      },
+
+      editGuideName () {
+        if (this.type !== 'new') {
+          return
+        }
+        wepy.navigateTo({
+          url: './edit/publish/guideName'
+        })
+      },
+
+      editGuideTel () {
+        if (this.type !== 'new') {
+          return
+        }
+        wepy.navigateTo({
+          url: './edit/publish/guideTel'
+        })
       },
 
       editDescription () {
@@ -398,17 +452,17 @@
           messageId: this.message.id,
           from: this.from
         })
+      },
+
+      publishNewTrip () {
+        this.methods.initMessage()
+        this.type = 'new'
+        this.init()
       }
     }
 
-    async onLoad (options) {
-      const { type, from } = options
-      this.type = type
-      this.from = from
-      this.qqMapWX = new QQMapWX({
-        key: 'YGWBZ-2726P-4TMDD-LERQY-RQE3O-ZCBFV'
-      })
-      if (type === 'new') {
+    async init () {
+      if (this.type === 'new') {
         await wepy.setNavigationBarTitle({ title: '发布空置信息' })
         const location = await wepy.getLocation({ type: 'gcj02' })
         this.methods.setMessageLocationMap(location)
@@ -434,6 +488,16 @@
       } else {
         await wepy.setNavigationBarTitle({ title: '修改空置信息' })
       }
+    }
+
+    async onLoad (options) {
+      const { type, from } = options
+      this.type = type
+      this.from = from
+      this.qqMapWX = new QQMapWX({
+        key: 'YGWBZ-2726P-4TMDD-LERQY-RQE3O-ZCBFV'
+      })
+      this.init()
     }
   }
 </script>

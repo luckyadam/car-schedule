@@ -1,0 +1,39 @@
+<style lang="scss">
+</style>
+
+<template>
+  <view class="container">
+    <view>
+      <EditInput :val.sync="guideName" placeholder="请输入导游姓名" :onInput="onInputHandler" />
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import { connect } from 'wepy-redux'
+
+  import EditInput from '../../../components/editInput'
+  import { setMessageGuideName } from '../../../actions/message'
+
+  @connect({
+    guideName (state) {
+      return state.user.guideName
+    }
+  }, {
+    setMessageGuideName
+  })
+  export default class EditUsername extends wepy.page {
+    config = {
+      navigationBarTitleText: '修改导游姓名'
+    }
+
+    components = {
+      EditInput
+    }
+
+    onInputHandler = (val) => {
+      this.methods.setMessageGuideName(val)
+    }
+  }
+</script>
