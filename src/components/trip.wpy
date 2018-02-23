@@ -183,7 +183,7 @@
         <view class="region_title icon-information">行程备注</view>
         <view class="region_section_main">
           <view class="editable-item trip_description_item" @tap="editDescription">
-            <view class="editable-item_title"><text wx:if="{{!message.description}}">请填写您需要备注的信息，如注意事项等（选填）</text><text wx:else :class="{'editable-item_title_main': true, uneditable: type !== 'new'}">{{message.description}}</text></view>
+            <view class="editable-item_title"><text wx:if="{{!message.description}}">请填写您需要备注的信息，如注意事项等（必填）</text><text wx:else :class="{'editable-item_title_main': true, uneditable: type !== 'new'}">{{message.description}}</text></view>
             <view class="editable-item_content">
               <view class="trip_arrow arrow-right" wx:if="{{type === 'new'}}"></view>
             </view>
@@ -446,6 +446,65 @@
         }
         if (!this.message.endTime) {
           this.methods.setMessageEndTime(new Date(standardizedTime(`${this.endTimeDateShow} ${this.endTimeTimeShow}`)).toString())
+        }
+        if (new Date(this.message.startTime).getTime() <= new Date().getTime()) {
+          await wepy.showToast({
+            icon: 'none',
+            title: '起始时间不能早于当前时间！'
+          })
+          return
+        }
+        if (this.user.role === ROLE.TRAVEL) {
+          if (!this.message.number) {
+            await wepy.showToast({
+              icon: 'none',
+              title: '出行人数为必填项！'
+            })
+            return
+          }
+          if (!this.message.guideName) {
+            await wepy.showToast({
+              icon: 'none',
+              title: '导游姓名为必填项！'
+            })
+            return
+          }
+          if (!this.message.guideTelphone) {
+            await wepy.showToast({
+              icon: 'none',
+              title: '导游联系方式为必填项！'
+            })
+            return
+          }
+        } else {
+          if (this.message.car) {
+            const carId = this.message.car
+            const car = this.user.cars.map(item => {
+              if (item.id === carId) {
+                return item
+              }
+            }).filter(item => item)[0]
+            if (car.status !== 0) {
+              await wepy.showToast({
+                icon: 'none',
+                title: '所选车辆未经审核不能使用！'
+              })
+              return
+            }
+          } else {
+            await wepy.showToast({
+              icon: 'none',
+              title: '请选择空置车辆！'
+            })
+            return
+          }
+        }
+        if (!this.message.description) {
+          await wepy.showToast({
+            icon: 'none',
+            title: '行程备注为必填项！'
+          })
+          return
         }
         await this.methods.publishMessage(this.user.role, { ...this.message })
         if (!this.message.isError) {
