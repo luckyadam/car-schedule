@@ -67,15 +67,16 @@
   }
   &_submit {
     padding-top: 10rpx;
+    padding-bottom: 30rpx;
   }
 }
 </style>
 
 <template>
   <view class="container car region">
-    <view class="toptip warning" wx:if="{{car.status === -1}}">资料审核中</view>
-    <view class="toptip success" wx:elif="{{car.status === 0}}">资料审核已通过</view>
-    <view class="toptip error" wx:elif="{{car.status === 1}}">资料审核未通过</view>
+    <view class="toptip warning" wx:if="{{car.status === -1}}">车辆审核中</view>
+    <view class="toptip success" wx:elif="{{car.status === 0}}">车辆审核已通过</view>
+    <view class="toptip error" wx:elif="{{car.status === 1}}">车辆审核未通过，{{car.auditOpinion}}</view>
     <view class="region_section">
       <view class="region_title icon-information">基本信息</view>
       <view class="region_section_main">
@@ -92,7 +93,7 @@
           <view class="editable-item_content">
             <text class="editable-item_content_add" wx:if="{{car.number == null}}">添加核载人数</text>
             <text class="editable-item_content_edit" wx:else>{{car.number}}人</text>
-            <text class="editable-item_arrow arrow-right"></text>
+            <text class="editable-item_arrow arrow-right" wx:if="{{car.status !== 0}}"></text>
           </view>
         </view>
         <view :class="{'editable-item': true, error: submitError.age}" @tap="editAge">
@@ -100,7 +101,7 @@
           <view class="editable-item_content">
             <text class="editable-item_content_add" wx:if="{{car.age == null}}">添加出厂年份</text>
             <text class="editable-item_content_edit" wx:else>{{ageShow}}年</text>
-            <text class="editable-item_arrow arrow-right"></text>
+            <text class="editable-item_arrow arrow-right" wx:if="{{car.status !== 0}}"></text>
           </view>
         </view>
         <view :class="{'editable-item': true, error: submitError.brand}" @tap="editBrand">
@@ -108,7 +109,7 @@
           <view class="editable-item_content">
             <text class="editable-item_content_add" wx:if="{{car.brand == null}}">添加车辆品牌</text>
             <text class="editable-item_content_edit" wx:else>{{car.brand}}</text>
-            <text class="editable-item_arrow arrow-right"></text>
+            <text class="editable-item_arrow arrow-right" wx:if="{{car.status !== 0}}"></text>
           </view>
         </view>
         <view :class="{'editable-item': true, error: submitError.system}" @tap="editSystem">
@@ -116,7 +117,7 @@
           <view class="editable-item_content">
             <text class="editable-item_content_add" wx:if="{{car.system == null}}">添加驱动系统</text>
             <text class="editable-item_content_edit" wx:else>{{car.system}}</text>
-            <text class="editable-item_arrow arrow-right"></text>
+            <text class="editable-item_arrow arrow-right" wx:if="{{car.status !== 0}}"></text>
           </view>
         </view>
         <view :class="{'editable-item': true, error: submitError.company}" @tap="editCompany">
@@ -124,7 +125,7 @@
           <view class="editable-item_content">
             <text class="editable-item_content_add" wx:if="{{car.company == null}}">添加车辆所属公司</text>
             <text class="editable-item_content_edit" wx:else>{{car.company}}</text>
-            <text class="editable-item_arrow arrow-right"></text>
+            <text class="editable-item_arrow arrow-right" wx:if="{{car.status !== 0}}"></text>
           </view>
         </view>
         <view :class="{'editable-item': true, error: submitError.belongTo}" @tap="editBelongTo">
@@ -132,7 +133,7 @@
           <view class="editable-item_content">
             <text class="editable-item_content_add" wx:if="{{car.belongTo == null}}">添加车辆所属地</text>
             <text class="editable-item_content_edit" wx:else>{{belongToShow}}</text>
-            <text class="editable-item_arrow arrow-right"></text>
+            <text class="editable-item_arrow arrow-right" wx:if="{{car.status !== 0}}"></text>
           </view>
         </view>
       </view>
@@ -152,12 +153,12 @@
             <view class="car_images_list_close" @tap="deleteImage" data-idx="{{index}}"></view>
           </view>
         </view>
-        <view class="car_images_add">
+        <view class="car_images_add" wx:if="{{car.status !== 0}}">
           <button class="car_images_add_btn btn-add" @tap="chooseImages">上传照片</button>
         </view>
       </view>
     </view>
-    <view class="car_submit">
+    <view class="car_submit" wx:if="{{car.status !== 0}}">
       <button class="btn car_submit_btn" @tap="submitProfile">确认提交</button>
     </view>
   </view>
@@ -245,6 +246,9 @@
 
     methods = {
       editNumber () {
+        if (this.car.status === 0) {
+          return
+        }
         wepy.navigateTo({
           url: '../edit/car/number'
         })
@@ -259,30 +263,45 @@
       },
 
       editAge () {
+        if (this.car.status === 0) {
+          return
+        }
         wepy.navigateTo({
           url: '../edit/car/age'
         })
       },
 
       editBrand () {
+        if (this.car.status === 0) {
+          return
+        }
         wepy.navigateTo({
           url: '../edit/car/brand'
         })
       },
 
       editSystem () {
+        if (this.car.status === 0) {
+          return
+        }
         wepy.navigateTo({
           url: '../edit/car/system'
         })
       },
 
       editCompany () {
+        if (this.car.status === 0) {
+          return
+        }
         wepy.navigateTo({
           url: '../edit/car/company'
         })
       },
 
       editBelongTo () {
+        if (this.car.status === 0) {
+          return
+        }
         wepy.navigateTo({
           url: '../edit/car/belongTo'
         })

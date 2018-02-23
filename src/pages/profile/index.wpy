@@ -1,11 +1,37 @@
 <style lang="scss">
   .profile {
     &_car {
+      &_list {
+        width: 100%;
+        overflow: hidden;
+      }
       &_item {
-        padding: 20rpx 0;
         border-bottom: 2rpx dashed #DADADA;
+        position: relative;
+        width: 100%;
+        height: 136rpx;
+        box-sizing: border-box;
         &:last-child {
           border-bottom: 0;
+        }
+        &_main,&_oper {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          box-sizing: border-box;
+        }
+        &_main {
+          z-index: 2;
+          transition: left 0.2s ease-in-out;
+          background: #FFFFFF;
+          padding: 20rpx 0;
+        }
+        &_oper {
+          display: flex;
+          justify-content: flex-end;
+          z-index: 1;
         }
       }
       &_top {
@@ -39,6 +65,22 @@
       }
       &_add {
         padding: 20rpx 0;
+      }
+      &_delete {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 80rpx;
+        color: #FFFFFF;
+        background: #2D3036;
+        &:before {
+          content: '\e905';
+          font-size: 30rpx;
+          font-family: 'car_iconfonts';
+        }
+      }
+      &_arrow {
+        margin-right: 6rpx;
       }
     }
     &_certificate {
@@ -83,6 +125,18 @@
           margin-bottom: 20rpx;
           &:before {
             content: '\e90d';
+          }
+        }
+        &_close {
+          position: absolute;
+          width: 40rpx;
+          height: 40rpx;
+          font-family: 'car_iconfonts';
+          font-size: 40rpx;
+          top: 10rpx;
+          right: 10rpx;
+          &:after {
+            content: '\e904'
           }
         }
       }
@@ -155,6 +209,7 @@
               <view class="profile_certificate_item_overlay uploading" wx:if="{{user.driverLicensePos && user.driverLicensePos.isUploading}}">
                 <view class="loading"></view>
               </view>
+              <view class="profile_certificate_item_close" @tap.stop="deleteDriverLicensePosImage" wx:if="{{user.status !== 0}}"></view>
             </view>
             <view class="profile_certificate_driver profile_certificate_item" @tap="chooseDriverLicenseOpp">
               <image wx:if="{{!user.driverLicenseOpp}}" mode="aspectFill" src="../../assets/driver_license_down.jpg" class="profile_certificate_item_img" />
@@ -168,6 +223,7 @@
               <view class="profile_certificate_item_overlay uploading" wx:if="{{user.driverLicenseOpp && user.driverLicenseOpp.isUploading}}">
                 <view class="loading"></view>
               </view>
+              <view class="profile_certificate_item_close" @tap.stop="deleteDriverLicenseOppImage" wx:if="{{user.status !== 0}}"></view>
             </view>
           </view>
           <view class="profile_certificate_line">
@@ -183,6 +239,7 @@
               <view class="profile_certificate_item_overlay uploading" wx:if="{{user.workLicensePos && user.workLicensePos.isUploading}}">
                 <view class="loading"></view>
               </view>
+              <view class="profile_certificate_item_close" @tap.stop="deleteWorkLicensePosImage" wx:if="{{user.status !== 0}}"></view>
             </view>
             <view class="profile_certificate_driver profile_certificate_item" @tap="chooseWorkLicenseOpp">
               <image wx:if="{{!user.workLicenseOpp}}" mode="aspectFill" src="../../assets/work_license_down.jpg" class="profile_certificate_item_img" />
@@ -196,6 +253,7 @@
               <view class="profile_certificate_item_overlay uploading" wx:if="{{user.workLicenseOpp && user.workLicenseOpp.isUploading}}">
                 <view class="loading"></view>
               </view>
+              <view class="profile_certificate_item_close" @tap.stop="deleteWorkLicenseOppImage" wx:if="{{user.status !== 0}}"></view>
             </view>
           </view>
         </view>
@@ -204,16 +262,31 @@
         <view class="region_title icon-bus">车辆信息</view>
         <view class="region_section_main">
           <view class="profile_car_list" wx:if="{{user.cars.length}}">
-            <view class="profile_car_item" wx:for="{{user.cars}}" wx:key="{{item.license}}" @tap="viewCar" data-idx="{{index}}">
-              <view class="profile_car_top">
-                <view class="profile_car_license">{{item.license}}</view>
-                <view class="profile_car_status warning" wx:if="{{item.status === -1}}">审核中</view>
-                <view class="profile_car_status success" wx:elif="{{item.status === 0}}">审核通过</view>
-                <view class="profile_car_status error" wx:else="{{item.status === 1}}">审核未通过</view>
+            <view
+              class="profile_car_item"
+              wx:for="{{user.cars}}"
+              wx:key="{{item.license}}">
+              <view
+                class="profile_car_item_main"
+                data-idx="{{index}}"
+                @touchstart="onCarItemTouchStart"
+                @touchmove="onCarItemTouchMove"
+                @touchend="onCarItemTouchEnd"
+                @tap="viewCar"
+                style="{{item.style}}">
+                <view class="profile_car_top">
+                  <view class="profile_car_license">{{item.license}}</view>
+                  <view class="profile_car_status warning" wx:if="{{item.status === -1}}">审核中</view>
+                  <view class="profile_car_status success" wx:elif="{{item.status === 0}}">审核通过</view>
+                  <view class="profile_car_status error" wx:else="{{item.status === 1}}">未通过</view>
+                </view>
+                <view class="profile_car_bottom">
+                  <view class="profile_car_desc">{{item.number}}座，{{item.brand}}客车，{{item.system}}，{{filter.formatYear(item.age)}}年</view>
+                  <view class="profile_car_arrow arrow-right"></view>
+                </view>
               </view>
-              <view class="profile_car_bottom">
-                <view class="profile_car_desc">{{item.number}}座，{{item.brand}}客车，{{item.system}}，{{filter.formatYear(item.age)}}年</view>
-                <view class="profile_car_arrow arrow-right"></view>
+              <view class="profile_car_item_oper">
+                <view class="profile_car_delete" @tap="deleteItemCar" data-idx="{{index}}"></view>
               </view>
             </view>
           </view>
@@ -259,7 +332,7 @@
           </view>
         </view>
       </view>
-      <view class="profile_submit">
+      <view class="profile_submit" wx:if="{{user.status !== 0}}">
         <button class="btn profile_submit_btn" @tap="updateProfile">确认提交</button>
       </view>
     </view>
@@ -274,8 +347,8 @@
   import TabBar from '../../components/tabBar'
 
   import { isChooseTempImage, isEmptyStr, isValidPhoneNumber, isValidIdentifyId } from '../../utils/validate'
-  import { updateUser, setUserDriverLicensePos, setUserDriverLicenseOpp, setUserWorkLicensePos, setUserWorkLicenseOpp } from '../../actions/user'
-  import { initCar, fetchCars } from '../../actions/car'
+  import { updateUser, setUserDriverLicensePos, setUserDriverLicenseOpp, setUserWorkLicensePos, setUserWorkLicenseOpp, updateUserCar } from '../../actions/user'
+  import { initCar, fetchCars, deleteCar } from '../../actions/car'
   import { API_BASE } from '../../utils/api'
   import { uploadFiles, uploadFilesInit } from '../../actions/upload'
   import { ROLE } from '../../constants/user'
@@ -291,8 +364,10 @@
     updateUser,
     initCar,
     fetchCars,
+    deleteCar,
     uploadFiles,
     uploadFilesInit,
+    updateUserCar,
     setUserDriverLicensePos,
     setUserDriverLicenseOpp,
     setUserWorkLicensePos,
@@ -309,7 +384,8 @@
 
     data = {
       certificateUploadCount: 0,
-      certificateUploadIndex: {}
+      certificateUploadIndex: {},
+      delBtnWidth: 100
     }
 
     computed = {
@@ -438,6 +514,17 @@
 
       async chooseDriverLicensePos () {
         try {
+          // 预览图片
+          if (this.user.driverLicensePos) {
+            const previewImageUrls = []
+            const driverLicensePos = this.driverLicensePosShow.path
+            previewImageUrls.push(driverLicensePos)
+            await wepy.previewImage({
+              urls: previewImageUrls,
+              current: driverLicensePos
+            })
+            return
+          }
           const res = await wepy.chooseImage({
             count: 1,
             sizeType: ['original', 'compressed'],
@@ -472,6 +559,17 @@
 
       async chooseDriverLicenseOpp () {
         try {
+          // 预览图片
+          if (this.user.driverLicenseOpp) {
+            const previewImageUrls = []
+            const driverLicenseOpp = this.driverLicenseOppShow.path
+            previewImageUrls.push(driverLicenseOpp)
+            await wepy.previewImage({
+              urls: previewImageUrls,
+              current: driverLicenseOpp
+            })
+            return
+          }
           const res = await wepy.chooseImage({
             count: 1,
             sizeType: ['original', 'compressed'],
@@ -506,6 +604,17 @@
 
       async chooseWorkLicensePos () {
         try {
+          // 预览图片
+          if (this.user.workLicensePos) {
+            const previewImageUrls = []
+            const workLicensePos = this.workLicensePosShow.path
+            previewImageUrls.push(workLicensePos)
+            await wepy.previewImage({
+              urls: previewImageUrls,
+              current: workLicensePos
+            })
+            return
+          }
           const res = await wepy.chooseImage({
             count: 1,
             sizeType: ['original', 'compressed'],
@@ -540,6 +649,17 @@
 
       async chooseWorkLicenseOpp () {
         try {
+          // 预览图片
+          if (this.user.workLicenseOpp) {
+            const previewImageUrls = []
+            const workLicenseOpp = this.workLicenseOppShow.path
+            previewImageUrls.push(workLicenseOpp)
+            await wepy.previewImage({
+              urls: previewImageUrls,
+              current: workLicenseOpp
+            })
+            return
+          }
           const res = await wepy.chooseImage({
             count: 1,
             sizeType: ['original', 'compressed'],
@@ -569,6 +689,79 @@
           })
         } catch (err) {
           console.log(err)
+        }
+      },
+
+      deleteDriverLicensePosImage (e) {
+        this.methods.setUserDriverLicensePos(null)
+      },
+
+      deleteDriverLicenseOppImage (e) {
+        this.methods.setUserDriverLicenseOpp(null)
+      },
+
+      deleteWorkLicensePosImage (e) {
+        this.methods.setUserWorkLicensePos(null)
+      },
+
+      deleteWorkLicenseOppImage (e) {
+        this.methods.setUserWorkLicenseOpp(null)
+      },
+
+      onCarItemTouchStart (e) {
+        if (e.touches.length === 1) {
+          const touch = e.touches[0]
+          this.startX = touch.clientX
+        }
+      },
+
+      onCarItemTouchMove (e) {
+        if (e.touches.length === 1) {
+          const moveX = e.touches[0].clientX
+          const disX = this.startX - moveX
+          const delBtnWidth = this.delBtnWidth
+          let style = ''
+          if (disX <= 0) {
+            style = 'left: 0rpx'
+          } else {
+            style = `left: -${disX}rpx`
+            if(disX >= delBtnWidth) {
+              style = `left: -${delBtnWidth}rpx`
+            }
+          }
+          const idx = e.currentTarget.dataset.idx
+          const cars = this.user.cars
+          const car = { ...cars[idx] }
+          car.style = style
+          this.methods.updateUserCar(idx, car)
+        }
+      },
+
+      onCarItemTouchEnd (e) {
+        if (e.changedTouches.length === 1) {
+          const endX = e.changedTouches[0].clientX
+          const disX = this.startX - endX
+          const delBtnWidth = this.delBtnWidth
+          const style = disX > delBtnWidth / 2 ? `left:-${delBtnWidth}rpx` : `left:0rpx`
+          const idx = e.currentTarget.dataset.idx
+          const cars = this.user.cars
+          const car = { ...cars[idx] }
+          car.style = style
+          this.methods.updateUserCar(idx, car)
+        }
+      },
+
+      async deleteItemCar (e) {
+        const idx = e.currentTarget.dataset.idx
+        const cars = this.user.cars
+        const car = { ...cars[idx] }
+        const res = await wepy.showModal({
+          title: '提示',
+          content: '是否要删除该车辆',
+          confirmColor: '#EB3434'
+        })
+        if (res.confirm) {
+          this.methods.deleteCar(idx, car)
         }
       },
 

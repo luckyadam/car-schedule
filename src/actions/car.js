@@ -14,7 +14,7 @@ import {
   CAR_IMAGES_UPDATE,
   INIT_CAR
 } from '../constants/car'
-import { addUserCar, updateUserCar } from './user'
+import { addUserCar, updateUserCar, deleteUserCar } from './user'
 import { API_CAR } from '../utils/api'
 
 export const inputCarLicense = createAction(CAR_LICENSE_INPUT, license => ({ license }))
@@ -31,8 +31,8 @@ export const initCar = createAction(INIT_CAR, car => car)
 
 export function addCar (car) {
   return async dispatch => {
-    await wepy.showLoading()
     try {
+      await wepy.showLoading()
       const authorization = wepy.getStorageSync('authorization')
       // 本地存在authorization，表示之前已经请求登录过
       if (authorization) {
@@ -72,8 +72,8 @@ export function addCar (car) {
 
 export function updateCar (idx, car) {
   return async dispatch => {
-    await wepy.showLoading()
     try {
+      await wepy.showLoading()
       const authorization = wepy.getStorageSync('authorization')
       // 本地存在authorization，表示之前已经请求登录过
       if (authorization) {
@@ -130,6 +130,41 @@ export function fetchCars () {
         }
       }
     } catch (err) {
+      console.log(err)
+    }
+  }
+}
+
+export function deleteCar (idx, car) {
+  return async dispatch => {
+    try {
+      await wepy.showLoading()
+      const authorization = wepy.getStorageSync('authorization')
+      // 本地存在authorization，表示之前已经请求登录过
+      if (authorization) {
+        const result = await wepy.request({
+          url: `${API_CAR}/${car.id}`,
+          method: 'DELETE',
+          header: {
+            authorization: `JWT ${authorization}`
+          }
+        })
+        await wepy.hideLoading()
+        if (result.statusCode === 204) {
+          await wepy.showToast({
+            icon: 'success',
+            title: '删除车辆成功！'
+          })
+          dispatch(deleteUserCar(idx))
+        } else {
+          await wepy.showToast({
+            icon: 'none',
+            title: '删除车辆失败，请重试！'
+          })
+        }
+      }
+    } catch (err) {
+      await wepy.hideLoading()
       console.log(err)
     }
   }

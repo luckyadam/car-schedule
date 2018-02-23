@@ -19,6 +19,7 @@ import {
   SET_USER_WORK_LICENSE_POS,
   SET_USER_WORK_LICENSE_OPP,
   ADD_USER_CAR,
+  DELETE_USER_CAR,
   UPDATE_USER_CAR,
   ADD_USER_MESSAGE,
   UPDATE_USER_MESSAGE,
@@ -197,6 +198,16 @@ export default handleActions({
     } else {
       cars.push(action.payload.car)
     }
+    return {
+      ...state,
+      cars
+    }
+  },
+
+  [DELETE_USER_CAR] (state, action) {
+    let cars = state.cars.concat()
+    const index = action.payload.index
+    cars.splice(index, 1)
     return {
       ...state,
       cars

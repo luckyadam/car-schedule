@@ -21,6 +21,7 @@ import {
   SET_USER_WORK_LICENSE_POS,
   SET_USER_WORK_LICENSE_OPP,
   ADD_USER_CAR,
+  DELETE_USER_CAR,
   UPDATE_USER_CAR,
   ADD_USER_MESSAGE,
   UPDATE_USER_MESSAGE,
@@ -49,6 +50,7 @@ export const updateUserSuccess = createAction(UPDATE_USER_SUCCESS)
 export const userLoginError = createAction(USER_LOGIN_ERROR)
 
 export const addUserCar = createAction(ADD_USER_CAR, car => ({ car }))
+export const deleteUserCar = createAction(DELETE_USER_CAR, index => ({ index }))
 export const updateUserCar = createAction(UPDATE_USER_CAR, (index, car) => ({ index, car }))
 
 export const addUserMessage = createAction(ADD_USER_MESSAGE, message => ({ message }))
@@ -129,11 +131,18 @@ export function updateUser (user) {
           data: user
         })
         await wepy.hideLoading()
-        dispatch(updateUserSuccess(userInfo))
-        await wepy.showToast({
-          title: '提交审核成功',
-          icon: 'success'
-        })
+        if (userInfo.statusCode === 200 || userInfo.statusCode === 201) {
+          dispatch(updateUserSuccess(userInfo))
+          await wepy.showToast({
+            title: '提交审核成功',
+            icon: 'success'
+          })
+        } else {
+          await wepy.showToast({
+            title: userInfo.data.msg,
+            icon: 'none'
+          })
+        }
       } else {
         await wepy.hideLoading()
         dispatch(userLoginError())
