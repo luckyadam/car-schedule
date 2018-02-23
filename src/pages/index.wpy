@@ -1,170 +1,36 @@
-<style lang="scss">
-  // @import '../style/reset.scss'
-  .container {
-    height: 100%;
-    background: linear-gradient(#EB3434, #EB7234);
-  }
-  .choose {
-    margin: 20rpx;
-    flex: 1;
-    background: #FFFFFF;
-    border-radius: 7rpx;
-    &_head {
-      width: 290rpx;
-      margin: 0 auto;
-      text-align: center;
-      margin-top: 60rpx;
-      margin-bottom: 80rpx;
-      &_title {
-        font-size: 36rpx;
-        color: #333333;
-        margin-bottom: 8rpx;
-        &_app {
-          color: #EB3434;
-        }
-      }
-      &_msg {
-        font-size: 28rpx;
-        color: #A4A4A4;
-      }
-    }
-    &_main {
-      position: relative;
-    }
-    &_role {
-      width: 252rpx;
-      margin: 0 auto;
-      text-align: center;
-      &_main {
-        width: 250rpx;
-        height: 250rpx;
-        border-radius: 50%;
-        border: 2px solid #D8D8D8;
-        background-color: #EEEEEE;
-      }
-      &_txt {
-        color: #A4A4A4;
-        font-size: 30rpx;
-      }
-      &.active {
-        .choose_role_main {
-          background-color: #F2DFDF;
-          border-color: #EB3434;
-        }
-        .choose_role_txt {
-          color: #EB3434;
-        }
-      }
-    }
-    &_btn {
-      &_wrapper {
-        text-align: center;
-        margin-top: 60rpx;
-      }
-    }
-    &_driver {
-      margin-bottom: 40rpx;
-      .choose_role_main {
-        position: relative;
-        &_img {
-          width: 175rpx;
-          height: 228rpx;
-          position: absolute;
-          bottom: 0;
-          left: 50%;
-          margin-left: -87.5rpx;
-        }
-      }
-    }
-    &_travel {
-      .choose_role_main {
-        position: relative;
-        &_img {
-          width: 158rpx;
-          height: 211rpx;
-          position: absolute;
-          bottom: 0;
-          left: 50%;
-          margin-left: -79rpx;
-        }
-      }
-    }
-  }
-</style>
 <template>
-  <view class="container">
-    <view class="choose">
-      <view class="choose_head">
-        <view class="choose_head_title">
-          <text class="choose_head_title_tip">欢迎使用</text>
-          <text class="choose_head_title_app">汽车调度</text>
-        </view>
-        <view class="choose_head_msg">请选择你的身份</view>
-      </view>
-      <view class="choose_main">
-        <view :class="{'choose_role': true, 'choose_driver': true, 'active': user.role === DRIVER}" @tap="chooseDriver">
-          <view class="choose_role_main">
-            <image class="choose_role_main_img" src="../assets/driver.png">
-          </view>
-          <text class="choose_role_txt">我是司机</text>
-        </view>
-        <view :class="{'choose_role': true, 'choose_travel': true, 'active': user.role === TRAVEL}" @tap="chooseTravel">
-          <view class="choose_role_main">
-            <image class="choose_role_main_img" src="../assets/travel.png">
-          </view>
-          <text class="choose_role_txt">我是旅行社</text>
-        </view>
-        <view class="choose_btn_wrapper">
-          <button class="choose_btn btn" disabled="{{user.role !== DRIVER && user.role !== TRAVEL}}" @tap="goToCompleteProfile">去完善资料</button>
-        </view>
-      </view>
-    </view>
-  </view>
+  <view></view>
 </template>
 
 <script>
   import wepy from 'wepy'
   import { connect } from 'wepy-redux'
-
-  import { fetchUser, setUserRole } from '../actions/user'
-  import { ROLE } from '../constants/user'
+  import { fetchUser, checkSettingStatus } from '../actions/user'
 
   @connect({
     user (state) {
       return state.user
     }
   }, {
-    fetchUser,
-    setUserRole
+    fetchUser
   })
   export default class Index extends wepy.page {
-    config = {
-      navigationBarTitleText: '选择角色'
-    }
-
-    data = {
-      DRIVER: ROLE.DRIVER,
-      TRAVEL: ROLE.TRAVEL
-    }
-
-    methods = {
-      chooseDriver () {
-        this.methods.setUserRole(ROLE.DRIVER)
-      },
-
-      chooseTravel () {
-        this.methods.setUserRole(ROLE.TRAVEL)
-      },
-
-      goToCompleteProfile () {
-        wepy.navigateTo({
-          url: `./profile/index`
-        })
+    async onLoad () {
+      await this.methods.fetchUser()
+      const user = this.user
+      if (user.isError && user.errorObj && user.errorObj.type === 'wx') {
+        await checkSettingStatus()
+      } else {
+        if (user.role) {
+          wepy.redirectTo({
+            url: './container?tab=2'
+          })
+        } else {
+          wepy.redirectTo({
+            url: './choose'
+          })
+        }
       }
-    }
-
-    onLoad () {
-      this.methods.fetchUser()
     }
   }
 </script>

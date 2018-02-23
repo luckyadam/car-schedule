@@ -19,6 +19,7 @@ import {
   SET_USER_WORK_LICENSE_POS,
   SET_USER_WORK_LICENSE_OPP,
   ADD_USER_CAR,
+  INIT_USER_CARS,
   DELETE_USER_CAR,
   UPDATE_USER_CAR,
   ADD_USER_MESSAGE,
@@ -201,6 +202,13 @@ export default handleActions({
     return {
       ...state,
       cars
+    }
+  },
+
+  [INIT_USER_CARS] (state) {
+    return {
+      ...state,
+      cars: []
     }
   },
 

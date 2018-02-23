@@ -11,7 +11,9 @@
   white-space: nowrap;
   display: flex;
   align-items: center;
+  z-index: 999;
   &_item {
+    color: #A4A4A4;
     &.active {
       color: #EB3034;
     }
@@ -20,15 +22,25 @@
     width: 100%;
     text-align: center;
     &_icon {
-      width: 40rpx;
-      height: 40rpx;
-      display: block;
-      margin: auto;
-      color: #A4A4A4;
+      font-family: 'car_iconfonts';
+      font-size: 40rpx;
+      &_trips {
+        &:before {
+          content: '\e900';
+        }
+      }
+      &_trip {
+        &:before {
+          content: '\e909';
+        }
+      }
+      &_me {
+        &:before {
+          content: '\e90b';
+        }
+      }
     }
     &_title {
-      color: #A4A4A4;
-      padding-top: 6rpx;
       display: block;
     }
   }
@@ -38,15 +50,15 @@
 <template>
   <view class="tabbar">
     <view class="tabbar_item tabbar_schedule{{active == 0 ? ' active' : ''}}" @tap="goToList">
-      <image class="tabbar_item_icon" src="../assets/schedule.svg"></image>
+      <view class="tabbar_item_icon tabbar_item_icon_trips"></view>
       <text class="tabbar_item_title">行程</text>
     </view>
     <view class="tabbar_item tabbar_add{{active == 1 ? ' active' : ''}}" @tap="goToPublish">
-      <image class="tabbar_item_icon" src="../assets/add.svg"></image>
+      <view class="tabbar_item_icon tabbar_item_icon_trip"></view>
       <text class="tabbar_item_title">发布</text>
     </view>
     <view class="tabbar_item tabbar_me{{active == 2 ? ' active' : ''}}" @tap="goToMine">
-      <image class="tabbar_item_icon" src="../assets/me.svg"></image>
+      <view class="tabbar_item_icon tabbar_item_icon_me"></view>
       <text class="tabbar_item_title">我</text>
     </view>
   </view>
@@ -57,9 +69,11 @@
   import { connect } from 'wepy-redux'
 
   import { initMessage } from '../actions/message'
+  import { setTripInfo } from '../actions/trip'
 
   @connect({}, {
-    initMessage
+    initMessage,
+    setTripInfo
   })
   export default class TabBar extends wepy.component {
     props = {
@@ -68,31 +82,26 @@
       }
     }
 
-    data = {
-    }
-
     methods = {
       goToList () {
         this.active = 0
-        wepy.navigateTo({
-          url: '../trips'
-        })
+        this.$emit('switchTab', 0)
       },
 
       goToPublish () {
         this.active = 1
         this.methods.initMessage()
-        wepy.navigateTo({
-          url: '../trip?type=new&from=add'
+        this.methods.setTripInfo({
+          type: 'new',
+          from: 'add'
         })
+        this.$emit('switchTab', 1)
       },
 
       goToMine () {
         this.active = 2
+        this.$emit('switchTab', 2)
       }
-    };
-
-    onLoad () {
     }
   }
 </script>

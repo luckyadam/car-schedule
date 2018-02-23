@@ -76,11 +76,11 @@
   <view class="container trips">
     <view class="trips_tab">
       <view class="trips_tab_hd">
-        <view :class="{trips_tab_hd_item: true, active: tabActive === 0}" @tap="changeTab(0)">全部</view>
-        <view :class="{trips_tab_hd_item: true, active: tabActive === 1}" @tap="changeTab(1)">待出发</view>
-        <view :class="{trips_tab_hd_item: true, active: tabActive === 2}" @tap="changeTab(2)">待匹配</view>
-        <view :class="{trips_tab_hd_item: true, active: tabActive === 3}" @tap="changeTab(3)">已完成</view>
-        <view :class="{trips_tab_hd_indicator: true, trips_tab_hd_indicator_active1: tabActive === 1, trips_tab_hd_indicator_active2: tabActive === 2, trips_tab_hd_indicator_active3: tabActive === 3}"></view>
+        <view class="trips_tab_hd_item{{tabActive === 0 ? ' active' : ''}}" @tap="changeTab(0)">全部</view>
+        <view class="trips_tab_hd_item{{tabActive === 1 ? ' active' : ''}}" @tap="changeTab(1)">待出发</view>
+        <view class="trips_tab_hd_item{{tabActive === 2 ? ' active' : ''}}" @tap="changeTab(2)">待匹配</view>
+        <view class="trips_tab_hd_item{{tabActive === 3 ? ' active' : ''}}" @tap="changeTab(3)">已完成</view>
+        <view class="trips_tab_hd_indicator{{tabActive === 1 ? ' trips_tab_hd_indicator_active1' : ''}}{{tabActive === 2 ? ' trips_tab_hd_indicator_active2' : ''}}{{tabActive === 3 ? ' trips_tab_hd_indicator_active3' : ''}}"></view>
       </view>
       <view class="trips_tab_bd">
         <view class="trips_tab_bd_item trips_tab_all" hidden="{{tabActive !== 0}}">
@@ -125,7 +125,7 @@
   import wepy from 'wepy'
   import { connect } from 'wepy-redux'
 
-  import TripCard from '../components/tripCard'
+  import TripCard from './tripCard'
   import { fetchMessages } from '../actions/message'
   import { initUserMessage } from '../actions/user'
 
@@ -142,12 +142,7 @@
     fetchMessages,
     initUserMessage
   })
-  export default class Trips extends wepy.page {
-    config = {
-      navigationBarTitleText: '我的行程',
-      enablePullDownRefresh: true
-    }
-
+  export default class Trips extends wepy.component {
     components = {
       TripCard
     }
@@ -262,7 +257,10 @@
       }
     }
 
-    onLoad () {
+    async init () {
+      await wepy.setNavigationBarTitle({
+        title: '我的行程'
+      })
       this.methods.initUserMessage()
       this.methods.fetchMessages(this.role, {
         page: 0,
@@ -271,14 +269,10 @@
       })
     }
 
-    async onPullDownRefresh () {
-      this.methods.initUserMessage()
-      await this.methods.fetchMessages(this.role, {
-        page: 0,
-        size: 20,
-        type: 0
-      })
-      wepy.stopPullDownRefresh()
+    events = {
+      showTrips: () => {
+        this.init()
+      }
     }
   }
 </script>

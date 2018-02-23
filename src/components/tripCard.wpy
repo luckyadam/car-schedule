@@ -28,9 +28,11 @@
 
   import { initMessage } from '../actions/message'
   import { ROLE } from '../constants/user'
+  import { setTripInfo } from '../actions/trip'
 
   @connect({}, {
-    initMessage
+    initMessage,
+    setTripInfo
   })
   export default class TripCard extends wepy.component {
     props = {
@@ -62,9 +64,11 @@
         delete message.statusShow
         message.car = message.car.id
         this.methods.initMessage(message)
-        wepy.navigateTo({
-          url: '../pages/trip?type=edit&from=list'
+        this.methods.setTripInfo({
+          type: 'edit',
+          from: 'list'
         })
+        this.$emit('switchTab', 1)
       }
     }
   }

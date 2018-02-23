@@ -102,7 +102,7 @@
         <view class="region_title icon-local">空置地点</view>
         <view class="region_section_main">
           <view class="editable-item" @tap="chooseLocation">
-            <view class="editable-item_title"><text wx:if="{{!message.location}}">正在获取当前位置...</text><text wx:else :class="{'editable-item_title_main': true, uneditable: type !== 'new'}">{{message.location}}</text></view>
+            <view class="editable-item_title"><text wx:if="{{!message.location}}">正在获取当前位置...</text><text wx:else class="editable-item_title_main{{type !== 'new' ? ' uneditable' : ''}}">{{message.location}}</text></view>
             <view class="editable-item_content">
               <view class="trip_arrow arrow-right" wx:if="{{type === 'new'}}"></view>
             </view>
@@ -115,14 +115,14 @@
           <view class="editable-item" @tap="chooseLocation">
             <view class="editable-item_title">接</view>
             <view class="editable-item_content">
-              <view class="trip_location_main"><text wx:if="{{!message.location}}">正在获取当前位置...</text><text wx:else :class="{'editable-item_content_main': true, uneditable: type !== 'new'}">{{message.location}}</text></view>
+              <view class="trip_location_main"><text wx:if="{{!message.location}}">正在获取当前位置...</text><text wx:else class="editable-item_title_main{{type !== 'new' ? ' uneditable' : ''}}">{{message.location}}</text></view>
               <view class="trip_arrow arrow-right" wx:if="{{type === 'new'}}"></view>
             </view>
           </view>
           <view class="editable-item" @tap="chooseLocationSend">
             <view class="editable-item_title">送</view>
             <view class="editable-item_content">
-              <view class="trip_location_main"><text wx:if="{{!message.locationSend}}">正在获取当前位置...</text><text wx:else :class="{'editable-item_content_main': true, uneditable: type !== 'new'}">{{message.locationSend}}</text></view>
+              <view class="trip_location_main"><text wx:if="{{!message.locationSend}}">正在获取当前位置...</text><text wx:else class="editable-item_title_main{{type !== 'new' ? ' uneditable' : ''}}">{{message.locationSend}}</text></view>
               <view class="trip_arrow arrow-right" wx:if="{{type === 'new'}}"></view>
             </view>
           </view>
@@ -225,6 +225,9 @@
     },
     user (state) {
       return state.user
+    },
+    trip (state) {
+      return state.trip
     }
   }, {
     initMessage,
@@ -238,7 +241,7 @@
     publishMessage,
     cancelMessage
   })
-  export default class Trip extends wepy.page {
+  export default class Trip extends wepy.component {
     data = {
       carPickerIndex: 0,
       type: 'new',
@@ -378,7 +381,7 @@
           return
         }
         wepy.navigateTo({
-          url: './edit/publish/number'
+          url: '../pages/edit/publish/number'
         })
       },
 
@@ -387,7 +390,7 @@
           return
         }
         wepy.navigateTo({
-          url: './edit/publish/guideName'
+          url: '../pages/edit/publish/guideName'
         })
       },
 
@@ -396,7 +399,7 @@
           return
         }
         wepy.navigateTo({
-          url: './edit/publish/guideTel'
+          url: '../pages/edit/publish/guideTel'
         })
       },
 
@@ -405,7 +408,7 @@
           return
         }
         wepy.navigateTo({
-          url: './edit/publish/description'
+          url: '../pages/edit/publish/description'
         })
       },
 
@@ -462,6 +465,8 @@
     }
 
     async init () {
+      this.type = this.trip.type
+      this.from = this.trip.type
       if (this.type === 'new') {
         await wepy.setNavigationBarTitle({ title: '发布空置信息' })
         const location = await wepy.getLocation({ type: 'gcj02' })
@@ -490,14 +495,16 @@
       }
     }
 
-    async onLoad (options) {
-      const { type, from } = options
-      this.type = type
-      this.from = from
+    async onLoad () {
       this.qqMapWX = new QQMapWX({
         key: 'YGWBZ-2726P-4TMDD-LERQY-RQE3O-ZCBFV'
       })
-      this.init()
+    }
+
+    events = {
+      showTrip: () => {
+        this.init()
+      }
     }
   }
 </script>

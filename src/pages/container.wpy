@@ -5,13 +5,13 @@
 <template>
   <view class="tab">
     <view class="tab_item tab_trip" hidden="{{currentTab !== 0}}">
-      sdsd
+      <Trips />
     </view>
     <view class="tab_item tab_publish" hidden="{{currentTab !== 1}}">
-      sdsd
+      <Trip />
     </view>
     <view class="tab_item tab_mine" hidden="{{currentTab !== 2}}">
-      sdsd
+      <Me />
     </view>
     <TabBar :active.sync="currentTab" />
   </view>
@@ -22,20 +22,78 @@
   import { connect } from 'wepy-redux'
 
   import TabBar from '../components/tabBar'
+  import Trips from '../components/trips'
+  import Trip from '../components/trip'
+  import Me from '../components/me'
 
+  import { fetchMessages } from '../actions/message'
+  import { initUserMessage, initUserCars } from '../actions/user'
+  import { fetchCars } from '../actions/car'
+
+  @connect({
+    role (state) {
+      return state.user.role
+    }
+  }, {
+    initUserMessage,
+    fetchMessages,
+    initUserCars,
+    fetchCars
+  })
   export default class Container extends wepy.page {
     config = {
-      navigationBarTitleText: 'wepy - 微信',
-      navigationBarTextStyle: 'white',
-      navigationBarBackgroundColor: '#3b3a40'
+      navigationBarTitleText: '汽车调度',
+      enablePullDownRefresh: true
     }
 
     components = {
-      TabBar
+      TabBar,
+      Trips,
+      Trip,
+      Me
     }
 
     data = {
       currentTab: 0
+    }
+
+    events = {
+      switchTab: (idx) => {
+        switch (idx) {
+          case 0:
+            this.$broadcast('showTrips')
+            this.currentTab = 0
+            break
+          case 1:
+            this.$broadcast('showTrip')
+            this.currentTab = 1
+            break
+          case 2:
+            this.$broadcast('showMe')
+            this.currentTab = 2
+            break
+        }
+      }
+    }
+
+    async onPullDownRefresh () {
+      if (this.currentTab === 0) {
+        this.methods.initUserMessage()
+        await this.methods.fetchMessages(this.role, {
+          page: 0,
+          size: 20,
+          type: 0
+        })
+      } else if (this.currentTab === 2) {
+        this.methods.initUserCars()
+        await this.methods.fetchCars()
+      }
+      wepy.stopPullDownRefresh()
+    }
+
+    onLoad (options) {
+      const tab = options.tab || 0
+      this.currentTab = parseInt(tab, 10)
     }
   }
 </script>

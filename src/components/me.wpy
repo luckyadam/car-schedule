@@ -148,7 +148,7 @@
 </style>
 
 <template>
-  <wxs module="filter" src="../../filter/filter.wxs"></wxs>
+  <wxs module="filter" src="../filter/filter.wxs"></wxs>
   <view class="container profile region">
     <view class="toptip warning" wx:if="{{user.status === -1}}">资料审核中</view>
     <view class="toptip success" wx:elif="{{user.status === 0}}">资料审核已通过</view>
@@ -173,7 +173,7 @@
             <view class="editable-item_title">姓名</view>
             <view class="editable-item_content">
               <text class="editable-item_content_add" wx:if="{{!user.username}}">请添加姓名</text>
-              <text :class="{'editable-item_content_edit': true, disabled: user.status === 0}" wx:else>{{user.username}}</text>
+              <text class="editable-item_content_edit{{user.status === 0 ? ' disabled' : ''}}" wx:else>{{user.username}}</text>
               <text class="editable-item_arrow arrow-right" wx:if="{{user.status !== 0}}"></text>
             </view>
           </view>
@@ -181,7 +181,7 @@
             <view class="editable-item_title">手机号码</view>
             <view class="editable-item_content">
               <text class="editable-item_content_add" wx:if="{{!user.telephone}}">请添加手机号码</text>
-              <text :class="{'editable-item_content_edit': true, disabled: user.status === 0}" wx:else>{{user.telephone}}</text>
+              <text class="editable-item_content_edit{{user.status === 0 ? ' disabled' : ''}}" wx:else>{{user.telephone}}</text>
               <text class="editable-item_arrow arrow-right" wx:if="{{user.status !== 0}}"></text>
             </view>
           </view>
@@ -302,7 +302,7 @@
             <view class="editable-item_title">名称</view>
             <view class="editable-item_content">
               <text class="editable-item_content_add" wx:if="{{!user.company}}">请添加名称</text>
-              <text :class="{'editable-item_content_edit': true, disabled: user.status === 0}" wx:else>{{user.company}}</text>
+              <text class="editable-item_content_edit{{user.status === 0 ? ' disabled' : ''}}" wx:else>{{user.company}}</text>
               <text class="editable-item_arrow arrow-right" wx:if="{{user.status !== 0}}"></text>
             </view>
           </view>
@@ -310,7 +310,7 @@
             <view class="editable-item_title">联系电话</view>
             <view class="editable-item_content">
               <text class="editable-item_content_add" wx:if="{{!user.companyTel}}">请添加联系电话</text>
-              <text :class="{'editable-item_content_edit': true, disabled: user.status === 0}" wx:else>{{user.companyTel}}</text>
+              <text class="editable-item_content_edit{{user.status === 0 ? ' disabled' : ''}}" wx:else>{{user.companyTel}}</text>
               <text class="editable-item_arrow arrow-right" wx:if="{{user.status !== 0}}"></text>
             </view>
           </view>
@@ -336,7 +336,6 @@
         <button class="btn profile_submit_btn" @tap="updateProfile">确认提交</button>
       </view>
     </view>
-    <TabBar active="2" />
   </view>
 </template>
 
@@ -344,14 +343,12 @@
   import wepy from 'wepy'
   import { connect } from 'wepy-redux'
 
-  import TabBar from '../../components/tabBar'
-
-  import { isChooseTempImage, isEmptyStr, isValidPhoneNumber, isValidIdentifyId } from '../../utils/validate'
-  import { updateUser, setUserDriverLicensePos, setUserDriverLicenseOpp, setUserWorkLicensePos, setUserWorkLicenseOpp, updateUserCar } from '../../actions/user'
-  import { initCar, fetchCars, deleteCar } from '../../actions/car'
-  import { API_BASE } from '../../utils/api'
-  import { uploadFiles, uploadFilesInit } from '../../actions/upload'
-  import { ROLE } from '../../constants/user'
+  import { isChooseTempImage, isEmptyStr, isValidPhoneNumber, isValidIdentifyId } from '../utils/validate'
+  import { updateUser, setUserDriverLicensePos, setUserDriverLicenseOpp, setUserWorkLicensePos, setUserWorkLicenseOpp, updateUserCar, initUserCars } from '../actions/user'
+  import { initCar, fetchCars, deleteCar } from '../actions/car'
+  import { API_BASE } from '../utils/api'
+  import { uploadFiles, uploadFilesInit } from '../actions/upload'
+  import { ROLE } from '../constants/user'
 
   @connect({
     user (state) {
@@ -368,20 +365,13 @@
     uploadFiles,
     uploadFilesInit,
     updateUserCar,
+    initUserCars,
     setUserDriverLicensePos,
     setUserDriverLicenseOpp,
     setUserWorkLicensePos,
     setUserWorkLicenseOpp
   })
-  export default class Profile extends wepy.page {
-    config = {
-      navigationBarTitleText: '我的资料'
-    }
-
-    components = {
-      TabBar
-    }
-
+  export default class Me extends wepy.component {
     data = {
       certificateUploadCount: 0,
       certificateUploadIndex: {},
@@ -458,7 +448,7 @@
         }
         this.methods.initCar()
         wepy.navigateTo({
-          url: './car?type=add'
+          url: '../pages/profile/car?type=add'
         })
       },
 
@@ -466,7 +456,7 @@
         const idx = e.currentTarget.dataset.idx
         this.methods.initCar(this.user.cars[idx])
         wepy.navigateTo({
-          url: `./car?type=edit&idx=${idx}`
+          url: `../pages/profile/car?type=edit&idx=${idx}`
         })
       },
 
@@ -475,7 +465,7 @@
           return
         }
         wepy.navigateTo({
-          url: '../edit/username'
+          url: '../pages/edit/username'
         })
       },
 
@@ -484,31 +474,31 @@
           return
         }
         wepy.navigateTo({
-          url: '../edit/telephone'
+          url: '../pages/edit/telephone'
         })
       },
 
       editCompany () {
         wepy.navigateTo({
-          url: '../edit/company'
+          url: '../pages/edit/company'
         })
       },
 
       editCompanyTel () {
         wepy.navigateTo({
-          url: '../edit/companyTel'
+          url: '../pages/edit/companyTel'
         })
       },
 
       editCompanyFax () {
         wepy.navigateTo({
-          url: '../edit/companyFax'
+          url: '../pages/edit/companyFax'
         })
       },
 
       editCompanyAddr () {
         wepy.navigateTo({
-          url: '../edit/companyAddr'
+          url: '../pages/edit/companyAddr'
         })
       },
 
@@ -784,8 +774,18 @@
       }
     }
 
-    async onLoad () {
+    async init () {
+      await wepy.setNavigationBarTitle({
+        title: '我的资料'
+      })
+      this.methods.initUserCars()
       await this.methods.fetchCars()
+    }
+
+    events = {
+      showMe: () => {
+        this.init()
+      }
     }
   }
 </script>

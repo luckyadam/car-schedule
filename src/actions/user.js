@@ -21,6 +21,7 @@ import {
   SET_USER_WORK_LICENSE_POS,
   SET_USER_WORK_LICENSE_OPP,
   ADD_USER_CAR,
+  INIT_USER_CARS,
   DELETE_USER_CAR,
   UPDATE_USER_CAR,
   ADD_USER_MESSAGE,
@@ -28,6 +29,7 @@ import {
   INIT_USER_MESSAGE
 } from '../constants/user'
 import { API_USER } from '../utils/api'
+import { isEmptyObject } from '../utils'
 
 export const getUserIng = createAction(GET_USER)
 export const getUserSuccess = createAction(GET_USER_SUCCESS)
@@ -49,6 +51,7 @@ export const updateUserError = createAction(UPDATE_USER_ERROR)
 export const updateUserSuccess = createAction(UPDATE_USER_SUCCESS)
 export const userLoginError = createAction(USER_LOGIN_ERROR)
 
+export const initUserCars = createAction(INIT_USER_CARS)
 export const addUserCar = createAction(ADD_USER_CAR, car => ({ car }))
 export const deleteUserCar = createAction(DELETE_USER_CAR, index => ({ index }))
 export const updateUserCar = createAction(UPDATE_USER_CAR, (index, car) => ({ index, car }))
@@ -56,6 +59,23 @@ export const updateUserCar = createAction(UPDATE_USER_CAR, (index, car) => ({ in
 export const addUserMessage = createAction(ADD_USER_MESSAGE, message => ({ message }))
 export const updateUserMessage = createAction(UPDATE_USER_MESSAGE, (index, message) => ({ index, message }))
 export const initUserMessage = createAction(INIT_USER_MESSAGE)
+
+export async function checkSettingStatus () {
+  const setting = await wepy.getSetting()
+  const authSetting = setting.authSetting
+  if (!isEmptyObject(authSetting)) {
+    if (authSetting['scope.userInfo'] === false) {
+      const res = await wepy.showModal({
+        title: '用户未授权',
+        content: '如需正常使用汽车调度小程序，请按确定并在授权管理中选中“用户信息”，然后点按确定。最后再重新进入小程序即可正常使用。',
+        showCancel: false
+      })
+      if (res.confirm) {
+        await wepy.openSetting()
+      }
+    }
+  }
+}
 
 export async function fetchInitialUserInfo () {
   try {
@@ -75,15 +95,16 @@ export async function fetchInitialUserInfo () {
   } catch (err) {
     console.log('微信登录或用户接口故障')
     return null
-    // return await fetchInitialUserInfo()
   }
 }
 
 export function fetchUser () {
   return async dispatch => {
     dispatch(getUserIng())
-    await wepy.showLoading()
     try {
+      await wepy.showLoading({
+        mask: true
+      })
       const authorization = wepy.getStorageSync('authorization')
       let userInfo
       // 本地存在authorization，表示之前已经请求登录过
@@ -100,7 +121,7 @@ export function fetchUser () {
       }
       await wepy.hideLoading()
       if (userInfo === null) {
-        dispatch(getUserError())
+        dispatch(getUserError({ type: 'wx' }))
       } else {
         dispatch(getUserSuccess(userInfo))
       }
@@ -118,8 +139,8 @@ export function fetchUser () {
 export function updateUser (user) {
   return async dispatch => {
     dispatch(updateUserIng())
-    await wepy.showLoading()
     try {
+      await wepy.showLoading()
       const authorization = wepy.getStorageSync('authorization')
       if (authorization) {
         const userInfo = await wepy.request({
