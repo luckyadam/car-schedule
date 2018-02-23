@@ -34,6 +34,9 @@
   @connect({
     role (state) {
       return state.user.role
+    },
+    messages (state) {
+      return state.user.messages
     }
   }, {
     initUserMessage,
@@ -55,7 +58,10 @@
     }
 
     data = {
-      currentTab: 0
+      currentTab: 0,
+      tripsPage: 0,
+      tripsSizePerPage: 20,
+      tripsHasMore: true
     }
 
     computed = {
@@ -86,9 +92,10 @@
     async onPullDownRefresh () {
       if (this.currentTabIndex === 0) {
         this.methods.initUserMessage()
+        this.tripsPage = 0
         await this.methods.fetchMessages(this.role, {
-          page: 0,
-          size: 20,
+          page: this.tripsPage,
+          size: this.tripsSizePerPage,
           type: 0
         })
       } else if (this.currentTabIndex === 2) {
@@ -98,6 +105,24 @@
         }
       }
       wepy.stopPullDownRefresh()
+    }
+
+    async onReachBottom () {
+      if (this.currentTabIndex === 0) {
+        if (this.tripsHasMore) {
+          this.tripsPage++
+          const tripsLength = this.messages.length
+          await this.methods.fetchMessages(this.role, {
+            page: this.tripsPage,
+            size: this.tripsSizePerPage,
+            type: 0
+          })
+          if (this.messages.length === tripsLength) {
+            this.tripsHasMore = false
+            this.tripsPage--
+          }
+        }
+      }
     }
 
     onLoad (options) {

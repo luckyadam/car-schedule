@@ -218,6 +218,7 @@
   import QQMapWX from '../utils/qqmap-wx-jssdk'
   import { formatDate, formatTime, standardizedTime } from '../utils/format'
   import { ROLE } from '../constants/user'
+  import { setTripType } from '../actions/trip'
 
   @connect({
     message (state) {
@@ -239,7 +240,8 @@
     setMessageStartTime,
     setMessageEndTime,
     publishMessage,
-    cancelMessage
+    cancelMessage,
+    setTripType
   })
   export default class Trip extends wepy.component {
     data = {
@@ -452,16 +454,17 @@
         }
       },
 
-      cancelTrip () {
-        this.methods.cancelMessage(this.user.role, {
+      async cancelTrip () {
+        await this.methods.cancelMessage(this.user.role, {
           messageId: this.message.id,
           from: this.from
         })
+        this.$emit('switchTab', 0)
       },
 
       publishNewTrip () {
         this.methods.initMessage()
-        this.type = 'new'
+        this.methods.setTripType('new')
         this.init()
       }
     }

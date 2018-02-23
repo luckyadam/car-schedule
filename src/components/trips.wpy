@@ -44,6 +44,7 @@
         background: #F5F5F5;
         padding: 20rpx;
         margin-top: 80rpx;
+        margin-bottom: 80rpx;
         .trip-card {
           margin-bottom: 20rpx;
         }

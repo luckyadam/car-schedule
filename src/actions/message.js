@@ -118,13 +118,6 @@ export function cancelMessage (role, opts) {
           await wepy.showToast({
             title: '取消成功！'
           })
-          if (opts.from === 'list') {
-            wepy.navigateBack()
-          } else {
-            wepy.redirectTo({
-              url: '../pages/trips?refresh=1'
-            })
-          }
         } else {
           await wepy.showToast({
             icon: 'none',
