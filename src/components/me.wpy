@@ -24,7 +24,8 @@
         }
         &_main {
           z-index: 2;
-          transition: left 0.2s ease-in-out;
+          transform: translateX(0);
+          transition: transform 0.2s ease;
           background: #FFFFFF;
           padding: 20rpx 0;
         }
@@ -733,11 +734,11 @@
           const delBtnWidth = this.delBtnWidth
           let style = ''
           if (disX <= 0) {
-            style = 'left: 0rpx'
+            style = 'transform: translateX(0rpx)'
           } else {
-            style = `left: -${disX}rpx`
+            style = `transform: translateX(-${disX}rpx)`
             if(disX >= delBtnWidth) {
-              style = `left: -${delBtnWidth}rpx`
+              style = `transform: translateX(-${delBtnWidth}rpx)`
             }
           }
           const idx = e.currentTarget.dataset.idx
@@ -753,7 +754,7 @@
           const endX = e.changedTouches[0].clientX
           const disX = this.startX - endX
           const delBtnWidth = this.delBtnWidth
-          const style = disX > delBtnWidth / 2 ? `left:-${delBtnWidth}rpx` : `left:0rpx`
+          const style = disX > delBtnWidth / 2 ? `transform: translateX(-${delBtnWidth}rpx)` : `transform: translateX(0rpx)`
           const idx = e.currentTarget.dataset.idx
           const cars = this.user.cars
           const car = { ...cars[idx] }
