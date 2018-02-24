@@ -1,5 +1,5 @@
-const path = require('path');
-var prod = process.env.NODE_ENV === 'production'
+const path = require('path')
+const prod = process.env.NODE_ENV === 'production'
 
 module.exports = {
   wpyExt: '.wpy',
@@ -12,7 +12,6 @@ module.exports = {
   },
   resolve: {
     alias: {
-      counter: path.join(__dirname, 'src/components/counter'),
       '@': path.join(__dirname, 'src')
     },
     modules: ['node_modules']

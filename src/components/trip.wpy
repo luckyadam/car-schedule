@@ -447,13 +447,13 @@
         if (!this.message.endTime) {
           this.methods.setMessageEndTime(new Date(standardizedTime(`${this.endTimeDateShow} ${this.endTimeTimeShow}`)).toString())
         }
-        if (new Date(this.message.startTime).getTime() <= new Date().getTime()) {
-          await wepy.showToast({
-            icon: 'none',
-            title: '起始时间不能早于当前时间！'
-          })
-          return
-        }
+        // if (new Date(this.message.startTime).getTime() <= new Date().getTime()) {
+        //   await wepy.showToast({
+        //     icon: 'none',
+        //     title: '起始时间不能早于当前时间！'
+        //   })
+        //   return
+        // }
         if (this.user.role === ROLE.TRAVEL) {
           if (!this.message.number) {
             await wepy.showToast({
