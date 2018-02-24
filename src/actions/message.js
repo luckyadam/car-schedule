@@ -16,7 +16,7 @@ import {
   PUBLISH_MESSAGE_ERROR,
   INIT_MESSAGE
 } from '../constants/message'
-import { addUserMessage, updateUserMessage } from './user'
+import { addUserMessage } from './user'
 
 import { API_DRIVER_MESSAGE, API_TRAVEL_MESSAGE } from '../utils/api'
 import { ROLE } from '../constants/user'

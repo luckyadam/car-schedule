@@ -45,6 +45,14 @@
         padding: 20rpx;
         margin-top: 80rpx;
         margin-bottom: 80rpx;
+        &_nodata {
+          text-align: center;
+          padding-top: 360rpx;
+          color: #A4A4A4;
+          &_lk {
+            border-bottom: 2rpx solid #A4A4A4;
+          }
+        }
         .trip-card {
           margin-bottom: 20rpx;
         }
@@ -95,12 +103,18 @@
               <TripCard :tripData="item" />
             </repeat>
           </view>
+          <view class="trips_tab_bd_nodata" wx:if="{{!isFetchingMessage && !allTrips.newestWillDepart && (!allTrips.others || !allTrips.others.length)}}">
+            您还没有行程，<text class="trips_tab_bd_nodata_lk" @tap="goToPublishTrip">前往发布</text>吧~
+          </view>
         </view>
         <view class="trips_tab_bd_item" hidden="{{tabActive !== 1}}">
           <view wx:if="{{willDepartTrips.length}}">
             <repeat for="{{willDepartTrips}}" key="2_{{item.id}}" index="index" item="item">
               <TripCard :tripData="item" />
             </repeat>
+          </view>
+          <view class="trips_tab_bd_nodata" wx:elif="{{!isFetchingMessage}}">
+            暂无待出发行程
           </view>
         </view>
         <view class="trips_tab_bd_item" hidden="{{tabActive !== 2}}">
@@ -109,12 +123,18 @@
               <TripCard :tripData="item" />
             </repeat>
           </view>
+          <view class="trips_tab_bd_nodata" wx:elif="{{!isFetchingMessage}}">
+            暂无待匹配行程
+          </view>
         </view>
         <view class="trips_tab_bd_item" hidden="{{tabActive !== 3}}">
           <view wx:if="{{doneTrips.length}}">
             <repeat for="{{doneTrips}}" key="4_{{item.id}}" index="index" item="item">
               <TripCard :tripData="item" />
             </repeat>
+          </view>
+          <view class="trips_tab_bd_nodata" wx:elif="{{!isFetchingMessage}}">
+            暂无已完成行程
           </view>
         </view>
       </view>
@@ -129,6 +149,7 @@
   import TripCard from './tripCard'
   import { fetchMessages } from '../actions/message'
   import { initUserMessage } from '../actions/user'
+  import { setTripInfo } from '../actions/trip'
 
   import { formatDate, formatTime } from '../utils/format'
 
@@ -138,10 +159,14 @@
     },
     messages (state) {
       return state.user.messages
+    },
+    isFetchingMessage (state) {
+      return state.user.isFetchingMessage
     }
   }, {
     fetchMessages,
-    initUserMessage
+    initUserMessage,
+    setTripInfo
   })
   export default class Trips extends wepy.component {
     components = {
@@ -255,13 +280,18 @@
     methods = {
       changeTab (idx) {
         this.tabActive = +idx
+      },
+
+      goToPublishTrip () {
+        this.methods.setTripInfo({
+          type: 'new',
+          from: 'list'
+        })
+        this.$emit('switchTab', 1)
       }
     }
 
-    async init () {
-      await wepy.setNavigationBarTitle({
-        title: '我的行程'
-      })
+    init () {
       this.methods.initUserMessage()
       this.methods.fetchMessages(this.role, {
         page: 0,
@@ -274,6 +304,13 @@
       showTrips: () => {
         this.init()
       }
+    }
+
+    async onLoad () {
+      await wepy.setNavigationBarTitle({
+        title: '我的行程'
+      })
+      this.init()
     }
   }
 </script>

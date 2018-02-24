@@ -244,7 +244,8 @@ export default handleActions({
     }
     return {
       ...state,
-      messages
+      messages,
+      isFetchingMessage: false
     }
   },
 
@@ -295,5 +296,6 @@ export default handleActions({
   messages: [],
   errorObj: null,
   loginError: false,
-  isNew: false
+  isNew: false,
+  isFetchingMessage: true
 })

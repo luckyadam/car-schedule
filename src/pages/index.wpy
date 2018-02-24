@@ -23,9 +23,15 @@
         await checkSettingStatus()
       } else {
         if (user.role === ROLE.DRIVER || user.role === ROLE.TRAVEL) {
-          await wepy.redirectTo({
-            url: './container?tab=2'
-          })
+          if (user.status === 0) {
+            await wepy.redirectTo({
+              url: './container'
+            })
+          } else {
+            await wepy.redirectTo({
+              url: './container?tab=2'
+            })
+          }
         } else {
           await wepy.redirectTo({
             url: './choose'
