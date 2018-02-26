@@ -156,7 +156,7 @@
     <view wx:if="{{!user.isNew}}">
       <view class="toptip warning" wx:if="{{user.status === -1}}">资料审核中</view>
       <view class="toptip success" wx:elif="{{user.status === 0}}">资料审核已通过</view>
-      <view class="toptip error" wx:elif="{{user.status === 1}}">资料审核未通过</view>
+      <view class="toptip error" wx:elif="{{user.status === 1}}">资料审核未通过，{{user.auditOpinion}}</view>
     </view>
     <view class="container_inner">
       <view class="region_section profile_info">
