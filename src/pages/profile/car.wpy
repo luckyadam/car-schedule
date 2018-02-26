@@ -1,5 +1,10 @@
 <style lang="scss">
 .car {
+  .region_section_main {
+    .car_picker {
+      border-bottom: 1rpx dashed #DADADA;
+    }
+  }
   &_images {
     &_add {
       padding: 20rpx 0;
@@ -96,28 +101,55 @@
             <text class="editable-item_arrow arrow-right" wx:if="{{car.status !== 0}}"></text>
           </view>
         </view>
-        <view :class="{'editable-item': true, error: submitError.age}" @tap="editAge">
+        <picker class="car_picker" @change="carAgeChangeHandler" value="{{ageIndex}}" range="{{yearList}}" wx:if="{{car.status !== 0}}">
+          <view :class="{'editable-item': true, error: submitError.age}">
+            <view class="editable-item_title">出厂年份</view>
+            <view class="editable-item_content">
+              <text class="editable-item_content_add" wx:if="{{car.age == null}}">添加出厂年份</text>
+              <text class="editable-item_content_edit" wx:else>{{ageShow}}年</text>
+              <text class="editable-item_arrow arrow-right"></text>
+            </view>
+          </view>
+        </picker>
+        <view :class="{'editable-item': true, error: submitError.age}" wx:else>
           <view class="editable-item_title">出厂年份</view>
           <view class="editable-item_content">
             <text class="editable-item_content_add" wx:if="{{car.age == null}}">添加出厂年份</text>
             <text class="editable-item_content_edit" wx:else>{{ageShow}}年</text>
-            <text class="editable-item_arrow arrow-right" wx:if="{{car.status !== 0}}"></text>
           </view>
         </view>
-        <view :class="{'editable-item': true, error: submitError.brand}" @tap="editBrand">
+        <picker class="car_picker" @change="carBrandChangeHandler" value="{{brandIndex}}" range="{{brandList}}" wx:if="{{car.status !== 0}}">
+          <view :class="{'editable-item': true, error: submitError.brand}">
+            <view class="editable-item_title">车辆品牌</view>
+            <view class="editable-item_content">
+              <text class="editable-item_content_add" wx:if="{{car.brand == null}}">添加车辆品牌</text>
+              <text class="editable-item_content_edit" wx:else>{{car.brand}}</text>
+              <text class="editable-item_arrow arrow-right"></text>
+            </view>
+          </view>
+        </picker>
+        <view :class="{'editable-item': true, error: submitError.brand}" wx:else>
           <view class="editable-item_title">车辆品牌</view>
           <view class="editable-item_content">
             <text class="editable-item_content_add" wx:if="{{car.brand == null}}">添加车辆品牌</text>
             <text class="editable-item_content_edit" wx:else>{{car.brand}}</text>
-            <text class="editable-item_arrow arrow-right" wx:if="{{car.status !== 0}}"></text>
           </view>
         </view>
-        <view :class="{'editable-item': true, error: submitError.system}" @tap="editSystem">
+        <picker class="car_picker" @change="carSystemChangeHandler" value="{{systemIndex}}" range="{{systemList}}" wx:if="{{car.status !== 0}}">
+          <view :class="{'editable-item': true, error: submitError.system}">
+            <view class="editable-item_title">驱动系统</view>
+            <view class="editable-item_content">
+              <text class="editable-item_content_add" wx:if="{{car.system == null}}">添加驱动系统</text>
+              <text class="editable-item_content_edit" wx:else>{{car.system}}</text>
+              <text class="editable-item_arrow arrow-right"></text>
+            </view>
+          </view>
+        </picker>
+        <view :class="{'editable-item': true, error: submitError.system}" wx:else>
           <view class="editable-item_title">驱动系统</view>
           <view class="editable-item_content">
             <text class="editable-item_content_add" wx:if="{{car.system == null}}">添加驱动系统</text>
             <text class="editable-item_content_edit" wx:else>{{car.system}}</text>
-            <text class="editable-item_arrow arrow-right" wx:if="{{car.status !== 0}}"></text>
           </view>
         </view>
         <view :class="{'editable-item': true, error: submitError.company}" @tap="editCompany">
@@ -128,12 +160,27 @@
             <text class="editable-item_arrow arrow-right" wx:if="{{car.status !== 0}}"></text>
           </view>
         </view>
-        <view :class="{'editable-item': true, error: submitError.belongTo}" @tap="editBelongTo">
+        <picker
+          mode="multiSelector"
+          value="{{belongToValue}}"
+          @change="belongToChangeHandler"
+          @columnchange="belongToColumnChangeHandler"
+          range="{{provinceList}}"
+          wx:if="{{car.status !== 0}}">
+          <view :class="{'editable-item': true, error: submitError.belongTo}">
+            <view class="editable-item_title">车辆所属地</view>
+            <view class="editable-item_content">
+              <text class="editable-item_content_add" wx:if="{{car.belongTo == null}}">添加车辆所属地</text>
+              <text class="editable-item_content_edit" wx:else>{{belongToShow}}</text>
+              <text class="editable-item_arrow arrow-right"></text>
+            </view>
+          </view>
+        </picker>
+        <view :class="{'editable-item': true, error: submitError.belongTo}" wx:else>
           <view class="editable-item_title">车辆所属地</view>
           <view class="editable-item_content">
             <text class="editable-item_content_add" wx:if="{{car.belongTo == null}}">添加车辆所属地</text>
             <text class="editable-item_content_edit" wx:else>{{belongToShow}}</text>
-            <text class="editable-item_arrow arrow-right" wx:if="{{car.status !== 0}}"></text>
           </view>
         </view>
       </view>
@@ -168,7 +215,17 @@
   import wepy from 'wepy'
   import { connect } from 'wepy-redux'
 
-  import { addCarImage, deleteCarImage, updateCarImage, addCar, updateCar } from '../../actions/car'
+  import {
+    addCarImage,
+    deleteCarImage,
+    updateCarImage,
+    addCar,
+    updateCar,
+    inputCarAge,
+    inputCarBrand,
+    inputCarSystem,
+    inputCarBelongTo
+  } from '../../actions/car'
   import { API_BASE } from '../../utils/api'
   import { isChooseTempImage } from '../../utils/validate'
   import { uploadFiles, uploadFilesInit } from '../../actions/upload'
@@ -187,7 +244,11 @@
     uploadFiles,
     uploadFilesInit,
     addCar,
-    updateCar
+    updateCar,
+    inputCarAge,
+    inputCarBrand,
+    inputCarSystem,
+    inputCarBelongTo
   })
   export default class ProfileCar extends wepy.page {
     config = {
@@ -200,10 +261,56 @@
       carInfo: {},
       tempImagesPaths: [],
       submitError: {},
-      pageHadShown: false
+      pageHadShown: false,
+      ageIndex: 0,
+      yearList: (function () {
+        const currentYear = new Date().getFullYear()
+        const region = 20
+        const years = []
+        for (let i = currentYear; i > currentYear - region; i--) {
+          years.push(`${i}`)
+        }
+        return years
+      })(),
+      brandList: [
+        '宇通',
+        '比亚迪',
+        '申龙',
+        '金旅',
+        '金龙'
+      ],
+
+      brandIndex: 0,
+      systemList: [
+        '燃油',
+        '电动',
+        '油电混合'
+      ],
+
+      systemIndex: 0,
+      provinceList: [
+        ['北京', '上海', '天津', '重庆', '四川'],
+        ['东城区', '西城区', '崇文区', '宣武区', '朝阳区', '丰台区', '石景山区', '海淀区', '门头沟区', '房山区', '通州区', '顺义区', '昌平区', '大兴区', '怀柔区', '平谷区']
+      ],
+      cityList: {
+        '0': ['东城区', '西城区', '崇文区', '宣武区', '朝阳区', '丰台区', '石景山区', '海淀区', '门头沟区', '房山区', '通州区', '顺义区', '昌平区', '大兴区', '怀柔区', '平谷区'],
+        '1': ['黄浦区', '卢湾区', '徐汇区', '长宁区', '静安区', '普陀区', '闸北区', '虹口区', '杨浦区', '闵行区', '宝山区', '嘉定区', '浦东新区', '金山区', '松江区', '青浦区', '南汇区', '奉贤区'],
+        '2': ['和平区', '河东区', '河西区', '南开区', '河北区', '红桥区', '塘沽区', '汉沽区', '大港区', '东丽区', '西青区', '津南区', '北辰区', '武清区', '宝坻区'],
+        '3': ['万州区', '涪陵区', '渝中区', '大渡口区', '江北区', '沙坪坝区', '九龙坡区', '南岸区', '北碚区', '万盛区', '双桥区', '渝北区', '巴南区', '黔江区', '长寿区'],
+        '4': ['成都市', '自贡市', '攀枝花市', '泸州市', '德阳市', '绵阳市', '广元市', '遂宁市', '内江市', '乐山市', '南充市', '眉山市', '宜宾市', '广安市', '达州市', '雅安市', '巴中市', '资阳市', '阿坝藏族羌族自治州', '甘孜藏族自治州', '凉山彝族自治州']
+      }
     }
 
     computed = {
+      belongToValue () {
+        if (this.car && this.car.belongTo) {
+          const provinceIndex = this.provinceList[0].indexOf(this.car.belongTo[0])
+          const cityIndex = this.cityList[provinceIndex].indexOf(this.car.belongTo[1])
+          return [provinceIndex, cityIndex]
+        }
+        return [0, 0]
+      },
+
       belongToShow () {
         if (this.car && this.car.belongTo) {
           return this.car.belongTo.join('，')
@@ -262,33 +369,6 @@
         }
       },
 
-      editAge () {
-        if (this.car.status === 0) {
-          return
-        }
-        wepy.navigateTo({
-          url: '../edit/car/age'
-        })
-      },
-
-      editBrand () {
-        if (this.car.status === 0) {
-          return
-        }
-        wepy.navigateTo({
-          url: '../edit/car/brand'
-        })
-      },
-
-      editSystem () {
-        if (this.car.status === 0) {
-          return
-        }
-        wepy.navigateTo({
-          url: '../edit/car/system'
-        })
-      },
-
       editCompany () {
         if (this.car.status === 0) {
           return
@@ -298,13 +378,53 @@
         })
       },
 
-      editBelongTo () {
-        if (this.car.status === 0) {
-          return
+      carAgeChangeHandler (e) {
+        this.methods.inputCarAge(this.yearList[e.detail.value])
+        if (!this.car.age) {
+          this.submitError.age = true
+          this.submitError.hasError = true
+        } else {
+          this.submitError.age = false
         }
-        wepy.navigateTo({
-          url: '../edit/car/belongTo'
-        })
+      },
+
+      carBrandChangeHandler (e) {
+        this.methods.inputCarBrand(this.brandList[e.detail.value])
+        if (!this.car.brand) {
+          this.submitError.submitError.brand = true
+          this.submitError.hasError = true
+        } else {
+          this.submitError.brand = false
+        }
+      },
+
+      carSystemChangeHandler (e) {
+        this.methods.inputCarSystem(this.systemList[e.detail.value])
+        if (!this.car.system) {
+          this.submitError.submitError.system = true
+          this.submitError.hasError = true
+        } else {
+          this.submitError.system = false
+        }
+      },
+
+      belongToChangeHandler (e) {
+        const value = e.detail.value
+        const province = this.provinceList[0][value[0]]
+        const city = this.cityList[value[0]][value[1]]
+        this.methods.inputCarBelongTo([province, city])
+        if (!this.car.belongTo || !this.car.belongTo.length) {
+          this.submitError.submitError.belongTo = true
+          this.submitError.hasError = true
+        } else {
+          this.submitError.belongTo = false
+        }
+      },
+
+      belongToColumnChangeHandler (e) {
+        if (e.detail.column === 0) {
+          this.provinceList[1] = this.cityList[e.detail.value]
+        }
       },
 
       async chooseImages () {
