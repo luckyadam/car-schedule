@@ -1,5 +1,8 @@
 <style lang="scss">
   .profile {
+    .container_inner {
+      padding-bottom: 180rpx;
+    }
     &_car {
       &_list {
         width: 100%;
@@ -345,7 +348,7 @@
   import wepy from 'wepy'
   import { connect } from 'wepy-redux'
 
-  import { isChooseTempImage, isEmptyStr, isValidPhoneNumber, isValidIdentifyId } from '../utils/validate'
+  import { isChooseTempImage, isEmptyStr, isValidPhoneNumber, isValidFax } from '../utils/validate'
   import { formatYear } from '../utils/format'
   import {
     updateUser,
@@ -386,7 +389,8 @@
     data = {
       certificateUploadCount: 0,
       certificateUploadIndex: {},
-      delBtnWidth: 100
+      delBtnWidth: 100,
+      submitError: {}
     }
 
     computed = {
@@ -777,7 +781,7 @@
         }
       },
 
-      updateProfile () {
+      async updateProfile () {
         const files = this.files
         const certificateUploadIndex = this.certificateUploadIndex
         const { nickname, username, telephone, avatarUrl, role, company, companyTel, companyFax, companyAddr } = this.user
@@ -788,19 +792,94 @@
           avatarUrl,
           role
         }
-        if (role === ROLE.DRIVER) {
-          params.driverLicensePos = this.files[certificateUploadIndex['0']] || undefined
-          params.driverLicenseOpp = this.files[certificateUploadIndex['1']] || undefined
-          params.workLicensePos = this.files[certificateUploadIndex['2']] || undefined
-          params.workLicenseOpp = this.files[certificateUploadIndex['3']] || undefined
-        } else {
-          params.company = company
-          params.companyTel = companyTel
-          params.companyFax = companyFax
-          params.companyAddr = companyAddr
+        try {
+          if (role === ROLE.DRIVER) {
+            params.driverLicensePos = this.files[certificateUploadIndex['0']] || undefined
+            params.driverLicenseOpp = this.files[certificateUploadIndex['1']] || undefined
+            params.workLicensePos = this.files[certificateUploadIndex['2']] || undefined
+            params.workLicenseOpp = this.files[certificateUploadIndex['3']] || undefined
+          } else {
+            if (!this.checkCompany()) {
+              await wepy.showToast({
+                title: '公司名称不能为空！'
+              })
+              return
+            }
+            if (!this.checkCompanyTel()) {
+              await wepy.showToast({
+                title: '公司联系方式格式错误！'
+              })
+              return
+            }
+            if (!this.checkCompanyFax()) {
+              await wepy.showToast({
+                title: '公司传真格式错误！'
+              })
+              return
+            }
+            if (!this.checkCompanyAddr()) {
+              await wepy.showToast({
+                title: '公司地址不能为空！'
+              })
+              return
+            }
+            params.company = company
+            params.companyTel = companyTel
+            params.companyFax = companyFax
+            params.companyAddr = companyAddr
+          }
+          await this.methods.updateUser(params)
+        } catch (err) {
+          await wepy.showToast({
+            title: '系统错误，请重新再试！'
+          })
+          console.log(err)
         }
-        this.methods.updateUser(params)
       }
+    }
+
+    checkCompany () {
+      const user = this.user
+      if (!user.company) {
+        this.submitError.hasError = true
+        this.submitError.companyError = true
+        return false
+      }
+      this.submitError.companyError = false
+      return true
+    }
+
+    checkCompanyTel () {
+      const user = this.user
+      if (!isValidFax(user.companyTel)) {
+        this.submitError.hasError = true
+        this.submitError.companyTelError = true
+        return false
+      }
+      this.submitError.companyTelError = false
+      return true
+    }
+
+    checkCompanyFax () {
+      const user = this.user
+      if (!isValidFax(user.companyFax)) {
+        this.submitError.hasError = true
+        this.submitError.companyFaxError = true
+        return false
+      }
+      this.submitError.companyFaxError = false
+      return true
+    }
+
+    checkCompanyAddr () {
+      const user = this.user
+      if (!user.companyAddr) {
+        this.submitError.hasError = true
+        this.submitError.companyAddrError = true
+        return false
+      }
+      this.submitError.companyAddrError = false
+      return true
     }
 
     async init () {
