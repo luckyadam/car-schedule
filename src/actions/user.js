@@ -96,46 +96,58 @@ export async function fetchInitialUserInfo () {
     return userInfo
   } catch (err) {
     console.log('微信登录或用户接口故障')
-    return null
+    return 'wxerror'
+  }
+}
+
+async function fetchUserCore (dispatch) {
+  dispatch(getUserIng())
+  try {
+    await wepy.showLoading({
+      mask: true
+    })
+    const authorization = wepy.getStorageSync('authorization')
+    let userInfo
+    let statusCode
+    // 本地存在authorization，表示之前已经请求登录过
+    if (authorization) {
+      userInfo = await wepy.request({
+        url: API_USER,
+        method: 'GET',
+        header: {
+          authorization: `JWT ${authorization}`
+        }
+      }).then(userData => {
+        statusCode = userData.statusCode
+        return userData.data
+      })
+    } else { // 请求微信登录获取相关信息
+      statusCode = 200
+      dispatch(setIsNew(true))
+      userInfo = await fetchInitialUserInfo()
+    }
+    await wepy.hideLoading()
+    if (userInfo === 'wxerror') {
+      dispatch(getUserError({ type: 'wx' }))
+    } else if (statusCode === 200 || statusCode === 201) {
+      dispatch(getUserSuccess(userInfo))
+    } else {
+      wepy.removeStorageSync('authorization')
+      await fetchUserCore(dispatch)
+    }
+  } catch (err) {
+    await wepy.showToast({
+      title: JSON.stringify(err),
+      icon: 'success'
+    })
+    await wepy.hideLoading()
+    dispatch(getUserError(err))
   }
 }
 
 export function fetchUser () {
   return async dispatch => {
-    dispatch(getUserIng())
-    try {
-      await wepy.showLoading({
-        mask: true
-      })
-      const authorization = wepy.getStorageSync('authorization')
-      let userInfo
-      // 本地存在authorization，表示之前已经请求登录过
-      if (authorization) {
-        userInfo = await wepy.request({
-          url: API_USER,
-          method: 'GET',
-          header: {
-            authorization: `JWT ${authorization}`
-          }
-        }).then(userData => userData.data)
-      } else { // 请求微信登录获取相关信息
-        dispatch(setIsNew(true))
-        userInfo = await fetchInitialUserInfo()
-      }
-      await wepy.hideLoading()
-      if (userInfo === null) {
-        dispatch(getUserError({ type: 'wx' }))
-      } else {
-        dispatch(getUserSuccess(userInfo))
-      }
-    } catch (err) {
-      await wepy.showToast({
-        title: JSON.stringify(err),
-        icon: 'success'
-      })
-      await wepy.hideLoading()
-      dispatch(getUserError(err))
-    }
+    await fetchUserCore(dispatch)
   }
 }
 
