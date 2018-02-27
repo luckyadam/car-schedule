@@ -28,7 +28,7 @@ export function uploadFiles (files, opts) {
           const singleRes = await wepy.uploadFile({
             url: API_FILE,
             name: 'files',
-            filePath: files[0].path,
+            filePath: file.path,
             header: {
               authorization: `JWT ${authorization}`
             }
