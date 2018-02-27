@@ -1,6 +1,11 @@
+<template>
+  <view></view>
+</template>
+
 <script>
   import wepy from 'wepy'
   import { connect } from 'wepy-redux'
+
   import { fetchUser, checkSettingStatus } from '../actions/user'
   import { ROLE } from '../constants/user'
 
