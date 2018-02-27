@@ -55,7 +55,7 @@ button::after {
     height: 100rpx;
     line-height: 100rpx;
     background: #FFFFFF;
-    border-bottom: 1px solid #DADADA;
+    border-bottom: 2rpx solid #DADADA;
     font-size: 28rpx;
     padding-left: 30rpx;
   }
@@ -84,7 +84,7 @@ button::after {
   font-size: 28rpx;
   min-height: 80rpx;
   // overflow: hidden;
-  border-bottom: 1rpx dashed #DADADA;
+  border-bottom: 2rpx dashed #DADADA;
   align-items: center;
   &_title {
     color: #A4A4A4;
@@ -158,7 +158,7 @@ button::after {
   width: 610rpx;
   height: 60rpx;
   line-height: 60rpx;
-  border: 1rpx dashed #DADADA;
+  border: 2rpx dashed #DADADA;
   text-align: center;
   color: #A4A4A4;
   font-size: 24rpx;
@@ -213,7 +213,7 @@ button::after {
   color: #FFFFFF;
   font-size: 24rpx;
   &_link {
-    border-bottom: 1rpx solid #FFFFFF;
+    border-bottom: 2rpx solid #FFFFFF;
   }
 }
 

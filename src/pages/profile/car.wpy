@@ -2,7 +2,7 @@
 .car {
   .region_section_main {
     .car_picker {
-      border-bottom: 1rpx dashed #DADADA;
+      border-bottom: 2rpx dashed #DADADA;
     }
   }
   &_images {
