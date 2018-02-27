@@ -131,14 +131,21 @@
       <view class="region_section trip_car" wx:if="{{user.role === ROLE.DRIVER}}">
         <view class="region_title icon-bus">空置车辆</view>
         <view class="region_section_main">
-          <picker @change="carPickerChange" value="{{carPickerIndex}}" range="{{carsList}}" wx:if="{{type === 'new'}}">
-            <view class="editable-item">
-              <view class="editable-item_title"><text wx:if="{{!message.car}}">请选择车辆</text><text wx:else class="editable-item_title_main">{{carShow}}</text></view>
+          <view wx:if="{{type === 'new'}}">
+            <picker @change="carPickerChange" value="{{carPickerIndex}}" range="{{carsList}}" wx:if="{{carsList.length > 0}}">
+              <view class="editable-item">
+                <view class="editable-item_title"><text wx:if="{{!message.car}}">请选择车辆</text><text wx:else class="editable-item_title_main">{{carShow}}</text></view>
+                <view class="editable-item_content">
+                  <view class="trip_arrow arrow-right"></view>
+                </view>
+              </view>
+            </picker>
+            <view class="editable-item" wx:else>
+              <view class="editable-item_title"><text>您暂时没有已通过审核可供使用的车辆</text></view>
               <view class="editable-item_content">
-                <view class="trip_arrow arrow-right"></view>
               </view>
             </view>
-          </picker>
+          </view>
           <view class="editable-item" wx:else>
             <view class="editable-item_title"><text>{{carShow}}</text></view>
             <view class="editable-item_content">
@@ -298,7 +305,11 @@
 
       carsList () {
         if (this.user && this.user.cars.length) {
-          return this.user.cars.map(item => `${item.number}座，${item.brand}，${item.license}`)
+          return this.user.cars.map(item => {
+            if (item.status === 0) {
+              return `${item.number}座，${item.brand}，${item.license}`
+            }
+          }).filter(item => item)
         }
         return []
       },
@@ -447,13 +458,13 @@
         if (!this.message.endTime) {
           this.methods.setMessageEndTime(new Date(standardizedTime(`${this.endTimeDateShow} ${this.endTimeTimeShow}`)).toString())
         }
-        // if (new Date(this.message.startTime).getTime() <= new Date().getTime()) {
-        //   await wepy.showToast({
-        //     icon: 'none',
-        //     title: '起始时间不能早于当前时间！'
-        //   })
-        //   return
-        // }
+        if (new Date(this.message.endTime).getTime() <= new Date().getTime()) {
+          await wepy.showToast({
+            icon: 'none',
+            title: '结束时间不能早于当前时间！'
+          })
+          return
+        }
         if (this.user.role === ROLE.TRAVEL) {
           if (!this.message.number) {
             await wepy.showToast({
