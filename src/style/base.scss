@@ -77,10 +77,8 @@ form {
 
 .editable-item {
   display: flex;
-  justify-content: space-between;
   font-size: 28rpx;
-  height: 80rpx;
-  line-height: 80rpx;
+  min-height: 80rpx;
   // overflow: hidden;
   border-bottom: 1rpx dashed #DADADA;
   align-items: center;
@@ -88,6 +86,14 @@ form {
     color: #A4A4A4;
   }
   &_content {
+    width: 100%;
+    flex: 1;
+    text-align: right;
+    word-break: break-all;
+    display: flex;
+    align-items: center;
+    margin-left: 12rpx;
+    justify-content: flex-end;
     &_add {
       color: #A4A4A4;
       display: inline-block;
@@ -96,7 +102,8 @@ form {
     &_edit {
       color: #333333;
       display: inline-block;
-      vertical-align: middle;
+      flex: 1;
+      width: 100%;
       &.disabled {
         color: #A4A4A4;
         background-color: transparent;
@@ -111,7 +118,6 @@ form {
   }
   &_arrow {
     display: inline-block;
-    vertical-align: middle;
     margin-left: 8rpx;
   }
   .uneditable {
