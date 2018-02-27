@@ -13,6 +13,10 @@ form {
   width: 100%;
 }
 
+button::after {
+  border: none;
+}
+
 /* lib */
 .strong {
   font-weight: bold;
@@ -160,7 +164,12 @@ form {
   font-size: 24rpx;
   border-radius: 0;
   background: transparent;
-  appearance: none;
+  &:before {
+    content: '\e90d';
+    font-family: 'car_iconfonts';
+    font-size: 20rpx;
+    margin-right: 12rpx;
+  }
 }
 
 .loading {
@@ -174,7 +183,6 @@ form {
 }
 .car-icons {
   font-family: 'car_iconfonts';
-  speak: none;
   font-style: normal;
   font-weight: normal;
   font-variant: normal;

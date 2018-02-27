@@ -39,7 +39,7 @@
         width: 250rpx;
         height: 250rpx;
         border-radius: 50%;
-        border: 2px solid #D8D8D8;
+        border: 4rpx solid #D8D8D8;
         background-color: #EEEEEE;
       }
       &_txt {
