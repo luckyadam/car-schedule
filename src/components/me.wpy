@@ -900,10 +900,7 @@
     }
 
     async onLoad () {
-      if (this.user.role === ROLE.DRIVER) {
-        this.methods.initUserCars()
-        await this.methods.fetchCars()
-      }
+      this.init()
     }
   }
 </script>

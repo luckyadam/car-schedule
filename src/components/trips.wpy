@@ -157,6 +157,9 @@
     role (state) {
       return state.user.role
     },
+    userStatus (state) {
+      return state.user.status
+    },
     messages (state) {
       return state.user.messages
     },
@@ -292,14 +295,16 @@
     }
 
     async init () {
-      await wepy.setNavigationBarTitle({
-        title: '我的行程'
-      })
-      this.methods.fetchMessages(this.role, {
-        page: 0,
-        size: 20,
-        type: 0
-      })
+      if (this.userStatus === 0) {
+        await wepy.setNavigationBarTitle({
+          title: '我的行程'
+        })
+        this.methods.fetchMessages(this.role, {
+          page: 0,
+          size: 20,
+          type: 0
+        })
+      }
     }
 
     events = {

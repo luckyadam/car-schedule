@@ -35,6 +35,9 @@
     role (state) {
       return state.user.role
     },
+    userStatus (state) {
+      return state.user.status
+    },
     messages (state) {
       return state.user.messages
     },
