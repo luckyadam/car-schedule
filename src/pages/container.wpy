@@ -27,7 +27,7 @@
   import Me from '../components/me'
 
   import { fetchMessages } from '../actions/message'
-  import { initUserMessage, initUserCars } from '../actions/user'
+  import { initUserMessage, initUserCars, setUserMessageHasMore } from '../actions/user'
   import { fetchCars } from '../actions/car'
   import { ROLE } from '../constants/user'
 
@@ -37,12 +37,16 @@
     },
     messages (state) {
       return state.user.messages
+    },
+    isMessagesHasMore (state) {
+      return state.user.isMessagesHasMore
     }
   }, {
     initUserMessage,
     fetchMessages,
     initUserCars,
-    fetchCars
+    fetchCars,
+    setUserMessageHasMore
   })
   export default class Container extends wepy.page {
     config = {
@@ -60,8 +64,7 @@
     data = {
       currentTab: 0,
       tripsPage: 0,
-      tripsSizePerPage: 20,
-      tripsHasMore: true
+      tripsSizePerPage: 20
     }
 
     computed = {
@@ -97,19 +100,18 @@
           size: this.tripsSizePerPage,
           type: 0
         })
-        this.tripsHasMore = true
       } else if (this.currentTabIndex === 2) {
         if (this.role === ROLE.DRIVER) {
           this.methods.initUserCars()
           await this.methods.fetchCars()
         }
       }
-      wepy.stopPullDownRefresh()
+      await wepy.stopPullDownRefresh()
     }
 
     async onReachBottom () {
       if (this.currentTabIndex === 0) {
-        if (this.tripsHasMore) {
+        if (this.isMessagesHasMore) {
           this.tripsPage++
           const tripsLength = this.messages.length
           await this.methods.fetchMessages(this.role, {
@@ -118,7 +120,7 @@
             type: 0
           })
           if (this.messages.length === tripsLength) {
-            this.tripsHasMore = false
+            this.methods.setUserMessageHasMore(false)
             this.tripsPage--
           }
         }

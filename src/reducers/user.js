@@ -25,6 +25,7 @@ import {
   ADD_USER_MESSAGE,
   UPDATE_USER_MESSAGE,
   INIT_USER_MESSAGE,
+  SET_USER_MESSAGE_HAS_MORE,
   SET_IS_NEW
 } from '../constants/user'
 
@@ -265,7 +266,15 @@ export default handleActions({
     const messages = payload.message || []
     return {
       ...state,
-      messages
+      messages,
+      isMessagesHasMore: true
+    }
+  },
+
+  [SET_USER_MESSAGE_HAS_MORE] (state, action) {
+    return {
+      ...state,
+      ...action.payload
     }
   },
 
@@ -299,5 +308,6 @@ export default handleActions({
   errorObj: null,
   loginError: false,
   isNew: false,
-  isFetchingMessage: true
+  isFetchingMessage: true,
+  isMessagesHasMore: true
 })

@@ -27,6 +27,7 @@ import {
   ADD_USER_MESSAGE,
   UPDATE_USER_MESSAGE,
   INIT_USER_MESSAGE,
+  SET_USER_MESSAGE_HAS_MORE,
   SET_IS_NEW
 } from '../constants/user'
 import { API_USER } from '../utils/api'
@@ -60,6 +61,7 @@ export const updateUserCar = createAction(UPDATE_USER_CAR, (index, car) => ({ in
 export const addUserMessage = createAction(ADD_USER_MESSAGE, message => ({ message }))
 export const updateUserMessage = createAction(UPDATE_USER_MESSAGE, (index, message) => ({ index, message }))
 export const initUserMessage = createAction(INIT_USER_MESSAGE, message => ({ message }))
+export const setUserMessageHasMore = createAction(SET_USER_MESSAGE_HAS_MORE, isMessagesHasMore => ({ isMessagesHasMore }))
 export const setIsNew = createAction(SET_IS_NEW, isNew => ({ isNew }))
 
 export async function checkSettingStatus () {
