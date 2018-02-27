@@ -267,7 +267,8 @@ export default handleActions({
     return {
       ...state,
       messages,
-      isMessagesHasMore: true
+      isMessagesHasMore: true,
+      isFetchingMessage: false
     }
   },
 
