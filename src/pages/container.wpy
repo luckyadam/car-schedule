@@ -91,13 +91,13 @@
 
     async onPullDownRefresh () {
       if (this.currentTabIndex === 0) {
-        this.methods.initUserMessage()
         this.tripsPage = 0
         await this.methods.fetchMessages(this.role, {
           page: this.tripsPage,
           size: this.tripsSizePerPage,
           type: 0
         })
+        this.tripsHasMore = true
       } else if (this.currentTabIndex === 2) {
         if (this.role === ROLE.DRIVER) {
           this.methods.initUserCars()

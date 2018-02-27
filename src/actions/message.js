@@ -16,7 +16,7 @@ import {
   PUBLISH_MESSAGE_ERROR,
   INIT_MESSAGE
 } from '../constants/message'
-import { addUserMessage } from './user'
+import { addUserMessage, initUserMessage } from './user'
 
 import { API_DRIVER_MESSAGE, API_TRAVEL_MESSAGE } from '../utils/api'
 import { ROLE } from '../constants/user'
@@ -155,7 +155,11 @@ export function fetchMessages (role, opts) {
         await wepy.hideLoading()
         if (result.statusCode === 200 || result.statusCode === 201) {
           const messages = result.data
-          dispatch(addUserMessage(messages))
+          if (opts.page === 0) {
+            dispatch(initUserMessage(messages))
+          } else {
+            dispatch(addUserMessage(messages))
+          }
         }
       }
     } catch (err) {

@@ -260,10 +260,12 @@ export default handleActions({
     }
   },
 
-  [INIT_USER_MESSAGE] (state) {
+  [INIT_USER_MESSAGE] (state, action) {
+    const payload = action.payload
+    const messages = payload.message || []
     return {
       ...state,
-      messages: []
+      messages
     }
   },
 

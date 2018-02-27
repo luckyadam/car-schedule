@@ -295,7 +295,6 @@
       await wepy.setNavigationBarTitle({
         title: '我的行程'
       })
-      this.methods.initUserMessage()
       this.methods.fetchMessages(this.role, {
         page: 0,
         size: 20,

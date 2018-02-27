@@ -59,7 +59,7 @@ export const updateUserCar = createAction(UPDATE_USER_CAR, (index, car) => ({ in
 
 export const addUserMessage = createAction(ADD_USER_MESSAGE, message => ({ message }))
 export const updateUserMessage = createAction(UPDATE_USER_MESSAGE, (index, message) => ({ index, message }))
-export const initUserMessage = createAction(INIT_USER_MESSAGE)
+export const initUserMessage = createAction(INIT_USER_MESSAGE, message => ({ message }))
 export const setIsNew = createAction(SET_IS_NEW, isNew => ({ isNew }))
 
 export async function checkSettingStatus () {
