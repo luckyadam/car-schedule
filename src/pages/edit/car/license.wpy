@@ -11,10 +11,8 @@
       padding-left: 30rpx;
       box-sizing: border-box;
       background: #FFFFFF;
-      border-bottom: 1rpx solid #DADADA;
+      border-bottom: 2rpx solid #DADADA;
       position: relative;
-      &_txt {
-      }
       &_arrow {
         position: absolute;
         top: 37rpx;
