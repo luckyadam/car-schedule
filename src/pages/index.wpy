@@ -6,7 +6,7 @@
   import wepy from 'wepy'
   import { connect } from 'wepy-redux'
 
-  import { fetchUser, checkSettingStatus } from '../actions/user'
+  import { fetchUser, checkSettingStatus, setIsNew } from '../actions/user'
   import { ROLE } from '../constants/user'
 
   @connect({
@@ -14,7 +14,8 @@
       return state.user
     }
   }, {
-    fetchUser
+    fetchUser,
+    setIsNew
   })
   export default class Index extends wepy.page {
     async onLoad () {
@@ -34,6 +35,7 @@
             })
           }
         } else {
+          this.methods.setIsNew(true)
           await wepy.redirectTo({
             url: './choose'
           })

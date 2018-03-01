@@ -125,7 +125,6 @@ async function fetchUserCore (dispatch) {
       })
     } else { // 请求微信登录获取相关信息
       statusCode = 200
-      dispatch(setIsNew(true))
       userInfo = await fetchInitialUserInfo()
     }
     await wepy.hideLoading()

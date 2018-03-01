@@ -35,6 +35,9 @@
     role (state) {
       return state.user.role
     },
+    isNewUser (state) {
+      return state.user.isNew
+    },
     userStatus (state) {
       return state.user.status
     },
@@ -105,10 +108,12 @@
           type: 0
         })
       } else if (this.currentTabIndex === 2) {
-        await this.methods.fetchUser()
-        if (this.role === ROLE.DRIVER && this.userStatus === 0) {
-          this.methods.initUserCars()
-          await this.methods.fetchCars()
+        if (!this.isNewUser) {
+          await this.methods.fetchUser()
+          if (this.role === ROLE.DRIVER && this.userStatus === 0) {
+            this.methods.initUserCars()
+            await this.methods.fetchCars()
+          }
         }
       }
       await wepy.stopPullDownRefresh()
