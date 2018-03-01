@@ -93,9 +93,11 @@
       </view>
       <view class="trips_tab_bd">
         <view class="trips_tab_bd_item trips_tab_all" hidden="{{tabActive !== 0}}">
-          <view class="trips_tab trips_tab_all_newest" wx:if="{{allTrips.newestWillDepart}}">
+          <view class="trips_tab trips_tab_all_newest" wx:if="{{allTrips.newestWillDepart && allTrips.newestWillDepart.length}}">
             <view class="trips_tab_title">即将出发</view>
-            <TripCard tripData="{{allTrips.newestWillDepart}}" />
+            <repeat for="{{allTrips.newestWillDepart}}" key="0_{{item.id}}" index="index" item="item">
+              <TripCard :tripData="item" />
+            </repeat>
           </view>
           <view class="trips_tab trips_tab_all_others" wx:if="{{allTrips.others && allTrips.others.length}}">
             <view class="trips_tab_title">其他行程</view>
@@ -103,7 +105,7 @@
               <TripCard :tripData="item" />
             </repeat>
           </view>
-          <view class="trips_tab_bd_nodata" wx:if="{{!isFetchingMessage && !allTrips.newestWillDepart && (!allTrips.others || !allTrips.others.length)}}">
+          <view class="trips_tab_bd_nodata" wx:if="{{!isFetchingMessage && (!allTrips.newestWillDepart || !allTrips.newestWillDepart.length) && (!allTrips.others || !allTrips.others.length)}}">
             您还没有行程，<text class="trips_tab_bd_nodata_lk" @tap="goToPublishTrip">前往发布</text>吧~
           </view>
         </view>
@@ -183,7 +185,7 @@
     computed = {
       allTrips () {
         if (this.messages && this.messages.length) {
-          let newestWillDepart = null
+          let newestWillDepart = []
           let newestWillDepartIndex = -1
           let messages = this.messages.concat()
           messages = messages.map((item, index) => {
@@ -206,7 +208,7 @@
             }
             if (item.type === 1) {
               newestWillDepartIndex = index
-              newestWillDepart = item
+              newestWillDepart = [{ ...item }]
             }
             item.role = this.role
             return item
@@ -220,7 +222,7 @@
           }
         }
         return {
-          newestWillDepart: null,
+          newestWillDepart: [],
           others: []
         }
       },
@@ -299,7 +301,7 @@
         await wepy.setNavigationBarTitle({
           title: '我的行程'
         })
-        this.methods.fetchMessages(this.role, {
+        await this.methods.fetchMessages(this.role, {
           page: 0,
           size: 20,
           type: 0

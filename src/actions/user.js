@@ -140,7 +140,7 @@ async function fetchUserCore (dispatch) {
   } catch (err) {
     await wepy.showToast({
       title: JSON.stringify(err),
-      icon: 'success'
+      icon: 'none'
     })
     await wepy.hideLoading()
     dispatch(getUserError(err))
@@ -157,7 +157,9 @@ export function updateUser (user) {
   return async dispatch => {
     dispatch(updateUserIng())
     try {
-      await wepy.showLoading()
+      await wepy.showLoading({
+        mask: true
+      })
       const authorization = wepy.getStorageSync('authorization')
       if (authorization) {
         const userInfo = await wepy.request({
@@ -173,8 +175,8 @@ export function updateUser (user) {
           dispatch(updateUserSuccess(userInfo))
           dispatch(setIsNew(false))
           await wepy.showToast({
-            title: '提交审核成功',
-            icon: 'success'
+            title: '资料提交成功，正在审核中！',
+            icon: 'none'
           })
         } else {
           await wepy.showToast({

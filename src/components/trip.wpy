@@ -272,15 +272,18 @@
         if (this.message) {
           return formatDate(this.message.startTime)
         }
-
-        return formatDate()
+        return formatDate(new Date().getTime() + 3600000)
       },
 
       startTimeTimeShow () {
-        if (this.message) {
-          return formatTime(this.message.startTime)
+        const message = this.message
+        if (message) {
+          if (!message.startTime) {
+            return formatTime(new Date().getTime() + 3600000)
+          }
+          return formatTime(message.startTime)
         }
-        return formatTime()
+        return formatTime(new Date().getTime() + 3600000)
       },
 
       endTimeDateShow () {
@@ -288,19 +291,23 @@
         if (message) {
           if (!message.endTime) {
             let startTimeStamp = message.startTime ? new Date(message.startTime).getTime() : new Date().getTime()
-            return formatDate(startTimeStamp + 86400000)
+            return formatDate(startTimeStamp + 86400000 + 3600000)
           }
           return formatDate(message.endTime)
         }
 
-        return formatDate(new Date().getTime() + 86400000)
+        return formatDate(new Date().getTime() + 86400000 + 3600000)
       },
 
       endTimeTimeShow () {
-        if (this.message) {
-          return formatTime(this.message.endTime)
+        const message = this.message
+        if (message) {
+          if (!message.endTime) {
+            return formatTime(new Date().getTime() + 3600000)
+          }
+          return formatTime(message.endTime)
         }
-        return formatTime()
+        return formatTime(new Date().getTime() + 3600000)
       },
 
       carsList () {

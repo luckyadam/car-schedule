@@ -10,7 +10,7 @@
 
 <template>
   <view class="container telephone">
-    <EditInput :val.sync="telephone" placeholder="请输入手机号" :onInput="onInputHandler" />
+    <EditInput type="number" :val.sync="telephone" placeholder="请输入手机号" :onInput="onInputHandler" />
     <view class="telephone_tip" wx:if="{{!telephoneValidate}}">
       请输入正确的手机号
     </view>
@@ -55,6 +55,13 @@
         this.telephoneValidate = false
       }
       this.$apply()
+    }
+
+    onLoad () {
+      if (isValidPhoneNumber(this.telephone)) {
+        this.telephoneValidate = true
+        this.$apply()
+      }
     }
   }
 </script>

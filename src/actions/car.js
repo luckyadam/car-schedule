@@ -12,6 +12,7 @@ import {
   CAR_IMAGES_ADD,
   CAR_IMAGRS_DELETE,
   CAR_IMAGES_UPDATE,
+  CAR_IMAGES_UPDATE_BY_INDEX,
   INIT_CAR
 } from '../constants/car'
 import { addUserCar, updateUserCar, deleteUserCar } from './user'
@@ -27,6 +28,7 @@ export const inputCarBelongTo = createAction(CAR_BELONGTO_SELECT, belongTo => ({
 export const addCarImage = createAction(CAR_IMAGES_ADD, image => ({ image }))
 export const deleteCarImage = createAction(CAR_IMAGRS_DELETE, index => ({ index }))
 export const updateCarImage = createAction(CAR_IMAGES_UPDATE, image => ({ image }))
+export const updateCarImageByIndex = createAction(CAR_IMAGES_UPDATE_BY_INDEX, (index, image) => ({ index, image }))
 export const initCar = createAction(INIT_CAR, car => car)
 
 export function addCar (car) {
@@ -153,7 +155,7 @@ export function deleteCar (idx, car) {
         await wepy.hideLoading()
         if (result.statusCode === 204) {
           await wepy.showToast({
-            icon: 'success',
+            icon: 'none',
             title: '删除车辆成功！'
           })
           dispatch(deleteUserCar(idx))

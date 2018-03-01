@@ -10,7 +10,7 @@
     background: #FFFFFF;
     border-radius: 7rpx;
     &_head {
-      width: 290rpx;
+      width: 320rpx;
       margin: 0 auto;
       text-align: center;
       margin-top: 60rpx;
@@ -139,7 +139,7 @@
   })
   export default class Choose extends wepy.page {
     config = {
-      navigationBarTitleText: '选择角色'
+      navigationBarTitleText: '选择身份'
     }
 
     data = {
@@ -156,10 +156,17 @@
         this.methods.setUserRole(ROLE.TRAVEL)
       },
 
-      goToCompleteProfile () {
-        wepy.navigateTo({
-          url: `./container?tab=2`
+      async goToCompleteProfile () {
+        const res = await wepy.showModal({
+          title: '选择身份',
+          content: '身份一经选择不可修改',
+          showCancel: false
         })
+        if (res.confirm) {
+          await wepy.redirectTo({
+            url: `./container?tab=2`
+          })
+        }
       }
     }
   }

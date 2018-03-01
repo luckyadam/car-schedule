@@ -5,6 +5,52 @@
       border-bottom: 2rpx dashed #DADADA;
     }
   }
+  &_dlicense {
+    &_line {
+      display: flex;
+      margin-top: 30rpx;
+    }
+    &_item {
+      flex: 1;
+      width: 100%;
+      margin-right: 20rpx;
+      position: relative;
+      &_img {
+        width: 300rpx;
+        height: 200rpx;
+      }
+      &_overlay {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        background-color: rgba(255,255,255, .7);
+        text-align: center;
+        &.uploading {
+          .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            margin-top: -14rpx;
+            margin-left: -14rpx;
+          }
+        }
+      }
+      &_tip {
+        color: #A4A4A4;
+        font-size: 20rpx;
+        padding-top: 60rpx;
+      }
+      &_add {
+        font-size: 40rpx;
+        margin-bottom: 20rpx;
+        &:before {
+          content: '\e90d';
+        }
+      }
+    }
+  }
   &_images {
     &_add {
       padding: 20rpx 0;
@@ -56,23 +102,23 @@
           }
         }
       }
-      &_close {
-        position: absolute;
-        width: 40rpx;
-        height: 40rpx;
-        font-family: 'car_iconfonts';
-        font-size: 40rpx;
-        top: 10rpx;
-        right: 10rpx;
-        &:after {
-          content: '\e904'
-        }
-      }
     }
   }
   &_submit {
     padding-top: 10rpx;
     padding-bottom: 30rpx;
+  }
+  &_close {
+    position: absolute;
+    width: 40rpx;
+    height: 40rpx;
+    font-family: 'car_iconfonts';
+    font-size: 40rpx;
+    top: 10rpx;
+    right: 10rpx;
+    &:after {
+      content: '\e904'
+    }
   }
 }
 </style>
@@ -89,7 +135,7 @@
           <view class="editable-item_title">车牌号码</view>
           <view class="editable-item_content">
             <text class="editable-item_content_add" wx:if="{{car.license == null}}">添加车牌号码</text>
-            <text class="editable-item_content_edit" wx:else>{{car.license}}</text>
+            <text class="editable-item_content_edit{{type !== 'add' ? ' disabled' : ''}}" wx:else>{{car.license}}</text>
             <text class="editable-item_arrow arrow-right" wx:if="{{type === 'add'}}"></text>
           </view>
         </view>
@@ -97,7 +143,7 @@
           <view class="editable-item_title">核载人数</view>
           <view class="editable-item_content">
             <text class="editable-item_content_add" wx:if="{{car.number == null}}">添加核载人数</text>
-            <text class="editable-item_content_edit" wx:else>{{car.number}}人</text>
+            <text class="editable-item_content_edit{{car.status === 0 ? ' disabled' : ''}}" wx:else>{{car.number}}人</text>
             <text class="editable-item_arrow arrow-right" wx:if="{{car.status !== 0}}"></text>
           </view>
         </view>
@@ -115,7 +161,7 @@
           <view class="editable-item_title">出厂年份</view>
           <view class="editable-item_content">
             <text class="editable-item_content_add" wx:if="{{car.age == null}}">添加出厂年份</text>
-            <text class="editable-item_content_edit" wx:else>{{ageShow}}年</text>
+            <text class="editable-item_content_edit disabled" wx:else>{{ageShow}}年</text>
           </view>
         </view>
         <picker class="car_picker" @change="carBrandChangeHandler" value="{{brandIndex}}" range="{{brandList}}" wx:if="{{car.status !== 0}}">
@@ -132,7 +178,7 @@
           <view class="editable-item_title">车辆品牌</view>
           <view class="editable-item_content">
             <text class="editable-item_content_add" wx:if="{{car.brand == null}}">添加车辆品牌</text>
-            <text class="editable-item_content_edit" wx:else>{{car.brand}}</text>
+            <text class="editable-item_content_edit disabled" wx:else>{{car.brand}}</text>
           </view>
         </view>
         <picker class="car_picker" @change="carSystemChangeHandler" value="{{systemIndex}}" range="{{systemList}}" wx:if="{{car.status !== 0}}">
@@ -149,23 +195,21 @@
           <view class="editable-item_title">驱动系统</view>
           <view class="editable-item_content">
             <text class="editable-item_content_add" wx:if="{{car.system == null}}">添加驱动系统</text>
-            <text class="editable-item_content_edit" wx:else>{{car.system}}</text>
+            <text class="editable-item_content_edit disabled" wx:else>{{car.system}}</text>
           </view>
         </view>
         <view :class="{'editable-item': true, error: submitError.company}" @tap="editCompany">
           <view class="editable-item_title">车辆所属公司</view>
           <view class="editable-item_content">
             <text class="editable-item_content_add" wx:if="{{car.company == null}}">添加车辆所属公司</text>
-            <text class="editable-item_content_edit" wx:else>{{car.company}}</text>
+            <text class="editable-item_content_edit{{car.status === 0 ? ' disabled' : ''}}" wx:else>{{car.company}}</text>
             <text class="editable-item_arrow arrow-right" wx:if="{{car.status !== 0}}"></text>
           </view>
         </view>
         <picker
-          mode="multiSelector"
+          mode="region"
           value="{{belongToValue}}"
           @change="belongToChangeHandler"
-          @columnchange="belongToColumnChangeHandler"
-          range="{{provinceList}}"
           wx:if="{{car.status !== 0}}">
           <view :class="{'editable-item': true, error: submitError.belongTo}">
             <view class="editable-item_title">车辆所属地</view>
@@ -180,7 +224,42 @@
           <view class="editable-item_title">车辆所属地</view>
           <view class="editable-item_content">
             <text class="editable-item_content_add" wx:if="{{car.belongTo == null}}">添加车辆所属地</text>
-            <text class="editable-item_content_edit" wx:else>{{belongToShow}}</text>
+            <text class="editable-item_content_edit disabled" wx:else>{{belongToShow}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+    <view class="region_section car_dlicense">
+      <view class="region_title icon-information">车辆行驶证</view>
+      <view class="region_section_main">
+        <view class="car_dlicense_line">
+          <view class="car_dlicense_driver car_dlicense_item" @tap="chooseDriverLicensePos">
+            <image wx:if="{{!imagesShow.driverLicenses[0]}}" mode="aspectFill" src="../../assets/car_license_up.jpg" class="car_dlicense_item_img" />
+            <image wx:else src="{{imagesShow.driverLicenses[0].path}}" mode="aspectFill" class="car_dlicense_item_img" />
+            <view class="car_dlicense_item_overlay" wx:if="{{!imagesShow.driverLicenses[0]}}">
+              <view class="car_dlicense_item_tip">
+                <view class="car_dlicense_item_add car-icons"></view>
+                <view>行驶证主页</view>
+              </view>
+            </view>
+            <view class="car_dlicense_item_overlay uploading" wx:if="{{imagesShow.driverLicenses[0] && imagesShow.driverLicenses[0].isUploading}}">
+              <view class="loading"></view>
+            </view>
+            <view class="car_close" @tap.stop="deleteDriverLicensePosImage" wx:if="{{car.status !== 0 && imagesShow.driverLicenses[0]}}"></view>
+          </view>
+          <view class="car_dlicense_driver car_dlicense_item" @tap="chooseDriverLicenseOpp">
+            <image wx:if="{{!imagesShow.driverLicenses[1]}}" mode="aspectFill" src="../../assets/car_license_down.jpg" class="car_dlicense_item_img" />
+            <image wx:else src="{{imagesShow.driverLicenses[1].path}}" mode="aspectFill" class="car_dlicense_item_img" />
+            <view class="car_dlicense_item_overlay" wx:if="{{!imagesShow.driverLicenses[1]}}">
+              <view class="car_dlicense_item_tip">
+                <view class="car_dlicense_item_add car-icons"></view>
+                <view>行驶证副页</view>
+              </view>
+            </view>
+            <view class="car_dlicense_item_overlay uploading" wx:if="{{imagesShow.driverLicenses[1] && imagesShow.driverLicenses[1].isUploading}}">
+              <view class="loading"></view>
+            </view>
+            <view class="car_close" @tap.stop="deleteDriverLicenseOppImage" wx:if="{{car.status !== 0 && imagesShow.driverLicenses[1]}}"></view>
           </view>
         </view>
       </view>
@@ -188,8 +267,8 @@
     <view class="region_section car_images">
       <view class="region_title icon-camera">车辆照片</view>
       <view class="region_section_main">
-        <view class="car_images_list" wx:if="{{imagesShow.length}}">
-          <view wx:for="{{imagesShow}}" wx:key="{{item.path}}" class="car_images_list_item">
+        <view class="car_images_list" wx:if="{{imagesShow.images.length}}">
+          <view wx:for="{{imagesShow.images}}" wx:key="{{item.path}}" class="car_images_list_item">
             <image class="car_images_list_img" mode="aspectFill" src="{{item.path}}" @tap="previewImage" data-idx="{{index}}" />
             <view class="car_images_list_overlay uploading" wx:if="{{item.isUploading}}">
               <view class="loading"></view>
@@ -197,7 +276,7 @@
             <view class="car_images_list_overlay error" wx:if="{{item.isUploadError}}">
               <view class="tip">上传失败</view>
             </view>
-            <view class="car_images_list_close" @tap="deleteImage" data-idx="{{index}}"></view>
+            <view class="car_close" @tap="deleteImage" data-idx="{{index}}"></view>
           </view>
         </view>
         <view class="car_images_add" wx:if="{{car.status !== 0}}">
@@ -221,6 +300,7 @@
     updateCarImage,
     addCar,
     updateCar,
+    updateCarImageByIndex,
     inputCarAge,
     inputCarBrand,
     inputCarSystem,
@@ -245,6 +325,7 @@
     uploadFilesInit,
     addCar,
     updateCar,
+    updateCarImageByIndex,
     inputCarAge,
     inputCarBrand,
     inputCarSystem,
@@ -287,28 +368,15 @@
         '油电混合'
       ],
 
-      systemIndex: 0,
-      provinceList: [
-        ['北京', '上海', '天津', '重庆', '四川'],
-        ['东城区', '西城区', '崇文区', '宣武区', '朝阳区', '丰台区', '石景山区', '海淀区', '门头沟区', '房山区', '通州区', '顺义区', '昌平区', '大兴区', '怀柔区', '平谷区']
-      ],
-      cityList: {
-        '0': ['东城区', '西城区', '崇文区', '宣武区', '朝阳区', '丰台区', '石景山区', '海淀区', '门头沟区', '房山区', '通州区', '顺义区', '昌平区', '大兴区', '怀柔区', '平谷区'],
-        '1': ['黄浦区', '卢湾区', '徐汇区', '长宁区', '静安区', '普陀区', '闸北区', '虹口区', '杨浦区', '闵行区', '宝山区', '嘉定区', '浦东新区', '金山区', '松江区', '青浦区', '南汇区', '奉贤区'],
-        '2': ['和平区', '河东区', '河西区', '南开区', '河北区', '红桥区', '塘沽区', '汉沽区', '大港区', '东丽区', '西青区', '津南区', '北辰区', '武清区', '宝坻区'],
-        '3': ['万州区', '涪陵区', '渝中区', '大渡口区', '江北区', '沙坪坝区', '九龙坡区', '南岸区', '北碚区', '万盛区', '双桥区', '渝北区', '巴南区', '黔江区', '长寿区'],
-        '4': ['成都市', '自贡市', '攀枝花市', '泸州市', '德阳市', '绵阳市', '广元市', '遂宁市', '内江市', '乐山市', '南充市', '眉山市', '宜宾市', '广安市', '达州市', '雅安市', '巴中市', '资阳市', '阿坝藏族羌族自治州', '甘孜藏族自治州', '凉山彝族自治州']
-      }
+      systemIndex: 0
     }
 
     computed = {
       belongToValue () {
         if (this.car && this.car.belongTo) {
-          const provinceIndex = this.provinceList[0].indexOf(this.car.belongTo[0])
-          const cityIndex = this.cityList[provinceIndex].indexOf(this.car.belongTo[1])
-          return [provinceIndex, cityIndex]
+          return [...this.car.belongTo]
         }
-        return [0, 0]
+        return ['北京市', '北京市']
       },
 
       belongToShow () {
@@ -322,6 +390,9 @@
         if (this.car && this.car.images && this.car.images.length) {
           const images = this.car.images.concat()
           const imagesClone = images.map(image => {
+            if (image == null) {
+              return null
+            }
             if (typeof image === 'string') {
               if (!isChooseTempImage(image)) {
                 return {
@@ -331,16 +402,21 @@
               return {
                 path: image
               }
-            } else {
-              if (!isChooseTempImage(image.path)) {
-                image.path = `${API_BASE}${image.path}`
-              }
+            }
+            if (!isChooseTempImage(image.path)) {
+              image.path = `${API_BASE}${image.path}`
             }
             return image
           })
-          return imagesClone
+          return {
+            driverLicenses: [imagesClone[0], imagesClone[1]],
+            images: imagesClone.splice(2)
+          }
         }
-        return []
+        return {
+          driverLicenses: [],
+          images: []
+        }
       },
 
       ageShow () {
@@ -410,9 +486,7 @@
 
       belongToChangeHandler (e) {
         const value = e.detail.value
-        const province = this.provinceList[0][value[0]]
-        const city = this.cityList[value[0]][value[1]]
-        this.methods.inputCarBelongTo([province, city])
+        this.methods.inputCarBelongTo(value)
         if (!this.car.belongTo || !this.car.belongTo.length) {
           this.submitError.submitError.belongTo = true
           this.submitError.hasError = true
@@ -424,6 +498,98 @@
       belongToColumnChangeHandler (e) {
         if (e.detail.column === 0) {
           this.provinceList[1] = this.cityList[e.detail.value]
+        }
+      },
+
+      async chooseDriverLicensePos () {
+        const driverLicensePosImage = this.imagesShow.driverLicenses[0]
+        try {
+          // 预览图片
+          if (driverLicensePosImage) {
+            const previewImageUrls = []
+            const driverLicensePos = driverLicensePosImage.path
+            previewImageUrls.push(driverLicensePos)
+            await wepy.previewImage({
+              urls: previewImageUrls,
+              current: driverLicensePos
+            })
+            return
+          }
+          const res = await wepy.chooseImage({
+            count: 1,
+            sizeType: ['original', 'compressed'],
+            sourceType: ['album', 'camera']
+          })
+          const files = res.tempFiles.map(file => file)
+          this.methods.updateCarImageByIndex(0, files[0])
+          await this.methods.uploadFiles(files, {
+            beforeFileUpload: () => {
+              const fileCopy = { ...this.car.images[0] }
+              fileCopy.isUploading = true
+              this.methods.updateCarImageByIndex(0, fileCopy)
+            },
+            uploadFileSuccess: (index, res) => {
+              const fileCopy = { ...this.car.images[0] }
+              fileCopy.isUploading = false
+              fileCopy.realPath = res
+              this.methods.updateCarImageByIndex(0, fileCopy)
+            },
+            uploadFileError: (index, res) => {
+              const fileCopy = { ...this.car.images[0] }
+              fileCopy.isUploading = false
+              fileCopy.realPath = null
+              fileCopy.isUploadError = true
+              this.methods.updateCarImageByIndex(0, fileCopy)
+            }
+          })
+        } catch (err) {
+          console.log(err)
+        }
+      },
+
+      async chooseDriverLicenseOpp () {
+        const driverLicenseOppImage = this.imagesShow.driverLicenses[1]
+        try {
+          // 预览图片
+          if (driverLicenseOppImage) {
+            const previewImageUrls = []
+            const driverLicenseOpp = driverLicenseOppImage.path
+            previewImageUrls.push(driverLicenseOpp)
+            await wepy.previewImage({
+              urls: previewImageUrls,
+              current: driverLicenseOpp
+            })
+            return
+          }
+          const res = await wepy.chooseImage({
+            count: 1,
+            sizeType: ['original', 'compressed'],
+            sourceType: ['album', 'camera']
+          })
+          const files = res.tempFiles.map(file => file)
+          this.methods.updateCarImageByIndex(1, files[0])
+          await this.methods.uploadFiles(files, {
+            beforeFileUpload: () => {
+              const fileCopy = { ...this.car.images[1] }
+              fileCopy.isUploading = true
+              this.methods.updateCarImageByIndex(1, fileCopy)
+            },
+            uploadFileSuccess: (index, res) => {
+              const fileCopy = { ...this.car.images[1] }
+              fileCopy.isUploading = false
+              fileCopy.realPath = res
+              this.methods.updateCarImageByIndex(1, fileCopy)
+            },
+            uploadFileError: (index, res) => {
+              const fileCopy = { ...this.car.images[1] }
+              fileCopy.isUploading = false
+              fileCopy.realPath = null
+              fileCopy.isUploadError = true
+              this.methods.updateCarImageByIndex(1, fileCopy)
+            }
+          })
+        } catch (err) {
+          console.log(err)
         }
       },
 
@@ -464,7 +630,7 @@
 
       async previewImage (e) {
         const idx = e.currentTarget.dataset.idx
-        const previewImageUrls = this.imagesShow.map(item => item.path)
+        const previewImageUrls = this.imagesShow.images.map(item => item.path)
         try {
           await wepy.previewImage({
             urls: previewImageUrls,
@@ -476,17 +642,89 @@
       },
 
       async deleteImage (e) {
-        const idx = e.currentTarget.dataset.idx
+        const idx = e.currentTarget.dataset.idx + 2
         this.methods.deleteCarImage(idx)
+      },
+
+      deleteDriverLicensePosImage () {
+        this.methods.updateCarImageByIndex(0, null)
+      },
+
+      deleteDriverLicenseOppImage () {
+        this.methods.updateCarImageByIndex(1, null)
       },
 
       async submitProfile () {
         const res = this.checkCarProfile()
         this.submitError = res.submitError
         if (res.hasError) {
+          const submitError = this.submitError
+          if (submitError.license) {
+            await wepy.showToast({
+              icon: 'none',
+              title: '车牌号填写错误'
+            })
+            return
+          }
+          if (submitError.number) {
+            await wepy.showToast({
+              icon: 'none',
+              title: '请填写核载人数'
+            })
+            return
+          }
+          if (submitError.age) {
+            await wepy.showToast({
+              icon: 'none',
+              title: '请填写出厂年份'
+            })
+            return
+          }
+          if (submitError.brand) {
+            await wepy.showToast({
+              icon: 'none',
+              title: '请填写车辆品牌'
+            })
+            return
+          }
+          if (submitError.system) {
+            await wepy.showToast({
+              icon: 'none',
+              title: '请填写驱动系统'
+            })
+            return
+          }
+          if (submitError.company) {
+            await wepy.showToast({
+              icon: 'none',
+              title: '请填写所属公司'
+            })
+            return
+          }
+          if (submitError.belongTo) {
+            await wepy.showToast({
+              icon: 'none',
+              title: '请填写所属地'
+            })
+            return
+          }
           return
         }
         const car = { ...this.car }
+        if (!car.images[0]) {
+          await wepy.showToast({
+            icon: 'none',
+            title: '请上传车辆行驶证主页'
+          })
+          return
+        }
+        if (!car.images[1]) {
+          await wepy.showToast({
+            icon: 'none',
+            title: '请上传车辆行驶证副页'
+          })
+          return
+        }
         car.images =  car.images.map(item => {
           if (typeof item === 'object' && item.realPath) {
             return item.realPath
@@ -547,6 +785,9 @@
     onLoad (options) {
       this.pageHadShown = false
       this.type = options.type
+      if (this.type === 'add') {
+        this.methods.addCarImage([null, null])
+      }
       if (options.idx) {
         this.idx = options.idx
       }

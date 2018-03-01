@@ -263,7 +263,7 @@
           </view>
         </view>
       </view>
-      <view class="region_section profile_car" wx:if="{{user.role === 'driver'}}">
+      <view class="region_section profile_car" wx:if="{{user.role === 'driver' && user.status === 0}}">
         <view class="region_title icon-bus">车辆信息</view>
         <view class="region_section_main">
           <view class="profile_car_list" wx:if="{{carsList.length}}">
@@ -887,7 +887,7 @@
         title: '我的资料'
       })
 
-      if (this.user.role === ROLE.DRIVER) {
+      if (this.user.role === ROLE.DRIVER && this.user.status === 0) {
         this.methods.initUserCars()
         await this.methods.fetchCars()
       }

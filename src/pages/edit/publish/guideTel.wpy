@@ -56,5 +56,12 @@
       }
       this.$apply()
     }
+
+    onLoad () {
+      if (isValidPhoneNumber(this.telephone)) {
+        this.telephoneValidate = true
+        this.$apply()
+      }
+    }
   }
 </script>

@@ -13,7 +13,7 @@
     <view class="tab_item tab_mine" hidden="{{currentTabIndex !== 2}}">
       <Me />
     </view>
-    <TabBar :active.sync="currentTabIndex" />
+    <TabBar :active.sync="currentTabIndex" wx:if="{{userStatus === 0}}" />
   </view>
 </template>
 
@@ -27,7 +27,7 @@
   import Me from '../components/me'
 
   import { fetchMessages } from '../actions/message'
-  import { initUserMessage, initUserCars, setUserMessageHasMore } from '../actions/user'
+  import { initUserMessage, initUserCars, setUserMessageHasMore, fetchUser } from '../actions/user'
   import { fetchCars } from '../actions/car'
   import { ROLE } from '../constants/user'
 
@@ -49,7 +49,8 @@
     fetchMessages,
     initUserCars,
     fetchCars,
-    setUserMessageHasMore
+    setUserMessageHasMore,
+    fetchUser
   })
   export default class Container extends wepy.page {
     config = {
@@ -104,7 +105,8 @@
           type: 0
         })
       } else if (this.currentTabIndex === 2) {
-        if (this.role === ROLE.DRIVER) {
+        await this.methods.fetchUser()
+        if (this.role === ROLE.DRIVER && this.userStatus === 0) {
           this.methods.initUserCars()
           await this.methods.fetchCars()
         }

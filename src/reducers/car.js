@@ -10,6 +10,7 @@ import {
   CAR_IMAGES_ADD,
   CAR_IMAGRS_DELETE,
   CAR_IMAGES_UPDATE,
+  CAR_IMAGES_UPDATE_BY_INDEX,
   INIT_CAR
 } from '../constants/car'
 
@@ -123,6 +124,17 @@ export default handleActions({
     return {
       ...state,
       images: image
+    }
+  },
+
+  [CAR_IMAGES_UPDATE_BY_INDEX] (state, action) {
+    let images = state.images.concat()
+    const index = action.payload.index
+    const image = action.payload.image
+    images.splice(index, 1, image)
+    return {
+      ...state,
+      images
     }
   }
 }, {

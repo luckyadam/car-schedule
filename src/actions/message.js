@@ -116,6 +116,7 @@ export function cancelMessage (role, opts) {
         await wepy.hideLoading()
         if (result.statusCode === 204) {
           await wepy.showToast({
+            icon: 'none',
             title: '取消成功！'
           })
         } else {
