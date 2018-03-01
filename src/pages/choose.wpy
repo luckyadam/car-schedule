@@ -160,7 +160,7 @@
         const res = await wepy.showModal({
           title: '选择身份',
           content: '身份一经选择不可修改',
-          showCancel: false
+          confirmColor: '#EB3434'
         })
         if (res.confirm) {
           await wepy.redirectTo({
