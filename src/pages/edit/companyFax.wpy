@@ -25,7 +25,7 @@
   })
   export default class EditCompanyFax extends wepy.page {
     config = {
-      navigationBarTitleText: '修改公司传真'
+      navigationBarTitleText: '公司传真'
     }
 
     components = {

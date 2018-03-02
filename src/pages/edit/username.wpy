@@ -25,7 +25,7 @@
   })
   export default class EditUsername extends wepy.page {
     config = {
-      navigationBarTitleText: '修改姓名'
+      navigationBarTitleText: '姓名'
     }
 
     components = {

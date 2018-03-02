@@ -25,7 +25,7 @@
   })
   export default class EditCompanyAddr extends wepy.page {
     config = {
-      navigationBarTitleText: '修改公司地址'
+      navigationBarTitleText: '公司地址'
     }
 
     components = {

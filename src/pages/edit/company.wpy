@@ -25,7 +25,7 @@
   })
   export default class EditCompany extends wepy.page {
     config = {
-      navigationBarTitleText: '修改公司名称'
+      navigationBarTitleText: '公司名称'
     }
 
     components = {

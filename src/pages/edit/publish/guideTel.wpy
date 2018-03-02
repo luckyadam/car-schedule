@@ -10,7 +10,7 @@
 
 <template>
   <view class="container telephone">
-    <EditInput :val.sync="guideTelphone" placeholder="请输入导游手机号" :onInput="onInputHandler" />
+    <EditInput :val.sync="guideTelphone" type="number" placeholder="请输入导游手机号" :onInput="onInputHandler" />
     <view class="telephone_tip" wx:if="{{!telephoneValidate}}">
       请输入正确的手机号
     </view>
@@ -34,7 +34,7 @@
   })
   export default class EditTelephone extends wepy.page {
     config = {
-      navigationBarTitleText: '修改导游手机'
+      navigationBarTitleText: '导游手机'
     }
 
     components = {

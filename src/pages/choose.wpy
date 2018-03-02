@@ -158,7 +158,7 @@
 
       async goToCompleteProfile () {
         const res = await wepy.showModal({
-          title: '选择身份',
+          title: '确认身份',
           content: '身份一经选择不可修改',
           confirmColor: '#EB3434'
         })

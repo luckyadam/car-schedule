@@ -35,7 +35,7 @@
   })
   export default class EditMessageDescription extends wepy.page {
     config = {
-      navigationBarTitleText: '修改行程备注'
+      navigationBarTitleText: '行程备注'
     }
 
     methods = {

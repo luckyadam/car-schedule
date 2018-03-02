@@ -69,7 +69,7 @@
   })
   export default class EditCarLicense extends wepy.page {
     config = {
-      navigationBarTitleText: '修改车牌号码'
+      navigationBarTitleText: '车牌号码'
     }
 
     data = {
