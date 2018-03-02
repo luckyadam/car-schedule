@@ -207,10 +207,11 @@ export default handleActions({
     }
   },
 
-  [INIT_USER_CARS] (state) {
+  [INIT_USER_CARS] (state, actions) {
+    const cars = (actions.payload && actions.payload.length) ? actions.payload : []
     return {
       ...state,
-      cars: []
+      cars
     }
   },
 

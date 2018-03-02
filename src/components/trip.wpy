@@ -140,14 +140,15 @@
                 </view>
               </view>
             </picker>
-            <view class="editable-item" wx:else>
-              <view class="editable-item_title"><text>您暂时没有已通过审核可供使用的车辆</text></view>
+            <view class="editable-item" @tap="goToAddCar()" wx:else>
+              <view class="editable-item_title"><text>暂时没有可供使用的车辆，去添加</text></view>
               <view class="editable-item_content">
+                <view class="trip_arrow arrow-right"></view>
               </view>
             </view>
           </view>
           <view class="editable-item" wx:else>
-            <view class="editable-item_title"><text>{{carShow}}</text></view>
+            <view class="editable-item_title"><text class="uneditable">{{carShow}}</text></view>
             <view class="editable-item_content">
             </view>
           </view>
@@ -190,7 +191,7 @@
         <view class="region_title icon-information">行程备注</view>
         <view class="region_section_main">
           <view class="editable-item trip_description_item" @tap="editDescription">
-            <view class="editable-item_title"><text wx:if="{{!message.description}}">请填写您需要备注的信息，如注意事项等（必填）</text><text wx:else :class="{'editable-item_title_main': true, uneditable: type !== 'new'}">{{message.description}}</text></view>
+            <view class="editable-item_title"><text wx:if="{{!message.description}}">请填写您需要备注的信息，如注意事项等（选填）</text><text wx:else :class="{'editable-item_title_main': true, uneditable: type !== 'new'}">{{message.description}}</text></view>
             <view class="editable-item_content">
               <view class="trip_arrow arrow-right" wx:if="{{type === 'new'}}"></view>
             </view>
@@ -221,6 +222,7 @@
     publishMessage,
     cancelMessage
   } from '../actions/message'
+  import { initCar } from '../actions/car'
 
   import QQMapWX from '../utils/qqmap-wx-jssdk'
   import { formatDate, formatTime, standardizedTime } from '../utils/format'
@@ -248,7 +250,8 @@
     setMessageEndTime,
     publishMessage,
     cancelMessage,
-    setTripType
+    setTripType,
+    initCar
   })
   export default class Trip extends wepy.component {
     data = {
@@ -434,6 +437,13 @@
         })
       },
 
+      goToAddCar () {
+        this.methods.initCar()
+        wepy.navigateTo({
+          url: '../pages/profile/car?type=add'
+        })
+      },
+
       onStartTimeDateChange (e) {
         const startTimeDate = e.detail.value
         const startTimeTime = this.startTimeTimeShow
@@ -516,13 +526,6 @@
             })
             return
           }
-        }
-        if (!this.message.description) {
-          await wepy.showToast({
-            icon: 'none',
-            title: '行程备注为必填项！'
-          })
-          return
         }
         await this.methods.publishMessage(this.user.role, { ...this.message })
         if (!this.message.isError) {

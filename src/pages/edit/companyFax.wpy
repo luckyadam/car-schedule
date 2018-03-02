@@ -4,7 +4,7 @@
 <template>
   <view class="container">
     <view>
-      <EditInput :val.sync="companyFax" placeholder="请输入公司传真" :onInput="onInputHandler" />
+      <EditInput type="number" :val.sync="companyFax" placeholder="请输入公司传真" :onInput="onInputHandler" />
     </view>
   </view>
 </template>

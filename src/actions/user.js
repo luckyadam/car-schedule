@@ -53,7 +53,7 @@ export const updateUserError = createAction(UPDATE_USER_ERROR)
 export const updateUserSuccess = createAction(UPDATE_USER_SUCCESS)
 export const userLoginError = createAction(USER_LOGIN_ERROR)
 
-export const initUserCars = createAction(INIT_USER_CARS)
+export const initUserCars = createAction(INIT_USER_CARS, cars => cars)
 export const addUserCar = createAction(ADD_USER_CAR, car => ({ car }))
 export const deleteUserCar = createAction(DELETE_USER_CAR, index => ({ index }))
 export const updateUserCar = createAction(UPDATE_USER_CAR, (index, car) => ({ index, car }))
@@ -102,12 +102,14 @@ export async function fetchInitialUserInfo () {
   }
 }
 
-async function fetchUserCore (dispatch) {
+async function fetchUserCore (dispatch, needLoading) {
   dispatch(getUserIng())
   try {
-    await wepy.showLoading({
-      mask: true
-    })
+    if (needLoading || typeof needLoading === 'undefined') {
+      await wepy.showLoading({
+        mask: true
+      })
+    }
     const authorization = wepy.getStorageSync('authorization')
     let userInfo
     let statusCode
@@ -127,7 +129,9 @@ async function fetchUserCore (dispatch) {
       statusCode = 200
       userInfo = await fetchInitialUserInfo()
     }
-    await wepy.hideLoading()
+    if (needLoading || typeof needLoading === 'undefined') {
+      await wepy.hideLoading()
+    }
     if (userInfo === 'wxerror') {
       dispatch(getUserError({ type: 'wx' }))
     } else if (statusCode === 200 || statusCode === 201) {
@@ -146,9 +150,9 @@ async function fetchUserCore (dispatch) {
   }
 }
 
-export function fetchUser () {
+export function fetchUser (needLoading) {
   return async dispatch => {
-    await fetchUserCore(dispatch)
+    await fetchUserCore(dispatch, needLoading)
   }
 }
 

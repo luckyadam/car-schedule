@@ -155,7 +155,7 @@
   <view class="container profile region">
     <view wx:if="{{!user.isNew}}">
       <view class="toptip warning" wx:if="{{user.status === -1}}">资料审核中</view>
-      <view class="toptip success" wx:elif="{{user.status === 0}}">资料审核已通过</view>
+      <view class="toptip success" wx:elif="{{user.status === 0}}">资料审核已通过<text wx:if="{{!user.cars.length}}">，请完善车辆信息</text></view>
       <view class="toptip error" wx:elif="{{user.status === 1}}">资料审核未通过，{{user.auditOpinion}}</view>
     </view>
     <view class="container_inner">
@@ -356,8 +356,7 @@
     setUserDriverLicenseOpp,
     setUserWorkLicensePos,
     setUserWorkLicenseOpp,
-    updateUserCar,
-    initUserCars
+    updateUserCar
   } from '../actions/user'
   import { initCar, fetchCars, deleteCar } from '../actions/car'
   import { API_BASE } from '../utils/api'
@@ -379,7 +378,6 @@
     uploadFiles,
     uploadFilesInit,
     updateUserCar,
-    initUserCars,
     setUserDriverLicensePos,
     setUserDriverLicenseOpp,
     setUserWorkLicensePos,
@@ -801,24 +799,28 @@
           } else {
             if (!this.checkCompany()) {
               await wepy.showToast({
+                icon: 'none',
                 title: '公司名称不能为空！'
               })
               return
             }
             if (!this.checkCompanyTel()) {
               await wepy.showToast({
+                icon: 'none',
                 title: '公司联系方式格式错误！'
               })
               return
             }
             if (!this.checkCompanyFax()) {
               await wepy.showToast({
+                icon: 'none',
                 title: '公司传真格式错误！'
               })
               return
             }
             if (!this.checkCompanyAddr()) {
               await wepy.showToast({
+                icon: 'none',
                 title: '公司地址不能为空！'
               })
               return
@@ -831,6 +833,7 @@
           await this.methods.updateUser(params)
         } catch (err) {
           await wepy.showToast({
+            icon: 'none',
             title: '系统错误，请重新再试！'
           })
           console.log(err)
@@ -888,7 +891,6 @@
       })
 
       if (this.user.role === ROLE.DRIVER && this.user.status === 0) {
-        this.methods.initUserCars()
         await this.methods.fetchCars()
       }
     }
@@ -897,10 +899,6 @@
       showMe: () => {
         this.init()
       }
-    }
-
-    async onLoad () {
-      this.init()
     }
   }
 </script>

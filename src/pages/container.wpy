@@ -27,7 +27,7 @@
   import Me from '../components/me'
 
   import { fetchMessages } from '../actions/message'
-  import { initUserMessage, initUserCars, setUserMessageHasMore, fetchUser } from '../actions/user'
+  import { initUserMessage, setUserMessageHasMore, fetchUser } from '../actions/user'
   import { fetchCars } from '../actions/car'
   import { ROLE } from '../constants/user'
 
@@ -50,7 +50,6 @@
   }, {
     initUserMessage,
     fetchMessages,
-    initUserCars,
     fetchCars,
     setUserMessageHasMore,
     fetchUser
@@ -100,22 +99,7 @@
     }
 
     async onPullDownRefresh () {
-      if (this.currentTabIndex === 0) {
-        this.tripsPage = 0
-        await this.methods.fetchMessages(this.role, {
-          page: this.tripsPage,
-          size: this.tripsSizePerPage,
-          type: 0
-        })
-      } else if (this.currentTabIndex === 2) {
-        if (!this.isNewUser) {
-          await this.methods.fetchUser()
-          if (this.role === ROLE.DRIVER && this.userStatus === 0) {
-            this.methods.initUserCars()
-            await this.methods.fetchCars()
-          }
-        }
-      }
+      await this.refresh()
       await wepy.stopPullDownRefresh()
     }
 
@@ -135,6 +119,40 @@
           }
         }
       }
+    }
+
+    async refresh () {
+      if (this.currentTabIndex === 0) {
+        this.tripsPage = 0
+        await this.methods.fetchMessages(this.role, {
+          page: this.tripsPage,
+          size: this.tripsSizePerPage,
+          type: 0
+        })
+        if (this.role === ROLE.DRIVER && this.userStatus === 0) {
+          await this.methods.fetchCars()
+        }
+      } else if (this.currentTabIndex === 2) {
+        if (!this.isNewUser) {
+          await this.methods.fetchUser(false)
+          if (this.role === ROLE.DRIVER && this.userStatus === 0) {
+            await this.methods.fetchCars()
+          }
+        }
+      }
+    }
+
+    async onShow () {
+      if (this.currentTabIndex === 0) {
+        await wepy.setNavigationBarTitle({
+          title: '我的行程'
+        })
+      } else if (this.currentTabIndex === 2) {
+        await wepy.setNavigationBarTitle({
+          title: '我的资料'
+        })
+      }
+      this.refresh()
     }
 
     onLoad (options) {

@@ -297,10 +297,10 @@
     }
 
     async init () {
+      await wepy.setNavigationBarTitle({
+        title: '我的行程'
+      })
       if (this.userStatus === 0) {
-        await wepy.setNavigationBarTitle({
-          title: '我的行程'
-        })
         await this.methods.fetchMessages(this.role, {
           page: 0,
           size: 20,
@@ -313,10 +313,6 @@
       showTrips: () => {
         this.init()
       }
-    }
-
-    onLoad () {
-      this.init()
     }
   }
 </script>

@@ -15,7 +15,7 @@ import {
   CAR_IMAGES_UPDATE_BY_INDEX,
   INIT_CAR
 } from '../constants/car'
-import { addUserCar, updateUserCar, deleteUserCar } from './user'
+import { addUserCar, initUserCars, updateUserCar, deleteUserCar } from './user'
 import { API_CAR } from '../utils/api'
 
 export const inputCarLicense = createAction(CAR_LICENSE_INPUT, license => ({ license }))
@@ -129,7 +129,7 @@ export function fetchCars () {
         })
         if (result.statusCode === 200 || result.statusCode === 201) {
           const cars = result.data
-          dispatch(addUserCar(cars))
+          dispatch(initUserCars(cars))
         }
       }
     } catch (err) {
