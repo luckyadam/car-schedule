@@ -23,7 +23,7 @@
     &_location,&_car,&_description,&_number,&_guidename,&_guidetel {
       .editable-item_title {
         &_main {
-          color: #333333;
+          color: #000000;
           &.uneditable {
             color: #A4A4A4;
           }
@@ -191,7 +191,7 @@
         <view class="region_title icon-information">行程备注</view>
         <view class="region_section_main">
           <view class="editable-item trip_description_item" @tap="editDescription">
-            <view class="editable-item_title"><text wx:if="{{!message.description}}">请填写您需要备注的信息，如注意事项等（选填）</text><text wx:else :class="{'editable-item_title_main': true, uneditable: type !== 'new'}">{{message.description}}</text></view>
+            <view class="editable-item_title"><text wx:if="{{!message.description && type === 'new'}}">请填写您需要备注的信息，如注意事项等（选填）</text><text wx:else :class="{'editable-item_title_main': true, uneditable: type !== 'new'}">{{message.description || '无'}}</text></view>
             <view class="editable-item_content">
               <view class="trip_arrow arrow-right" wx:if="{{type === 'new'}}"></view>
             </view>
