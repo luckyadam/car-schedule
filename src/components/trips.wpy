@@ -206,11 +206,11 @@
             if (item.car) {
               item.carShow = `${item.car.number}座，${item.car.brand}`
             }
+            item.role = this.role
             if (item.type === 1) {
               newestWillDepartIndex = index
               newestWillDepart = [{ ...item }]
             }
-            item.role = this.role
             return item
           })
           if (newestWillDepartIndex >= 0) {
