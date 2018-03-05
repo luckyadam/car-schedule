@@ -1,6 +1,9 @@
 <style lang="scss">
   .trips {
+    height: 100%;
     &_tab {
+      height: 100%;
+      background:#F5F5F5;
       &_hd {
         display: flex;
         background: linear-gradient(to bottom, #EB3434, #EB7234);
@@ -41,7 +44,6 @@
         }
       }
       &_bd {
-        background: #F5F5F5;
         padding: 20rpx;
         margin-top: 80rpx;
         margin-bottom: 80rpx;

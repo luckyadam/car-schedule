@@ -1,5 +1,10 @@
 <style lang="scss">
-
+  .tab {
+    height: 100%;
+    &_item {
+      height: 100%;
+    }
+  }
 </style>
 
 <template>
