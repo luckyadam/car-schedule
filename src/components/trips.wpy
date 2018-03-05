@@ -313,5 +313,15 @@
         this.init()
       }
     }
+
+    async onLoad () {
+      if (this.userStatus === 0) {
+        await this.methods.fetchMessages(this.role, {
+          page: 0,
+          size: 20,
+          type: 0
+        })
+      }
+    }
   }
 </script>

@@ -99,7 +99,21 @@
     }
 
     async onPullDownRefresh () {
-      await this.refresh(true)
+      if (this.currentTabIndex === 0) {
+        this.tripsPage = 0
+        await this.methods.fetchMessages(this.role, {
+          page: this.tripsPage,
+          size: this.tripsSizePerPage,
+          type: 0
+        })
+      } else if (this.currentTabIndex === 2) {
+        if (!this.isNewUser) {
+          await this.methods.fetchUser(false)
+          if (this.role === ROLE.DRIVER && this.userStatus === 0) {
+            await this.methods.fetchCars()
+          }
+        }
+      }
       await wepy.stopPullDownRefresh()
     }
 
@@ -121,27 +135,6 @@
       }
     }
 
-    async refresh (isPullDown) {
-      if (this.currentTabIndex === 0) {
-        this.tripsPage = 0
-        await this.methods.fetchMessages(this.role, {
-          page: this.tripsPage,
-          size: this.tripsSizePerPage,
-          type: 0
-        })
-        if (this.role === ROLE.DRIVER && this.userStatus === 0 && !isPullDown) {
-          await this.methods.fetchCars()
-        }
-      } else if (this.currentTabIndex === 2) {
-        if (!this.isNewUser) {
-          await this.methods.fetchUser(false)
-          if (this.role === ROLE.DRIVER && this.userStatus === 0) {
-            await this.methods.fetchCars()
-          }
-        }
-      }
-    }
-
     async onShow () {
       if (this.currentTabIndex === 0) {
         await wepy.setNavigationBarTitle({
@@ -152,10 +145,9 @@
           title: '我的资料'
         })
       }
-      this.refresh()
     }
 
-    onLoad (options) {
+    async onLoad (options) {
       const tab = options.tab || 0
       this.currentTab = tab
     }
