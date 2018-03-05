@@ -167,6 +167,18 @@ button::after {
     margin-right: 12rpx;
   }
 }
+.btn-close {
+  width: 40rpx;
+  height: 40rpx;
+  background: #FFFFFF;
+  border-radius: 50%;
+  font-family: 'car_iconfonts';
+  font-size: 40rpx;
+  line-height: 1;
+  &:before {
+    content: '\e904';
+  }
+}
 
 .loading {
   border-radius: 100%;
@@ -214,7 +226,7 @@ button::after {
 }
 
 .warning {
-  background-color: #F2E37A;
+  background-color: #E6A23C;
 }
 
 .success {

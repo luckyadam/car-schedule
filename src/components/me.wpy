@@ -133,15 +133,8 @@
         }
         &_close {
           position: absolute;
-          width: 40rpx;
-          height: 40rpx;
-          font-family: 'car_iconfonts';
-          font-size: 40rpx;
           top: 10rpx;
           right: 10rpx;
-          &:after {
-            content: '\e904';
-          }
         }
       }
     }
@@ -214,7 +207,7 @@
               <view class="profile_certificate_item_overlay uploading" wx:if="{{user.driverLicensePos && user.driverLicensePos.isUploading}}">
                 <view class="loading"></view>
               </view>
-              <view class="profile_certificate_item_close" @tap.stop="deleteDriverLicensePosImage" wx:if="{{user.status !== 0 && user.driverLicensePos}}"></view>
+              <view class="profile_certificate_item_close btn-close" @tap.stop="deleteDriverLicensePosImage" wx:if="{{user.status !== 0 && user.driverLicensePos}}"></view>
             </view>
             <view class="profile_certificate_driver profile_certificate_item" @tap="chooseDriverLicenseOpp">
               <image wx:if="{{!user.driverLicenseOpp}}" mode="aspectFill" src="../assets/driver_license_down.jpg" class="profile_certificate_item_img" />
@@ -228,7 +221,7 @@
               <view class="profile_certificate_item_overlay uploading" wx:if="{{user.driverLicenseOpp && user.driverLicenseOpp.isUploading}}">
                 <view class="loading"></view>
               </view>
-              <view class="profile_certificate_item_close" @tap.stop="deleteDriverLicenseOppImage" wx:if="{{user.status !== 0 && user.driverLicenseOpp}}"></view>
+              <view class="profile_certificate_item_close btn-close" @tap.stop="deleteDriverLicenseOppImage" wx:if="{{user.status !== 0 && user.driverLicenseOpp}}"></view>
             </view>
           </view>
           <view class="profile_certificate_line">
@@ -244,7 +237,7 @@
               <view class="profile_certificate_item_overlay uploading" wx:if="{{user.workLicensePos && user.workLicensePos.isUploading}}">
                 <view class="loading"></view>
               </view>
-              <view class="profile_certificate_item_close" @tap.stop="deleteWorkLicensePosImage" wx:if="{{user.status !== 0 && user.workLicensePos}}"></view>
+              <view class="profile_certificate_item_close btn-close" @tap.stop="deleteWorkLicensePosImage" wx:if="{{user.status !== 0 && user.workLicensePos}}"></view>
             </view>
             <view class="profile_certificate_driver profile_certificate_item" @tap="chooseWorkLicenseOpp">
               <image wx:if="{{!user.workLicenseOpp}}" mode="aspectFill" src="../assets/work_license_down.jpg" class="profile_certificate_item_img" />
@@ -258,7 +251,7 @@
               <view class="profile_certificate_item_overlay uploading" wx:if="{{user.workLicenseOpp && user.workLicenseOpp.isUploading}}">
                 <view class="loading"></view>
               </view>
-              <view class="profile_certificate_item_close" @tap.stop="deleteWorkLicenseOppImage" wx:if="{{user.status !== 0 && user.workLicenseOpp}}"></view>
+              <view class="profile_certificate_item_close btn-close" @tap.stop="deleteWorkLicenseOppImage" wx:if="{{user.status !== 0 && user.workLicenseOpp}}"></view>
             </view>
           </view>
         </view>
@@ -889,7 +882,6 @@
       await wepy.setNavigationBarTitle({
         title: '我的资料'
       })
-
       if (this.user.role === ROLE.DRIVER && this.user.status === 0) {
         await this.methods.fetchCars()
       }
@@ -898,6 +890,12 @@
     events = {
       showMe: () => {
         this.init()
+      }
+    }
+
+    async onLoad () {
+      if (this.user.role === ROLE.DRIVER && this.user.status === 0) {
+        await this.methods.fetchCars()
       }
     }
   }
