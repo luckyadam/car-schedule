@@ -12,9 +12,11 @@ checkbox, radio {
 form {
   width: 100%;
 }
-
-button::after {
-  border: none;
+button {
+  padding: 0;
+  &:after {
+    border: none;
+  }
 }
 
 /* lib */

@@ -70,7 +70,7 @@
     &_icon {
       width: 88rpx;
       height: 88rpx;
-      background: #EB3434;
+      background: #A4A4A4;
       border-radius: 50%;
       margin-top: -40rpx;
       margin-bottom: 4rpx;
@@ -98,6 +98,11 @@
       }
       &.roll {
         animation: roll .5s ease-in-out forwards;
+      }
+    }
+    &.active {
+      .tabbar_trip_icon {
+        background: #EB3434;
       }
     }
   }

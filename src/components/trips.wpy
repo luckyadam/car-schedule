@@ -49,8 +49,17 @@
           text-align: center;
           padding-top: 360rpx;
           color: #A4A4A4;
-          &_lk {
-            border-bottom: 2rpx solid #A4A4A4;
+          font-size: 28rpx;
+          &_btn {
+            display: inline-block;
+            vertical-align: middle;
+            width: 150rpx;
+            height: 40rpx;
+            border-radius: 20rpx;
+            background: #2D3036;
+            color: #FFFFFF;
+            font-size: 24rpx;
+            line-height: 40rpx;
           }
         }
         .trip-card {
@@ -106,7 +115,7 @@
             </repeat>
           </view>
           <view class="trips_tab_bd_nodata" wx:if="{{!isFetchingMessage && (!allTrips.newestWillDepart || !allTrips.newestWillDepart.length) && (!allTrips.others || !allTrips.others.length)}}">
-            您还没有行程，<text class="trips_tab_bd_nodata_lk" @tap="goToPublishTrip">前往发布</text>吧~
+            您还没有行程，<text class="trips_tab_bd_nodata_btn" @tap="goToPublishTrip">前往发布</text>
           </view>
         </view>
         <view class="trips_tab_bd_item" hidden="{{tabActive !== 1}}">

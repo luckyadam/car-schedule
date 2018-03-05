@@ -76,7 +76,9 @@ export function publishMessage (role, message) {
             title: '发布成功，即将为您匹配行程！'
           })
           const messageData = result.data
-          messageData.car = messageData.car.id
+          if (messageData.car) {
+            messageData.car = messageData.car.id
+          }
           dispatch(initMessage(messageData))
         } else {
           await wepy.showToast({

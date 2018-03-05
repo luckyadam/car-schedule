@@ -1,5 +1,6 @@
 <style lang="scss">
   .trip {
+    padding-bottom: 60rpx;
     &_description {
       &_item {
         line-height: 46rpx;
@@ -57,6 +58,9 @@
       &_main {
         width: 100%;
         flex: 1;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
       }
     }
     &_submit {
