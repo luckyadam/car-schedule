@@ -64,6 +64,12 @@ export function addCar (car) {
           const carData = result.data
           dispatch(initCar(carData))
           dispatch(addUserCar(carData))
+        } else {
+          dispatch(initCar())
+          await wepy.showToast({
+            icon: 'none',
+            title: '添加车辆失败，请重试！'
+          })
         }
       }
     } catch (err) {
@@ -105,6 +111,11 @@ export function updateCar (idx, car) {
           })
           const carData = result.data
           dispatch(updateUserCar(idx, carData))
+        } else {
+          await wepy.showToast({
+            icon: 'none',
+            title: '修改车辆资料失败，请重试！'
+          })
         }
       }
     } catch (err) {
@@ -130,6 +141,12 @@ export function fetchCars () {
         if (result.statusCode === 200 || result.statusCode === 201) {
           const cars = result.data
           dispatch(initUserCars(cars))
+        } else {
+          dispatch(initUserCars([]))
+          await wepy.showToast({
+            icon: 'none',
+            title: '获取车辆列表，请重试！'
+          })
         }
       }
     } catch (err) {

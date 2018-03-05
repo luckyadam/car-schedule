@@ -161,6 +161,12 @@ export function fetchMessages (role, opts) {
           } else {
             dispatch(addUserMessage(messages))
           }
+        } else {
+          dispatch(initUserMessage([]))
+          await wepy.showToast({
+            icon: 'none',
+            title: '获取行程失败，请重试！'
+          })
         }
       }
     } catch (err) {

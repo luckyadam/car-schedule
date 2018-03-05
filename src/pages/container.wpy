@@ -99,7 +99,7 @@
     }
 
     async onPullDownRefresh () {
-      await this.refresh()
+      await this.refresh(true)
       await wepy.stopPullDownRefresh()
     }
 
@@ -121,7 +121,7 @@
       }
     }
 
-    async refresh () {
+    async refresh (isPullDown) {
       if (this.currentTabIndex === 0) {
         this.tripsPage = 0
         await this.methods.fetchMessages(this.role, {
@@ -129,7 +129,7 @@
           size: this.tripsSizePerPage,
           type: 0
         })
-        if (this.role === ROLE.DRIVER && this.userStatus === 0) {
+        if (this.role === ROLE.DRIVER && this.userStatus === 0 && !isPullDown) {
           await this.methods.fetchCars()
         }
       } else if (this.currentTabIndex === 2) {
