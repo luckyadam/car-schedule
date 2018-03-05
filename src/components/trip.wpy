@@ -16,8 +16,18 @@
           display: flex;
         }
       }
-      &_picker,&_shower {
+      &_shower {
         margin-left: 36rpx;
+      }
+      &_picker {
+        font-weight: 700;
+        color: #000000;
+      }
+      &_split {
+        width: 2rpx;
+        height: 30rpx;
+        background: #A4A4A4;
+        margin: 0 36rpx;
       }
     }
     &_location,&_car,&_description,&_number,&_guidename,&_guidetel {
@@ -58,10 +68,11 @@
 <template>
   <view class="container trip region">
     <wxs module="filter" src="../filter/filter.wxs"></wxs>
+    <view class="toptip disabled" wx:if="{{topTipShowStatus === 0}}">该行程已过期，您可以<text class="toptip_link" @tap="publishNewTrip">发布新的行程</text></view>
     <view class="toptip tipping" wx:if="{{topTipShowStatus === 1}}">该行程已匹配成功，请按时出发</view>
     <view class="toptip warning" wx:elif="{{topTipShowStatus === 2}}">正在为您努力匹配该行程</view>
     <view class="toptip success" wx:elif="{{topTipShowStatus === 3}}">该行程已完成，您可以<text class="toptip_link" @tap="publishNewTrip">发布新的行程</text></view>
-    <view class="toptip disabled" wx:elif="{{topTipShowStatus === 4}}">该行程已过期，您可以<text class="toptip_link" @tap="publishNewTrip">发布新的行程</text></view>
+    <view class="toptip ongoing" wx:elif="{{topTipShowStatus === 4}}">该行程正在进行中</view>
     <view class="container_inner">
       <view class="region_section trip_time">
         <view class="region_title icon-clock">空置时间</view>
@@ -72,6 +83,7 @@
               <picker class="trip_time_picker" mode="date" value="{{startTimeDateShow}}" @change="onStartTimeDateChange">
                 <view>{{startTimeDateShow}}</view>
               </picker>
+              <view class="trip_time_split"></view>
               <picker class="trip_time_picker" mode="time" value="{{startTimeTimeShow}}" @change="onStartTimeTimeChange">
                 <view>{{startTimeTimeShow}}</view>
               </picker>
@@ -87,6 +99,7 @@
               <picker class="trip_time_picker" mode="date" value="{{endTimeDateShow}}" @change="onEndTimeDateChange">
                 <view>{{endTimeDateShow}}</view>
               </picker>
+              <view class="trip_time_split"></view>
               <picker class="trip_time_picker" mode="time" value="{{endTimeTimeShow}}" @change="onEndTimeTimeChange">
                 <view>{{endTimeTimeShow}}</view>
               </picker>

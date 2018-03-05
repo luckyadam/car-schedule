@@ -6,7 +6,7 @@
   <view class="trip-card" @tap="goToTrip" data-item="{{tripData}}">
     <view class="trip-card_hd">
       <view class="trip-card_hd_time icon-clock">{{tripData.startTime}}-{{tripData.endTime}}</view>
-      <view class="trip-card_hd_status{{tripData.type === 1 ? ' tipping': ''}}{{tripData.type === 2 ? ' warning': ''}}{{tripData.type === 3 ? ' success': ''}}{{tripData.type === 4 ? ' disabled': ''}}">{{tripData.statusShow}}</view>
+      <view class="trip-card_hd_status{{tripData.type === 0 ? ' disabled': ''}}{{tripData.type === 1 ? ' tipping': ''}}{{tripData.type === 2 ? ' warning': ''}}{{tripData.type === 3 ? ' success': ''}}{{tripData.type === 4 ? ' ongoing': ''}}">{{tripData.statusShow}}</view>
     </view>
     <view class="trip-card_bd">
       <view class="trip-card_bd_location icon-local">

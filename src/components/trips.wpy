@@ -189,19 +189,18 @@
           let newestWillDepartIndex = -1
           let messages = this.messages.concat()
           messages = messages.map((item, index) => {
-            if (item.endTime && new Date(item.endTime).getTime() < new Date().getTime() && !item.status) {
-              item.type = 4
-            }
             item.startTime = `${formatDate(item.startTime)} ${formatTime(item.startTime)}`
             item.endTime = `${formatDate(item.endTime)} ${formatTime(item.endTime)}`
-            if (item.type === 1) {
+            if (item.type === 0) {
+              item.statusShow = '已过期'
+            } else if (item.type === 1) {
               item.statusShow = '待出发'
             } else if (item.type === 2) {
               item.statusShow = '待匹配'
             } else if (item.type === 3) {
               item.statusShow = '已完成'
             } else if (item.type === 4) {
-              item.statusShow = '已过期'
+              item.statusShow = '进行中'
             }
             if (item.car) {
               item.carShow = `${item.car.number}座，${item.car.brand}`
