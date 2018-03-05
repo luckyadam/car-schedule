@@ -548,11 +548,18 @@
       },
 
       async cancelTrip () {
-        await this.methods.cancelMessage(this.user.role, {
-          messageId: this.message.id,
-          from: this.from
+        const res = await wepy.showModal({
+          title: '提示',
+          content: '是否要取消该行程',
+          confirmColor: '#EB3434'
         })
-        this.$emit('switchTab', 0)
+        if (res.confirm) {
+          await this.methods.cancelMessage(this.user.role, {
+            messageId: this.message.id,
+            from: this.from
+          })
+          this.$emit('switchTab', 0)
+        }
       },
 
       publishNewTrip () {
