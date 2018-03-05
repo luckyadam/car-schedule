@@ -175,7 +175,7 @@ export function updateUser (user) {
         })
         await wepy.hideLoading()
         if (userInfo.statusCode === 200 || userInfo.statusCode === 201) {
-          dispatch(updateUserSuccess(userInfo))
+          dispatch(updateUserSuccess(userInfo.data))
           dispatch(setIsNew(false))
           await wepy.showToast({
             title: '资料提交成功，正在审核中！',

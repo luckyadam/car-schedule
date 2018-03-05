@@ -141,11 +141,38 @@ export default handleActions({
   },
 
   [UPDATE_USER_SUCCESS] (state, action) {
+    const payload = { ...action.payload }
+    const {
+      driverLicensePos,
+      driverLicenseOpp,
+      workLicensePos,
+      workLicenseOpp
+    } = payload
+    if (driverLicensePos) {
+      payload.driverLicensePos = {
+        path: driverLicensePos
+      }
+    }
+    if (driverLicenseOpp) {
+      payload.driverLicenseOpp = {
+        path: driverLicenseOpp
+      }
+    }
+    if (workLicensePos) {
+      payload.workLicensePos = {
+        path: workLicensePos
+      }
+    }
+    if (workLicenseOpp) {
+      payload.workLicenseOpp = {
+        path: workLicenseOpp
+      }
+    }
     return {
       ...state,
       isFetching: false,
       isError: false,
-      ...action.payload
+      ...payload
     }
   },
 
