@@ -105,20 +105,20 @@
     }
   }
   &_submit {
-    padding-top: 10rpx;
-    padding-bottom: 30rpx;
+    text-align: center;
+    padding: 10rpx 0 30rpx 0;
+    &_btn {
+      display: inline-block;
+      margin-right: 30rpx;
+      &:last-child {
+        margin-right: 0;
+      }
+    }
   }
   &_close {
     position: absolute;
-    width: 40rpx;
-    height: 40rpx;
-    font-family: 'car_iconfonts';
-    font-size: 40rpx;
     top: 10rpx;
     right: 10rpx;
-    &:after {
-      content: '\e904'
-    }
   }
 }
 </style>
@@ -245,7 +245,7 @@
             <view class="car_dlicense_item_overlay uploading" wx:if="{{imagesShow.driverLicenses[0] && imagesShow.driverLicenses[0].isUploading}}">
               <view class="loading"></view>
             </view>
-            <view class="car_close" @tap.stop="deleteDriverLicensePosImage" wx:if="{{car.status !== 0 && imagesShow.driverLicenses[0]}}"></view>
+            <view class="car_close btn-close" @tap.stop="deleteDriverLicensePosImage" wx:if="{{car.status !== 0 && imagesShow.driverLicenses[0]}}"></view>
           </view>
           <view class="car_dlicense_driver car_dlicense_item" @tap="chooseDriverLicenseOpp">
             <image wx:if="{{!imagesShow.driverLicenses[1]}}" mode="aspectFill" src="../../assets/car_license_down.jpg" class="car_dlicense_item_img" />
@@ -259,7 +259,7 @@
             <view class="car_dlicense_item_overlay uploading" wx:if="{{imagesShow.driverLicenses[1] && imagesShow.driverLicenses[1].isUploading}}">
               <view class="loading"></view>
             </view>
-            <view class="car_close" @tap.stop="deleteDriverLicenseOppImage" wx:if="{{car.status !== 0 && imagesShow.driverLicenses[1]}}"></view>
+            <view class="car_close btn-close" @tap.stop="deleteDriverLicenseOppImage" wx:if="{{car.status !== 0 && imagesShow.driverLicenses[1]}}"></view>
           </view>
         </view>
       </view>
@@ -276,7 +276,7 @@
             <view class="car_images_list_overlay error" wx:if="{{item.isUploadError}}">
               <view class="tip">上传失败</view>
             </view>
-            <view class="car_close" @tap="deleteImage" data-idx="{{index}}"></view>
+            <view class="car_close btn-close" @tap="deleteImage" data-idx="{{index}}"></view>
           </view>
         </view>
         <view class="car_images_add" wx:if="{{car.status !== 0}}">
@@ -284,8 +284,9 @@
         </view>
       </view>
     </view>
-    <view class="car_submit" wx:if="{{car.status !== 0}}">
-      <button class="btn car_submit_btn" @tap="submitProfile">确认提交</button>
+    <view class="car_submit">
+      <button class="btn car_submit_btn cancel" @tap="deleteItemCar" wx:if="{{type !== 'add'}}">删除车辆</button>
+      <button class="btn car_submit_btn" @tap="submitProfile" wx:if="{{car.status !== 0}}">确认提交</button>
     </view>
   </view>
 </template>
@@ -300,6 +301,7 @@
     updateCarImage,
     addCar,
     updateCar,
+    deleteCar,
     updateCarImageByIndex,
     inputCarAge,
     inputCarBrand,
@@ -325,6 +327,7 @@
     uploadFilesInit,
     addCar,
     updateCar,
+    deleteCar,
     updateCarImageByIndex,
     inputCarAge,
     inputCarBrand,
@@ -652,6 +655,19 @@
 
       deleteDriverLicenseOppImage () {
         this.methods.updateCarImageByIndex(1, null)
+      },
+
+      async deleteItemCar () {
+        const idx = this.idx
+        const res = await wepy.showModal({
+          title: '提示',
+          content: '是否要删除该车辆',
+          confirmColor: '#EB3434'
+        })
+        if (res.confirm) {
+          await this.methods.deleteCar(idx, this.car)
+          await wepy.navigateBack()
+        }
       },
 
       async submitProfile () {
