@@ -70,7 +70,10 @@
           type: 'edit',
           from: 'list'
         })
-        this.$emit('switchTab', 1)
+        // this.$emit('switchTab', 1)
+        wepy.navigateTo({
+          url: '../pages/tripShow'
+        })
       }
     }
   }

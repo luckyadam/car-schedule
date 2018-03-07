@@ -19,6 +19,7 @@ export default class extends wepy.app {
       'pages/index',
       'pages/choose',
       'pages/container',
+      'pages/tripShow',
       'pages/profile/car',
       'pages/edit/username',
       'pages/edit/telephone',

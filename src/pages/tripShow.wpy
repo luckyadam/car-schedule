@@ -1,0 +1,29 @@
+<style lang="scss">
+
+</style>
+
+<template>
+  <view>
+    <Trip />
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import Trip from '../components/trip'
+
+  export default class TripShow extends wepy.page {
+    config = {
+      navigationBarTitleText: '查看空置信息'
+    }
+
+    components = {
+      Trip
+    }
+
+    onLoad () {
+      this.$broadcast('showTrip')
+    }
+  }
+
+</script>
