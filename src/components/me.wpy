@@ -790,6 +790,13 @@
             params.workLicensePos = this.files[certificateUploadIndex['2']] || undefined
             params.workLicenseOpp = this.files[certificateUploadIndex['3']] || undefined
           } else {
+            if (!this.checkUsername()) {
+              await wepy.showToast({
+                icon: 'none',
+                title: '姓名不能为空且不少于 2 个字符！'
+              })
+              return
+            }
             if (!this.checkCompany()) {
               await wepy.showToast({
                 icon: 'none',
@@ -832,6 +839,17 @@
           console.log(err)
         }
       }
+    }
+
+    checkUsername () {
+      const user = this.user
+      if (!user.username || user.username.length < 2) {
+        this.submitError.hasError = true
+        this.submitError.usernameError = true
+        return false
+      }
+      this.submitError.usernameError = false
+      return true
     }
 
     checkCompany () {
