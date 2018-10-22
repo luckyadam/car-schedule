@@ -61,7 +61,7 @@
   })
   export default class Container extends wepy.page {
     config = {
-      navigationBarTitleText: '汽车调度',
+      navigationBarTitleText: '巴士调度',
       enablePullDownRefresh: true
     }
 

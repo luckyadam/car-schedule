@@ -71,7 +71,7 @@ export async function checkSettingStatus () {
     if (authSetting['scope.userInfo'] === false) {
       const res = await wepy.showModal({
         title: '用户未授权',
-        content: '如需正常使用汽车调度小程序，请按确定并在授权管理中选中“用户信息”，然后点按确定。最后再重新进入小程序即可正常使用。',
+        content: '如需正常使用巴士调度小程序，请按确定并在授权管理中选中“用户信息”，然后点按确定。最后再重新进入小程序即可正常使用。',
         showCancel: false
       })
       if (res.confirm) {

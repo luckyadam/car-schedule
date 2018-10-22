@@ -1,0 +1,246 @@
+<style lang="less">
+  .h-modal {
+    position: fixed;
+    overflow: hidden;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: 100%;
+    z-index: 999;
+    transform: translateZ(1px);
+    opacity: 0;
+    visibility: hidden;
+    &-show {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    &-mask {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 999;
+      transition: all .5s ease-in-out;
+      opacity: 0;
+      visibility: hidden;
+
+      &-show {
+        opacity: 1;
+        visibility: visible;
+      }
+    }
+
+    &-main {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: auto;
+      position: relative;
+      margin-bottom: 80rpx;
+      z-index: 1000;
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    &-content {
+      border-radius: 7px;
+      padding-top: 15px;
+      position: relative;
+      background-color: #fff;
+      border: 0;
+      background-clip: padding-box;
+      text-align: center;
+      width: 540rpx;
+      height: auto;
+      overflow: hidden;
+    }
+
+    &-body {
+      max-height: 100px;
+      margin-bottom: 15px;
+      padding: 0 15px;
+      font-size: 14px;
+      height: 100%;
+      min-height: 30px;
+      line-height: 1.5;
+      overflow: auto;
+    }
+
+    &-title {
+      padding: 6px 15px 15px;
+      margin: 0;
+      font-size: 38rpx;
+      line-height: 1;
+      color: #333;
+      text-align: center;
+    }
+
+    &-actions {
+      display: flex;
+
+      &-item {
+        flex: 1;
+        padding: 10px 0;
+    	border: 1rpx solid #eee;
+      }
+      &-item {
+        border-right: none;
+      }
+      &.vertical {
+        flex-direction: column;
+      }
+      &.vertical > &-item {
+        border-bottom: none;
+      }
+    }
+
+    &-footer {
+      display: flex;
+      &-wrap {
+        display: inherit;
+        width: 100%;
+      }
+      &-item {
+        flex: 1;
+        padding: 10px 0;
+        border: 1rpx solid #eee;
+        &:first-child {
+          border-right: 0;
+        }
+      }
+      &-ok {
+        color: #479BFF;
+      }
+      &-auth {
+        border-radius: 0;
+        line-height: 1.5;
+        background-color: #fff;
+        font-size: 32rpx;
+        color: #EB3434;
+      }
+    }
+  }
+</style>
+
+<template lang="wxml">
+  <view class="h-modal {{ visible ? 'h-modal-show' : '' }} {{ className ? className : ''}}">
+    <view class="h-modal-mask {{ visible ? 'h-modal-mask-show' : '' }}"></view>
+    <view class="h-modal-main">
+      <view class="h-modal-content">
+        <view class="h-modal-title" wx:if="{{ title }}">{{ title }}</view>
+        <view class="h-modal-body">
+          <slot name="body"></slot>
+        </view>
+        <view class="h-modal-actions {{ actionMode }}" wx:if="{{ actions.length }}">
+          <view class="h-modal-actions-item" wx:for="{{ actions }}" wx:key="{{ item.name }}">
+            <view class="h-modal-actions-item-wrap" @tap="handleClickItem({{ index }}, {{ item }})">
+              <view class="h-modal-btn-text" style="{{ item.color ? 'color: ' + item.color : '' }}">{{ item.name }}</view>
+            </view>
+          </view>
+        </view>
+        <view class="h-modal-footer" wx:else>
+          <view class="h-modal-footer-wrap" wx:if="{{ showOk || showCancel || showAuth }}">
+            <view class="h-modal-footer-item" @tap="handleClickCancel" wx:if="{{ showCancel }}">
+              <view class="h-modal-footer-cancel">{{ cancelTxt }}</view>
+            </view>
+            <view class="h-modal-footer-item" @tap="handleClickOk" wx:if="{{ showOk }}">
+              <view class="h-modal-footer-ok">{{ okTxt }}</view>
+            </view>
+            <view class="h-modal-footer-item" wx:if="{{ showAuth }}">
+              <button class="h-modal-footer-auth" open-type="getUserInfo" @getuserinfo="getUserInfo">授权</button>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  export default class Modal extends wepy.component {
+    props = {
+      className: {
+        type: String,
+        default: ''
+      },
+      title: {
+        type: String,
+        default: ''
+      },
+      okTxt: {
+        type: String,
+        default: '确定'
+      },
+      cancelTxt: {
+        type: String,
+        default: '取消'
+      },
+      showOk: {
+        type: Boolean,
+        default: true
+      },
+      showCancel: {
+        type: Boolean,
+        default: true
+      },
+      showAuth: {
+        type: Boolean,
+        default: true
+      },
+      actionMode: {
+        type: String,
+        default: ''
+      },
+      actions: {
+        type: Array,
+        default: []
+      },
+      visible: {
+        type: Boolean,
+        default: false,
+        twoWay: true
+      }
+    }
+
+    data = {
+      visible: false,
+      title: '',
+      actionMode: ''
+    }
+
+    methods = {
+      showModal(params) {
+        this.visible = true;
+        for (let val in params) {
+          this[val] = params[val];
+        }
+      },
+      handleClickItem (index, action) {
+        this.visible = false;
+        this.$emit('onClickItem', index, action);
+      },
+      handleClickOk () {
+        this.visible = false;
+        this.$emit('onClickOk');
+      },
+      getUserInfo (e) {
+        const detail = e.detail
+        if (detail.signature) {
+          this.visible = false
+          this.$emit('onClickAuth', detail)
+        }
+      },
+      handleClickCancel () {
+        this.visible = false;
+        this.$emit('onClickCancel');
+      }
+    }
+  }
+</script>

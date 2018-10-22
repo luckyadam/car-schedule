@@ -97,7 +97,7 @@
       <view class="choose_head">
         <view class="choose_head_title">
           <text class="choose_head_title_tip">欢迎使用</text>
-          <text class="choose_head_title_app">汽车调度</text>
+          <text class="choose_head_title_app">巴士调度</text>
         </view>
         <view class="choose_head_msg">请选择你的身份</view>
       </view>

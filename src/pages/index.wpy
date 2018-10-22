@@ -1,10 +1,22 @@
 <template>
-  <view></view>
+  <view style='height: 100%'>
+    <modal
+      :showOk.sync="showOk"
+      :showAuth.sync="showAuth"
+      :showCancel.sync="showCancel"
+      @onClickAuth.user="handleClickAuth"
+    >
+      <view slot="body">
+        <view>巴士调度小程序需要您的授权才能提供服务哦</view>
+      </view>
+    </modal>
+  </view>
 </template>
 
 <script>
   import wepy from 'wepy'
   import { connect } from 'wepy-redux'
+  import modal from '../components/modal'
 
   import { fetchUser, checkSettingStatus, setIsNew } from '../actions/user'
   import { ROLE } from '../constants/user'
@@ -18,11 +30,29 @@
     setIsNew
   })
   export default class Index extends wepy.page {
-    async onLoad () {
+    components = {
+      modal
+    }
+
+    data = {
+      showOk: false,
+      showAuth: true,
+      showCancel: false
+    }
+
+    methods = {
+      async handleClickAuth () {
+        await this.getUserInfo()
+      }
+    }
+
+    async getUserInfo () {
       await this.methods.fetchUser()
       const user = this.user
       if (user.isError && user.errorObj && user.errorObj.type === 'wx') {
-        await checkSettingStatus()
+        this.$invoke('modal', 'showModal', {
+          title: '请求授权'
+        })
       } else {
         if (user.role === ROLE.DRIVER || user.role === ROLE.TRAVEL) {
           if (user.status === 0) {
@@ -41,6 +71,10 @@
           })
         }
       }
+    }
+
+    async onLoad () {
+      await this.getUserInfo()
     }
   }
 </script>
